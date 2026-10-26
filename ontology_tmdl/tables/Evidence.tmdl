@@ -1,0 +1,70 @@
+table Evidence
+	lineageTag: be9fd723-77d2-5c5d-b95b-fa672fe009dd
+
+	column evidence_id
+		dataType: string
+		sourceColumn: evidence_id
+		lineageTag: 6a2318ef-e326-51c2-84f8-f2b7bc3677e8
+
+	column event_id
+		dataType: string
+		sourceColumn: event_id
+		lineageTag: f7f0d6ec-e7f6-505a-ae9c-8a2151d51042
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: f833f62f-96cc-595b-a840-e3ccaa11a7f0
+
+	column recorded_date
+		dataType: dateTime
+		sourceColumn: recorded_date
+		lineageTag: a07d86fd-cb88-5723-80d7-fa1fbb3269a0
+
+	column evidence_type
+		dataType: string
+		sourceColumn: evidence_type
+		lineageTag: 847f52b4-3c2a-541f-b9e5-45f3925dc102
+
+	column source_record
+		dataType: string
+		sourceColumn: source_record
+		lineageTag: d7c8f145-888e-5ab0-8600-08de10bffa98
+
+	column excerpt
+		dataType: string
+		sourceColumn: excerpt
+		lineageTag: ff1db13f-0312-5d74-88d5-dbb0d39e43cd
+
+	column is_synthetic
+		dataType: boolean
+		sourceColumn: is_synthetic
+		lineageTag: 4f9062bc-ebc0-5dcc-aadd-41c3d3e4e266
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: 247ef2ff-d6ed-5cf7-a03e-4011516d83be
+
+	partition Evidence = entity
+		mode: directLake
+		source
+			entityName: semantic_event_evidence
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

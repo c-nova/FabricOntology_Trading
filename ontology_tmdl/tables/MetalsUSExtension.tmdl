@@ -1,0 +1,60 @@
+table MetalsUSExtension
+	lineageTag: ab4c48a1-191c-5d8d-bd77-d4b64edfb0d9
+
+	column extension_id
+		dataType: string
+		sourceColumn: extension_id
+		lineageTag: 06fa9bab-10df-59b1-8c43-af9e54ad0249
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: fd6fddd0-379b-545c-ab0f-96014baddde7
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: d10e4201-310f-5151-ab12-cf56bc97afc2
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: 3c6c7c12-6e18-51fd-922e-76ad78cccbaf
+
+	column observation_date
+		dataType: dateTime
+		sourceColumn: observation_date
+		lineageTag: 892bfdda-6233-5a4e-a9af-981e8e04e8a1
+
+	column purity_percent
+		dataType: double
+		sourceColumn: purity_percent
+		lineageTag: d6aca387-960d-514b-86ef-78ab94227e88
+
+	column smelter_utilization
+		dataType: double
+		sourceColumn: smelter_utilization
+		lineageTag: 6901970c-5fd5-5a92-8273-e6dba2e39080
+
+	partition MetalsUSExtension = entity
+		mode: directLake
+		source
+			entityName: raw_metals_us_extension
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

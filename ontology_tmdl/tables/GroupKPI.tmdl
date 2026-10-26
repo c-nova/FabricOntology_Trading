@@ -1,0 +1,70 @@
+table GroupKPI
+	lineageTag: 545a6590-e88a-54ee-badc-766412de2be0
+
+	column kpi_id
+		dataType: string
+		sourceColumn: kpi_id
+		lineageTag: e9cbf1fd-5b90-5ab4-abef-5b9b41b337c9
+
+	column kpi_date
+		dataType: dateTime
+		sourceColumn: kpi_date
+		lineageTag: b9691184-339e-50fb-a803-4c2bcc77df48
+
+	column fiscal_year
+		dataType: int64
+		sourceColumn: fiscal_year
+		lineageTag: 01f0287b-e018-541e-b3e6-ab74d6c928af
+
+	column fiscal_period
+		dataType: int64
+		sourceColumn: fiscal_period
+		lineageTag: 7b7de806-0ba4-541f-a8b7-60053a65482f
+
+	column kpi_code
+		dataType: string
+		sourceColumn: kpi_code
+		lineageTag: f9ffb6af-fe6e-5491-9703-8ff7eee8ea07
+
+	column amount_group
+		dataType: double
+		sourceColumn: amount_group
+		lineageTag: ca00151b-1e07-5b39-8e19-90330bceefb8
+
+	column currency_code
+		dataType: string
+		sourceColumn: currency_code
+		lineageTag: 32b00d18-84e1-559f-a715-b4ddb5a4ac81
+
+	column scenario_tag
+		dataType: string
+		sourceColumn: scenario_tag
+		lineageTag: 2cd49f50-4458-5847-a7a4-c24f300180dd
+
+	column definition
+		dataType: string
+		sourceColumn: definition
+		lineageTag: 60d76e41-3de0-5cad-bfbb-367b66fcbc5e
+
+	partition GroupKPI = entity
+		mode: directLake
+		source
+			entityName: kpi_snapshot
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

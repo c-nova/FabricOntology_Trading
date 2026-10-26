@@ -1,0 +1,76 @@
+entity FinancialMetric
+	lineageTag: dffc59e2-7840-5982-b7de-66e9e0f4cdd9
+	backingTable: FinancialMetric
+	keyProperty: metric_id
+
+	property metric_id
+		dataType: string
+		lineageTag: 30a1af83-b5ac-534f-bbab-c3506c0683fc
+		backingConfiguration
+			valueColumn: FinancialMetric.metric_id
+
+	property metric_date
+		dataType: dateTime
+		lineageTag: 8ea40f1f-0398-535b-843f-1ed5a8d19396
+		backingConfiguration
+			valueColumn: FinancialMetric.metric_date
+
+	property entity_id
+		dataType: string
+		lineageTag: c089b2ec-8b70-5b4c-b505-8e174d5f8733
+		backingConfiguration
+			valueColumn: FinancialMetric.entity_id
+
+	property metric_code
+		dataType: string
+		lineageTag: b9194373-e0cf-5e92-88f0-517b37ee9dfb
+		backingConfiguration
+			valueColumn: FinancialMetric.metric_code
+
+	property amount_local
+		dataType: double
+		lineageTag: 189058b4-f5f8-59b2-9cda-18b2ac54fd03
+		backingConfiguration
+			valueColumn: FinancialMetric.amount_local
+
+	property currency_code
+		dataType: string
+		lineageTag: 6148630a-ba17-5db6-bc39-46d7c789f1be
+		backingConfiguration
+			valueColumn: FinancialMetric.currency_code
+
+	property fx_rate_to_group
+		dataType: double
+		lineageTag: 0272aa36-17a7-53ee-8305-9c29cde30e07
+		backingConfiguration
+			valueColumn: FinancialMetric.fx_rate_to_group
+
+	property amount_group
+		dataType: double
+		lineageTag: 7fa900e1-2225-5eb4-a6c2-f052acf5d08a
+		backingConfiguration
+			valueColumn: FinancialMetric.amount_group
+
+	property management_contribution_jpy
+		dataType: double
+		lineageTag: 0b7f886b-2f84-5b5d-b260-7afcd59c0de0
+		backingConfiguration
+			valueColumn: FinancialMetric.management_contribution_jpy
+
+	property scenario_tag
+		dataType: string
+		lineageTag: 928a7681-3363-50c8-b152-d5fc14813ae5
+		backingConfiguration
+			valueColumn: FinancialMetric.scenario_tag
+
+	property interco_flag
+		dataType: boolean
+		lineageTag: de59458f-0a2b-5863-b305-8aa50ac75094
+		backingConfiguration
+			valueColumn: FinancialMetric.interco_flag
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 08e5796c-15ce-5158-9bd3-e3ec79f10db7
+		backingConfiguration
+			valueColumn: FinancialMetric.source_lakehouse

@@ -1,0 +1,52 @@
+entity FinanceJPExtension
+	lineageTag: bb7cbcf5-c879-51fd-a3c0-eb7c7310390e
+	backingTable: FinanceJPExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: 10cade36-4cda-5c1e-96e8-cbebae14e277
+		backingConfiguration
+			valueColumn: FinanceJPExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: 4e714273-2d37-5149-8b24-7d1d3c656a4f
+		backingConfiguration
+			valueColumn: FinanceJPExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 45e9f413-1d67-5506-9085-6eb51306c254
+		backingConfiguration
+			valueColumn: FinanceJPExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 0a6a6c18-a4eb-50fa-890e-888b6b89c46f
+		backingConfiguration
+			valueColumn: FinanceJPExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: b1c8fc03-1c40-58fd-9373-3a257446e1c9
+		backingConfiguration
+			valueColumn: FinanceJPExtension.observation_date
+
+	property notional_local
+		dataType: double
+		lineageTag: 544b463a-6265-5204-a979-a1cadff84dc7
+		backingConfiguration
+			valueColumn: FinanceJPExtension.notional_local
+
+	property credit_spread_bps
+		dataType: double
+		lineageTag: a7195559-fc39-5945-a4a4-ebe48e8d0ce0
+		backingConfiguration
+			valueColumn: FinanceJPExtension.credit_spread_bps
+
+	property hedge_coverage
+		dataType: double
+		lineageTag: 2cf13676-5590-5ce2-b2d2-10ce9de3bb99
+		backingConfiguration
+			valueColumn: FinanceJPExtension.hedge_coverage

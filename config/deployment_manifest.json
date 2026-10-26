@@ -1,0 +1,100 @@
+{
+  "status": "deployed_published_and_live_verified",
+  "verification_date": "2026-10-23",
+  "step3_extension": {
+    "verified_on": "2026-10-26",
+    "manifest": "config/step3_deployment.json",
+    "notebook_id": "a4f43713-21d0-481e-a843-50566614182d",
+    "status": "executed_with_persisted_reopened_live_graph_dag"
+  },
+  "data_classification": "fictional_synthetic_company_data_with_actual_public_ECB_FX",
+  "period": {"start": "2025-10-01", "end": "2026-09-30"},
+  "seed": 20261023,
+  "workspace": {
+    "id": "fb31bf6e-8199-4559-b1ce-541d04d20f04",
+    "name": "Trading",
+    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/list?experience=fabric-developer",
+    "capacity_id": "38018e0f-a4ed-4723-9939-081296c99cc7",
+    "capacity_sku": "F16"
+  },
+  "storage": {
+    "lakehouses": 9,
+    "inventory": "config/lakehouse_inventory.json",
+    "physical_delta_tables": 95,
+    "physical_rows": 90424,
+    "zero_copy_shortcuts": 8,
+    "shortcut_definitions": "config/sector_shortcuts.json",
+    "shortcut_live_readback": "reports/sector_shortcuts_readback.json",
+    "source_lakehouses_preserved": true,
+    "copied_shortcut_rows": 0
+  },
+  "seed_notebook": {
+    "id": "9515251b-f0c8-42ac-8191-d97e039d3251",
+    "job_id": "bddfef90-b2bf-4628-86ec-264850817cef",
+    "job_status": "Completed"
+  },
+  "finalize_notebook": {
+    "id": "2a1d9049-3321-407c-aeb3-48bdc504b5c8",
+    "job_id": "7c414a58-ff48-4f6c-86a8-adb67bdc481d",
+    "job_status": "Completed"
+  },
+  "ontology": {
+    "id": "71b8b726-4f82-491b-afcb-ab5c75510e5e",
+    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/ontologies/71b8b726-4f82-491b-afcb-ab5c75510e5e",
+    "entity_types": 17,
+    "relationship_types": 39,
+    "backed_tables": 20,
+    "native_connection_annotations_verified": 160,
+    "graph_id": "06a5ee19-a046-4ad5-9be3-1251c2378a68",
+    "final_refresh_job_id": "859c989a-1a44-4c40-a3bf-5ce38c99f253",
+    "final_refresh_status": "Completed",
+    "final_refresh_end_utc": "2026-10-23T09:44:24.8216406Z",
+    "runtime_verified_nodes": 33960,
+    "runtime_verified_edges": 65684,
+    "events_with_complete_evidence_to_kpi_paths": 10,
+    "effects_with_complete_paths": 1344
+  },
+  "data_agent": {
+    "id": "f8bd4ae0-96fa-4752-b911-6ebcc8c531e7",
+    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/aiskills/f8bd4ae0-96fa-4752-b911-6ebcc8c531e7?experience=fabric-developer",
+    "published_through_fabric": true,
+    "native_publish_http_status": 200,
+    "selected_tables": 25,
+    "runtime": "Preview",
+    "published_stage_japanese_live_qa": "passed",
+    "production_conversation_id": "conv_fabqjhS3wLTVpXY4PWVhJZgut6f7",
+    "microsoft_copilot_publication": false,
+    "separate_basic_plan_setting_verified": false,
+    "japanese_support": "tested_best_effort_not_officially_supported"
+  },
+  "annual_actual_jpy": {
+    "ebitda_full_consolidated": "44757399732.84",
+    "ebitda_ownership_weighted_management": "33547898914.09",
+    "cf_full_simplified": "35805919787.41",
+    "cf_ownership_weighted_management_simplified": "26838319120.68"
+  },
+  "verification": {
+    "local": "reports/local_validation.json",
+    "spark_cloud": "reports/cloud_validation.json",
+    "end_to_end": "reports/end_to_end_validation.json",
+    "draft_da_sql": "reports/da_qa_final_draft.json",
+    "published_da_sql": "reports/da_qa_published.json",
+    "graph_nodes": "reports/graph_node_counts.json",
+    "graph_edges": "reports/graph_edge_counts.json",
+    "all_event_paths": "reports/graph_all_event_paths.json",
+    "command": "python3 scripts/verify_live_reports.py"
+  },
+  "safety": {
+    "credentials_exported": false,
+    "sharing_grants_changed": false,
+    "outbound_messages_sent": false,
+    "github_push_performed": false
+  },
+  "limitations": [
+    "A separate requested Basic-plan setting was not found or verified; actual runtime is Preview.",
+    "Japanese Data Agent responses are tested best-effort, not officially supported.",
+    "Ownership-weighted management contribution is not statutory consolidated EBITDA.",
+    "CF and event causality are simplified synthetic demonstrations.",
+    "Use SQL DECIMAL, not graph floating-point properties, for exact reconciliation."
+  ]
+}

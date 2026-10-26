@@ -1,0 +1,51 @@
+# Randomly shuffled [100,100,100,100,51,51,51,51], Python Random(20261023).
+# Canonical generated records, including fictional names: subsidiaries.json.
+subsidiaries:
+  - entity_id: SUB_MTL_JP_01
+    name: Veltrona Metals Japan KK
+    sector: metals
+    country: JP
+    currency: JPY
+    ownership_ratio: 1.00
+  - entity_id: SUB_MTL_US_01
+    name: Veltrona Metals USA Inc.
+    sector: metals
+    country: US
+    currency: USD
+    ownership_ratio: 0.51
+  - entity_id: SUB_ENE_JP_01
+    name: Orivexa Energy Japan KK
+    sector: energy
+    country: JP
+    currency: JPY
+    ownership_ratio: 1.00
+  - entity_id: SUB_ENE_US_01
+    name: Orivexa Energy USA Inc.
+    sector: energy
+    country: US
+    currency: USD
+    ownership_ratio: 0.51
+  - entity_id: SUB_FOD_JP_01
+    name: Caldriva Foods Japan KK
+    sector: foods
+    country: JP
+    currency: JPY
+    ownership_ratio: 0.51
+  - entity_id: SUB_FOD_US_01
+    name: Caldriva Foods USA Inc.
+    sector: foods
+    country: US
+    currency: USD
+    ownership_ratio: 1.00
+  - entity_id: SUB_FIN_JP_01
+    name: Nuvellora Finance Japan KK
+    sector: finance
+    country: JP
+    currency: JPY
+    ownership_ratio: 1.00
+  - entity_id: SUB_FIN_US_01
+    name: Nuvellora Finance USA Inc.
+    sector: finance
+    country: US
+    currency: USD
+    ownership_ratio: 0.51

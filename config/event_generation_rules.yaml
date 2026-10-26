@@ -1,0 +1,43 @@
+period:
+  start_date: 2025-10-01
+  end_date: 2026-09-30
+
+event_mix:
+  per_sector_events: 2
+  cross_sector_events: 2
+  severity_scale: [1, 2, 3, 4, 5]
+  force_high_impact_per_sector: true
+  force_positive_event_per_sector: true
+
+channels:
+  common: [price, volume, delay, cost, fx, hedge]
+  sector_defaults:
+    metals: [delay, cost, price]
+    energy: [price, delay, hedge]
+    foods: [delay, cost, volume]
+    finance: [fx, hedge, cost]
+
+impact_rules:
+  - name: severe_event_penalty
+    when: "severity >= 4"
+    effects:
+      delay_days_multiplier: 1.8
+      cost_delta_multiplier: 1.6
+      margin_delta_multiplier: 1.5
+  - name: positive_hedge_boost
+    when: "impact_channel contains hedge and direction == positive"
+    effects:
+      ebitda_delta_multiplier: 1.4
+  - name: lagged_realization
+    when: "always"
+    effects:
+      lag_days_range: [1, 21]
+      decay_half_life_days_range: [7, 28]
+
+consolidation_formula:
+  delta_full_consolidated: "delta_local * fx_rate"
+  delta_management_contribution: "delta_local * fx_rate * ownership_ratio"
+  note: "All 8 companies are controlled and fully consolidated. Weighted contribution is NOT statutory EBITDA."
+  interco_elimination:
+    revenue: "revenue_total - interco_sales"
+    cogs: "cogs_total - interco_purchases"

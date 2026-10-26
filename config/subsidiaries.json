@@ -1,0 +1,82 @@
+[
+  {
+    "entity_id": "SUB_MTL_JP_01",
+    "entity_name": "Veltrona Metals Japan KK",
+    "sector_code": "metals",
+    "country_code": "JP",
+    "currency_code": "JPY",
+    "ownership_ratio": "1.00",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_MTL_US_01",
+    "entity_name": "Veltrona Metals USA Inc.",
+    "sector_code": "metals",
+    "country_code": "US",
+    "currency_code": "USD",
+    "ownership_ratio": "0.51",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_ENE_JP_01",
+    "entity_name": "Orivexa Energy Japan KK",
+    "sector_code": "energy",
+    "country_code": "JP",
+    "currency_code": "JPY",
+    "ownership_ratio": "1.00",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_ENE_US_01",
+    "entity_name": "Orivexa Energy USA Inc.",
+    "sector_code": "energy",
+    "country_code": "US",
+    "currency_code": "USD",
+    "ownership_ratio": "0.51",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_FOD_JP_01",
+    "entity_name": "Caldriva Foods Japan KK",
+    "sector_code": "foods",
+    "country_code": "JP",
+    "currency_code": "JPY",
+    "ownership_ratio": "0.51",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_FOD_US_01",
+    "entity_name": "Caldriva Foods USA Inc.",
+    "sector_code": "foods",
+    "country_code": "US",
+    "currency_code": "USD",
+    "ownership_ratio": "1.00",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_FIN_JP_01",
+    "entity_name": "Nuvellora Finance Japan KK",
+    "sector_code": "finance",
+    "country_code": "JP",
+    "currency_code": "JPY",
+    "ownership_ratio": "1.00",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  },
+  {
+    "entity_id": "SUB_FIN_US_01",
+    "entity_name": "Nuvellora Finance USA Inc.",
+    "sector_code": "finance",
+    "country_code": "US",
+    "currency_code": "USD",
+    "ownership_ratio": "0.51",
+    "valid_from": "2025-10-01",
+    "valid_to": "2026-09-30"
+  }
+]

@@ -1,0 +1,7 @@
+REFERENCE ONLY: this directory contains the older entity-type JSON representation
+used as a readable generation intermediate. It is NOT the deployed Fabric format.
+The current deployment is ontology_tmdl/ and config/ontology_create.json (TMDL).
+After a public ontology definition replacement, apply all partition connection
+scripts in config/ontology_connection_bindings.json through the native ontology
+authoring flow: public ALM currently removes reserved ONT connection annotations.
+The final live definition is preserved in reports/ontology_readback.json.

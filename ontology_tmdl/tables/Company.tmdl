@@ -1,0 +1,75 @@
+table Company
+	lineageTag: d2f17619-baf3-5b07-85fb-8164e664daeb
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: c0b3a1e1-d949-5202-9c61-9aaba1be87c3
+
+	column entity_name
+		dataType: string
+		sourceColumn: entity_name
+		lineageTag: b6a7778d-d3c4-592e-8e32-687183189602
+
+	column sector_code
+		dataType: string
+		sourceColumn: sector_code
+		lineageTag: ff99ff04-4a04-5151-88c6-4dba259fc3d9
+
+	column country_code
+		dataType: string
+		sourceColumn: country_code
+		lineageTag: 4ead2012-0317-5af1-989d-62a34b9f30f7
+
+	column currency_code
+		dataType: string
+		sourceColumn: currency_code
+		lineageTag: bec86933-ada5-5d5a-8865-a6fe1f988e9b
+
+	column ownership_ratio
+		dataType: double
+		sourceColumn: ownership_ratio
+		lineageTag: b82cfab5-ac9c-5076-9a51-cc40d7ae168d
+
+	column valid_from
+		dataType: dateTime
+		sourceColumn: valid_from
+		lineageTag: cde8eb92-ca4f-5e25-b405-de7372cafe62
+
+	column valid_to
+		dataType: dateTime
+		sourceColumn: valid_to
+		lineageTag: f4881101-585d-5e03-b274-b397641471bd
+
+	column company_code
+		dataType: string
+		sourceColumn: company_code
+		lineageTag: 09c414b3-a8e2-578c-a747-a1680acdae52
+
+	column consolidation_type
+		dataType: string
+		sourceColumn: consolidation_type
+		lineageTag: a233ba14-75bc-5fca-afbc-f4c3a6389728
+
+	partition Company = entity
+		mode: directLake
+		source
+			entityName: company_master
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

@@ -1,0 +1,52 @@
+entity FinanceUSExtension
+	lineageTag: ddd2bde1-2505-5cf4-a093-a4a8887535df
+	backingTable: FinanceUSExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: 38da28d6-543e-5fa9-b197-d43f6bdef969
+		backingConfiguration
+			valueColumn: FinanceUSExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: 7a90886c-8693-590b-aa64-55aef4504c8d
+		backingConfiguration
+			valueColumn: FinanceUSExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: abb3b59f-c191-5b43-9cf4-513b2f50591b
+		backingConfiguration
+			valueColumn: FinanceUSExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 61b674b0-d787-545e-851a-8a1b09eaf821
+		backingConfiguration
+			valueColumn: FinanceUSExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: f3ab7596-09b9-5756-90b9-be90a179fd98
+		backingConfiguration
+			valueColumn: FinanceUSExtension.observation_date
+
+	property notional_local
+		dataType: double
+		lineageTag: 1b6d3f20-e003-51d4-9589-94f52c19b7df
+		backingConfiguration
+			valueColumn: FinanceUSExtension.notional_local
+
+	property credit_spread_bps
+		dataType: double
+		lineageTag: 180b06d1-b1e2-504d-92c1-4f330d65c55a
+		backingConfiguration
+			valueColumn: FinanceUSExtension.credit_spread_bps
+
+	property hedge_coverage
+		dataType: double
+		lineageTag: ffe511c4-d57b-55d2-8c74-f0b6b0b68f11
+		backingConfiguration
+			valueColumn: FinanceUSExtension.hedge_coverage

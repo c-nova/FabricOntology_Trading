@@ -1,0 +1,64 @@
+entity Company
+	lineageTag: 26b38bf0-15e2-575c-8a33-e44e2d2b4e4d
+	backingTable: Company
+	keyProperty: entity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 530bd6b9-9f46-5402-a65a-b6a3a71e472d
+		backingConfiguration
+			valueColumn: Company.entity_id
+
+	property entity_name
+		dataType: string
+		lineageTag: 3384b6cf-a8d2-5902-a86a-5126beb707ca
+		backingConfiguration
+			valueColumn: Company.entity_name
+
+	property sector_code
+		dataType: string
+		lineageTag: 9841c42b-fb99-59a6-970f-dd00b0ccc377
+		backingConfiguration
+			valueColumn: Company.sector_code
+
+	property country_code
+		dataType: string
+		lineageTag: 836db881-b04f-541a-a697-3680d1cd7f33
+		backingConfiguration
+			valueColumn: Company.country_code
+
+	property currency_code
+		dataType: string
+		lineageTag: 47e75ac7-6d1c-5b2b-8f52-98f223cf6787
+		backingConfiguration
+			valueColumn: Company.currency_code
+
+	property ownership_ratio
+		dataType: double
+		lineageTag: f9aaa462-3775-5b68-bbda-ba115ac907e7
+		backingConfiguration
+			valueColumn: Company.ownership_ratio
+
+	property valid_from
+		dataType: dateTime
+		lineageTag: 595c9186-f128-5f98-8d2e-ba46a74e2459
+		backingConfiguration
+			valueColumn: Company.valid_from
+
+	property valid_to
+		dataType: dateTime
+		lineageTag: 62f98ac9-773b-5c19-8ac8-7db956c62585
+		backingConfiguration
+			valueColumn: Company.valid_to
+
+	property company_code
+		dataType: string
+		lineageTag: a12a6af4-e897-5be0-8918-4d1e94288bdb
+		backingConfiguration
+			valueColumn: Company.company_code
+
+	property consolidation_type
+		dataType: string
+		lineageTag: aab0611c-7547-5d9d-85cf-cf57c4e5d300
+		backingConfiguration
+			valueColumn: Company.consolidation_type

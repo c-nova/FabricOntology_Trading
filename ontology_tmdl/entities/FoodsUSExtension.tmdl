@@ -1,0 +1,46 @@
+entity FoodsUSExtension
+	lineageTag: 1fa211c3-4633-53f8-9df8-6f473a234584
+	backingTable: FoodsUSExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: 306fc394-0f85-5ae7-976b-cac4855914dc
+		backingConfiguration
+			valueColumn: FoodsUSExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: 218406fe-96ab-50ea-aa0a-090d2d072d41
+		backingConfiguration
+			valueColumn: FoodsUSExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: bef1ad3b-7519-5818-b16a-b35170ba4fae
+		backingConfiguration
+			valueColumn: FoodsUSExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 52d83006-ae6e-577c-9163-921f433ece23
+		backingConfiguration
+			valueColumn: FoodsUSExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: af417cbb-967d-55ee-aaf8-c1a1239250ed
+		backingConfiguration
+			valueColumn: FoodsUSExtension.observation_date
+
+	property temperature_c
+		dataType: double
+		lineageTag: 3a0b1285-407f-5e54-89cf-81698a06a111
+		backingConfiguration
+			valueColumn: FoodsUSExtension.temperature_c
+
+	property spoilage_percent
+		dataType: double
+		lineageTag: 5086499f-38c1-59e0-b38a-bdd89c6be53f
+		backingConfiguration
+			valueColumn: FoodsUSExtension.spoilage_percent

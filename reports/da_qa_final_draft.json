@@ -1,0 +1,1566 @@
+{
+  "has_more": false,
+  "last_id": "msg_0e3716740ed770fe016adb2c73a5f08194950452c71bf00236",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "LH_Group_SAPのsemantic_risk_eventsとsemantic_event_financial_effectsを使用し、10イベント全部のevent_id、primary_sector、direction、全額EBITDA影響JPY、持分管理影響JPYをeffect_idを重複させず集計してください。metals/energy/foods/financeの正負各1件とCROSS_NEG/CROSS_POSをすべて表にしてください。",
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "対象期間は**2025-10-01～2026-09-30**です。`semantic_risk_events` と `semantic_event_financial_effects` を `event_id` で対応付け、**effect_idを重複排除して1回のみ**集計しました。金額はすべて **JPY（円）**、イベント効果の **delta EBITDA** のみです（actual・baselineとの合算や再加算はしていません）。\n\n| event_id | primary_sector | direction | 全額EBITDA影響JPY | 持分管理EBITDA影響JPY |\n|---|---|---:|---:|---:|\n| ENE_POS | energy | positive | 210,155,445.28円 | 157,280,607.47円 |\n| MTL_POS | metals | positive | 182,646,287.72円 | 135,652,789.94円 |\n| FOD_POS | foods | positive | 119,698,730.65円 | 91,134,062.87円 |\n| FIN_POS | finance | positive | 116,692,616.68円 | 87,351,407.02円 |\n| FOD_NEG | foods | negative | -114,461,186.25円 | -87,630,294.31円 |\n| FIN_NEG | finance | negative | -124,852,353.72円 | -94,382,719.37円 |\n| ENE_NEG | energy | negative | -188,475,012.78円 | -143,866,099.63円 |\n| MTL_NEG | metals | negative | -208,722,530.97円 | -157,587,508.53円 |\n\n- 各イベントはいずれも重複除外後の **84 effect_id** に基づく集計です。  \n- 正の影響最大は **ENE_POS（全額 +210,155,445.28円）**、負の影響最大は **MTL_NEG（全額 -208,722,530.97円）**です。  \n- 指定された10イベントのうち、取得できたのは上記8件です。**CROSS_NEG と CROSS_POS の2件は結果に含まれなかった**ため、期間・セクター／種別条件を満たす実データとしては未検証です。0件とは断定していません。\n\n完全な行データ: `result_0.json`。",
+          "annotations": [
+            {
+              "type": "file_citation",
+              "file_id": "file_fab77RAal8RLZm99mjaLvjh8tdB7",
+              "filename": "result_0.json",
+              "index": 0
+            }
+          ],
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "横断イベントのprimary_sectorはallです。前のSQLがセクター4種類だけで絞って横断2件を落としていないか確認し、primary_sectorで除外せず10イベント全部を再集計してください。必ずCROSS_NEGとCROSS_POSの行も含め、全額と持分管理の影響JPYを返してください。",
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "確認しました。前回の抽出は4セクターに限定され、`primary_sector = 'all'` の横断イベント **CROSS_POS / CROSS_NEG** を除外していました。今回は `primary_sector` で除外せず、対象期間 **2025-10-01～2026-09-30** における10イベントを、**effect_idを重複排除**して再集計しています。金額はイベント効果のdeltaのみ、すべて **JPY（円）** です。\n\n| event_id | primary_sector | direction | 全額EBITDA影響JPY | 持分管理EBITDA影響JPY |\n|---|---|---|---:|---:|\n| CROSS_POS | all | positive | 584,435,114.92円 | 438,898,434.77円 |\n| ENE_POS | energy | positive | 210,155,445.28円 | 157,280,607.47円 |\n| MTL_POS | metals | positive | 182,646,287.72円 | 135,652,789.94円 |\n| FOD_POS | foods | positive | 119,698,730.65円 | 91,134,062.87円 |\n| FIN_POS | finance | positive | 116,692,616.68円 | 87,351,407.02円 |\n| FOD_NEG | foods | negative | -114,461,186.25円 | -87,630,294.31円 |\n| FIN_NEG | finance | negative | -124,852,353.72円 | -94,382,719.37円 |\n| ENE_NEG | energy | negative | -188,475,012.78円 | -143,866,099.63円 |\n| MTL_NEG | metals | negative | -208,722,530.97円 | -157,587,508.53円 |\n| CROSS_NEG | all | negative | -680,035,231.24円 | -515,651,483.39円 |\n\n横断イベントはそれぞれ **336件の重複排除済みeffect_id**、各セクター固有イベントは各 **84件** を基礎に集計されています。最大のプラス影響は **CROSS_POS（全額 +584,435,114.92円）**、最大のマイナス影響は **CROSS_NEG（全額 -680,035,231.24円）** です。\n\n完全な集計結果: `result_1.json`。",
+          "annotations": [
+            {
+              "type": "file_citation",
+              "file_id": "file_fab42O7BWpSmWuC5Kg7P631Pjx5j",
+              "filename": "result_1.json",
+              "index": 0
+            }
+          ],
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "LH_Group_SAPの実テーブルで検証してください。(1)会社8社のownership_ratioと51%でも全額連結する扱い。(2)2026-09-05のUSD→JPYについてfx_rate、observation_date、fill_days、source。(3)内部サービス24pairの売買額と消去が対で一致し残差ゼロか。(4)対象年度のEBITDA/CFについてactualとbaseline、全額と持分管理を分けた合計。CFは簡易値で正式な営業CFではないと明記してください。",
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "LH_Group_SAPの**実テーブル**で検証しました。対象年度は **2025-10-01～2026-09-30**、金額は **JPY（円）** です。\n\n## 1. 8社の所有比率と全額連結扱い\n\n8社はすべて `consolidation_type = FULL_CONTROL` でした。したがって、**所有比率51%の4社も全額連結**として扱われています。51%を掛けるのは持分管理寄与（`MANAGEMENT_WEIGHTED`）のためであり、`FULL_CONSOLIDATED` には適用しません。\n\n- **100%所有（4社）**  \n  Orivexa Energy Japan KK、Nuvellora Finance Japan KK、Caldriva Foods USA Inc.、Veltrona Metals Japan KK\n- **51%所有（4社）**  \n  Orivexa Energy USA Inc.、Nuvellora Finance USA Inc.、Caldriva Foods Japan KK、Veltrona Metals USA Inc.\n\n## 2. 2026-09-05のUSD→JPY\n\n| 適用日 | USD→JPYレート | observation_date | fill_days | source |\n|---|---:|---|---:|---|\n| 2026-09-05 | **156.24677336** | 2026-09-04 | 1日 | ECB API（EUR建てJPY/USDクロス） |\n\n2026-09-05に対して、直近観測日の**2026-09-04を1日補完**して適用しています。補完上限5日以内です。\n\n## 3. 内部取引24 pair の照合・消去\n\n対象年度には24件の `pair_id` が取得されました。**全24件で、売手売上と買手即時費用は一致し、消去仕訳は逆符号対、消去後残差はすべて0円**でした。\n\n- JPの各月pair：売手売上・買手費用とも **14,500,000.00円**、売上消去 **-14,500,000.00円**、買手側消去 **+14,500,000.00円**、残差 **0.00円**\n- USの各月pair：売手売上と買手費用は各pairで一致し、同額の逆符号消去により残差はすべて **0.00円**\n\n**制約:** `intercompany_transactions` と `group_consolidation_entries` にはサービス取引だけを識別する列がないため、これは「内部サービス24 pair」に限定した検証ではなく、対象年度に取得された**全内部取引24 pair**の検証です。\n\n## 4. EBITDA / CF：actual・baseline、全額・持分管理の区別\n\n| 指標・連結区分 | scenario | 合計（JPY） |\n|---|---|---:|\n| EBITDA_FULL_CONSOLIDATED | actual | **44,757,399,732.84円** |\n| EBITDA_FULL_CONSOLIDATED | baseline | **44,860,317,852.64円** |\n| EBITDA_MANAGEMENT_WEIGHTED | actual | **33,547,898,914.09円** |\n| EBITDA_MANAGEMENT_WEIGHTED | baseline | **33,636,699,717.29円** |\n| CF_FULL_CONSOLIDATED | actual | **35,805,919,787.41円** |\n| CF_FULL_CONSOLIDATED | baseline | **35,888,254,306.84円** |\n| CF_MANAGEMENT_WEIGHTED | actual | **26,838,319,120.68円** |\n| CF_MANAGEMENT_WEIGHTED | baseline | **26,909,359,783.28円** |\n\n**定義上の注意**\n- `FULL_CONSOLIDATED` は支配子会社を**全額**で連結する管理デモ値です。\n- `MANAGEMENT_WEIGHTED` は所有比率を反映した**簡易的な管理寄与**であり、法定連結EBITDA・持分法損益ではありません。\n- **CFは正式な営業CF・フリーCFではありません。** EBITDAの80%を起点にイベントCF効果を加えた**簡易シミュレーション**です。\n\n参照した実テーブル検証結果: `result_3.json`、`result_2.json`、`result_5.json`、`result_4.json`。",
+          "annotations": [
+            {
+              "type": "file_citation",
+              "file_id": "file_fabdlf0sxAiMWSv5RntCroBc7mBR",
+              "filename": "result_2.json",
+              "index": 0
+            },
+            {
+              "type": "file_citation",
+              "file_id": "file_fab8OpcwqK9saRTDs8VUE2jcZEYh",
+              "filename": "result_3.json",
+              "index": 1
+            },
+            {
+              "type": "file_citation",
+              "file_id": "file_fab9GTlgjoVSkRvDy8KBbF3UKA8k",
+              "filename": "result_4.json",
+              "index": 2
+            },
+            {
+              "type": "file_citation",
+              "file_id": "file_fabmxSz6KRNjAwpWsux73ZPKblnt",
+              "filename": "result_5.json",
+              "index": 3
+            }
+          ],
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "ゼロコピー参照の実行検証です。LH_Group_SAPのraw_<sector>_<jp/us>_extension全8テーブルをsemantic_business_activitiesにactivity_idで結合し、各テーブルの件数と結合成功件数を示してください。さらにFOD_NEGの1件についてevidence_id→activity_id→contract_id→effect_id→metric_id→kpi_idの実在する経路を、IDと架空根拠の抜粋付きで示してください。「直近30日」の対象期間も確認してください。金額はDECIMALのSQLを優先し、グラフの浮動小数精度を会計照合に使わないでください。",
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    },
+    {
+      "role": "assistant",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "## ゼロコピー参照の実行検証\n\n`raw_<sector>_<jp/us>_extension` の全8テーブルを `semantic_business_activities` に `activity_id` で照合した結果、**全テーブルで365件中365件が結合成功、不成功0件**でした。\n\n| 拡張テーブル | 総件数 | activity_id結合成功 | 結合不成功 |\n|---|---:|---:|---:|\n| raw_metals_jp_extension | 365 | 365 | 0 |\n| raw_metals_us_extension | 365 | 365 | 0 |\n| raw_energy_jp_extension | 365 | 365 | 0 |\n| raw_energy_us_extension | 365 | 365 | 0 |\n| raw_foods_jp_extension | 365 | 365 | 0 |\n| raw_foods_us_extension | 365 | 365 | 0 |\n| raw_finance_jp_extension | 365 | 365 | 0 |\n| raw_finance_us_extension | 365 | 365 | 0 |\n\n従って、全8テーブルについて `activity_id` をキーとする `semantic_business_activities` への参照・結合は実データで成功しています。\n\n## FOD_NEG：実在する根拠からグループKPIまでの経路（1件）\n\n| 経路要素 | 実在ID・属性 |\n|---|---|\n| Event | `FOD_NEG` |\n| Evidence | `SUB_FOD_JP_01_FOD_NEG_0` |\n| 架空根拠フラグ | `True` |\n| 根拠抜粋 | `SYNTHETIC operations_log: SYNTHETIC: cold chain spoilage incident; designed causal mechanism=cost.` |\n| Activity | `SUB_FOD_JP_01_A133_0` |\n| Contract | `SUB_FOD_JP_01_C04` |\n| Financial effect | `SUB_FOD_JP_01_A133_0_FOD_NEG_F` |\n| effect_date | 2026-02-11 |\n| Financial metric | `SUB_FOD_JP_01_2026-02-11_ebitda_actual` |\n| Metric属性 | `EBITDA` / `actual`、metric_date: 2026-02-11 |\n| Group KPI | `2026-02-11_EBITDA_FULL_CONSOLIDATED_actual` |\n| KPI属性 | `EBITDA_FULL_CONSOLIDATED`、kpi_date: 2026-02-11 |\n\n検証経路は、**`FOD_NEG` → evidence_id → activity_id → contract_id → effect_id → metric_id → kpi_id** です。根拠は `effect.evidence_id = evidence.evidence_id` で結合しており、event_idだけによる根拠の重複結合はしていません。\n\n## 直近30日\n\n「直近30日」の固定対象期間は、指定どおり **2026-09-01～2026-09-30** です。上記のFOD_NEG経路で確認された効果・EBITDA metric・KPI日は **2026-02-11** のため、この直近30日枠には含まれません。\n\n会計照合で金額を扱う場合は、**SQLのDECIMAL出力を正**とし、グラフの浮動小数精度は照合根拠に使用しません。今回の照合はID結合の検証であり、金額集計は実施していません。\n\n参照結果: `result_6.json`、`result_7.json`。",
+          "annotations": [
+            {
+              "type": "file_citation",
+              "file_id": "file_fabCnMyw6BLrIMiPYpjCs7F30Bzj",
+              "filename": "result_6.json",
+              "index": 0
+            },
+            {
+              "type": "file_citation",
+              "file_id": "file_fabzMAJwtXyNZO1wqt0K4hprEqOk",
+              "filename": "result_7.json",
+              "index": 1
+            }
+          ],
+          "transcript": null,
+          "audio": null,
+          "image_url": null
+        }
+      ]
+    }
+  ],
+  "sql_executions": [
+    {
+      "execution_index": 0,
+      "sql": "WITH selected_events AS (\n    SELECT\n        e.event_id,\n        e.primary_sector,\n        e.direction,\n        e.event_type,\n        e.start_date,\n        e.end_date\n    FROM dbo.semantic_risk_events e\n    WHERE (e.primary_sector IN ('metals','energy','foods','finance') AND e.direction IN ('positive','negative'))\n       OR e.primary_sector IN ('CROSS_NEG','CROSS_POS')\n       OR e.event_type IN ('CROSS_NEG','CROSS_POS')\n), overlapping_events AS (\n    SELECT\n        event_id,\n        primary_sector,\n        direction,\n        event_type,\n        start_date,\n        end_date\n    FROM selected_events\n    WHERE start_date <= CAST('2026-09-30' AS date)\n      AND end_date >= CAST('2025-10-01' AS date)\n), period_effects AS (\n    SELECT DISTINCT\n        f.effect_id,\n        f.event_id,\n        f.delta_ebitda_full_jpy,\n        f.delta_management_jpy\n    FROM dbo.semantic_event_financial_effects f\n    WHERE f.effect_date >= CAST('2025-10-01' AS date)\n      AND f.effect_date <= CAST('2026-09-30' AS date)\n), aggregated AS (\n    SELECT\n        e.event_id,\n        e.primary_sector,\n        e.direction,\n        COUNT(p.effect_id) AS distinct_effect_count,\n        SUM(p.delta_ebitda_full_jpy) AS full_ebitda_impact_jpy,\n        SUM(p.delta_management_jpy) AS management_ebitda_impact_jpy,\n        CASE\n            WHEN COUNT(p.effect_id) = 0 THEN N'対象期間内のFinancialEffectなし'\n            ELSE N'集計対象'\n        END AS status\n    FROM overlapping_events e\n    LEFT JOIN period_effects p\n        ON p.event_id = e.event_id\n    GROUP BY e.event_id, e.primary_sector, e.direction\n)\nSELECT\n    event_id AS [event_id],\n    primary_sector AS [primary_sector],\n    direction AS [direction],\n    distinct_effect_count AS [重複除外effect_id件数],\n    full_ebitda_impact_jpy AS [全額EBITDA影響JPY],\n    management_ebitda_impact_jpy AS [持分管理EBITDA影響JPY],\n    status AS [対象判定]\nFROM aggregated\nORDER BY\n    CASE WHEN full_ebitda_impact_jpy IS NULL THEN 1 ELSE 0 END,\n    full_ebitda_impact_jpy DESC,\n    event_id ASC;",
+      "rows": [
+        [
+          "ENE_POS",
+          "energy",
+          "positive",
+          84,
+          210155445.28,
+          157280607.47,
+          "集計対象"
+        ],
+        [
+          "MTL_POS",
+          "metals",
+          "positive",
+          84,
+          182646287.72,
+          135652789.94,
+          "集計対象"
+        ],
+        [
+          "FOD_POS",
+          "foods",
+          "positive",
+          84,
+          119698730.65,
+          91134062.87,
+          "集計対象"
+        ],
+        [
+          "FIN_POS",
+          "finance",
+          "positive",
+          84,
+          116692616.68,
+          87351407.02,
+          "集計対象"
+        ],
+        [
+          "FOD_NEG",
+          "foods",
+          "negative",
+          84,
+          -114461186.25,
+          -87630294.31,
+          "集計対象"
+        ],
+        [
+          "FIN_NEG",
+          "finance",
+          "negative",
+          84,
+          -124852353.72,
+          -94382719.37,
+          "集計対象"
+        ],
+        [
+          "ENE_NEG",
+          "energy",
+          "negative",
+          84,
+          -188475012.78,
+          -143866099.63,
+          "集計対象"
+        ],
+        [
+          "MTL_NEG",
+          "metals",
+          "negative",
+          84,
+          -208722530.97,
+          -157587508.53,
+          "集計対象"
+        ]
+      ],
+      "columns": [
+        "event_id",
+        "primary_sector",
+        "direction",
+        "重複除外effect_id件数",
+        "全額EBITDA影響JPY",
+        "持分管理EBITDA影響JPY",
+        "対象判定"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "varchar",
+        "int",
+        "decimal",
+        "decimal",
+        "nvarchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| event_id | primary_sector | direction | 重複除外effect_id件数 | 全額EBITDA影響JPY | 持分管理EBITDA影響JPY | 対象判定 |\r\n|:---------|:---------------|:----------|----------------:|--------------:|----------------:|:-----|\r\n| ENE_POS  | energy         | positive  |              84 |  210155445.28 |    157280607.47 | 集計対象 |\r\n| MTL_POS  | metals         | positive  |              84 |  182646287.72 |    135652789.94 | 集計対象 |\r\n| FOD_POS  | foods          | positive  |              84 |  119698730.65 |     91134062.87 | 集計対象 |\r\n| FIN_POS  | finance        | positive  |              84 |  116692616.68 |     87351407.02 | 集計対象 |\r\n| FOD_NEG  | foods          | negative  |              84 | -114461186.25 |    -87630294.31 | 集計対象 |\r\n| FIN_NEG  | finance        | negative  |              84 | -124852353.72 |    -94382719.37 | 集計対象 |\r\n| ENE_NEG  | energy         | negative  |              84 | -188475012.78 |   -143866099.63 | 集計対象 |\r\n| MTL_NEG  | metals         | negative  |              84 | -208722530.97 |   -157587508.53 | 集計対象 |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "SELECT e.event_id, e.primary_sector, e.direction, e.start_date, e.end_date, COUNT(DISTINCT f.effect_id) AS distinct_effect_id_count, SUM(f.delta_ebitda_full_jpy) AS full_ebitda_impact_jpy, SUM(f.delta_management_jpy) AS management_ebitda_impact_jpy\nFROM dbo.semantic_risk_events AS e\nINNER JOIN dbo.semantic_event_financial_effects AS f\n    ON f.event_id = e.event_id\nWHERE e.start_date <= CAST('2026-09-30' AS date)\n  AND e.end_date >= CAST('2025-10-01' AS date)\n  AND f.effect_date >= CAST('2025-10-01' AS date)\n  AND f.effect_date <= CAST('2026-09-30' AS date)\nGROUP BY e.event_id, e.primary_sector, e.direction, e.start_date, e.end_date\nORDER BY full_ebitda_impact_jpy DESC, e.event_id ASC",
+      "rows": [
+        [
+          "CROSS_POS",
+          "all",
+          "positive",
+          "2026-09-01T00:00:00",
+          "2026-09-21T00:00:00",
+          336,
+          584435114.92,
+          438898434.77
+        ],
+        [
+          "ENE_POS",
+          "energy",
+          "positive",
+          "2026-06-02T00:00:00",
+          "2026-06-22T00:00:00",
+          84,
+          210155445.28,
+          157280607.47
+        ],
+        [
+          "MTL_POS",
+          "metals",
+          "positive",
+          "2026-03-03T00:00:00",
+          "2026-03-23T00:00:00",
+          84,
+          182646287.72,
+          135652789.94
+        ],
+        [
+          "FOD_POS",
+          "foods",
+          "positive",
+          "2026-07-06T00:00:00",
+          "2026-07-26T00:00:00",
+          84,
+          119698730.65,
+          91134062.87
+        ],
+        [
+          "FIN_POS",
+          "finance",
+          "positive",
+          "2026-08-04T00:00:00",
+          "2026-08-24T00:00:00",
+          84,
+          116692616.68,
+          87351407.02
+        ],
+        [
+          "FOD_NEG",
+          "foods",
+          "negative",
+          "2026-02-09T00:00:00",
+          "2026-03-01T00:00:00",
+          84,
+          -114461186.25,
+          -87630294.31
+        ],
+        [
+          "FIN_NEG",
+          "finance",
+          "negative",
+          "2026-04-13T00:00:00",
+          "2026-05-03T00:00:00",
+          84,
+          -124852353.72,
+          -94382719.37
+        ],
+        [
+          "ENE_NEG",
+          "energy",
+          "negative",
+          "2026-01-14T00:00:00",
+          "2026-02-03T00:00:00",
+          84,
+          -188475012.78,
+          -143866099.63
+        ],
+        [
+          "MTL_NEG",
+          "metals",
+          "negative",
+          "2025-11-12T00:00:00",
+          "2025-12-02T00:00:00",
+          84,
+          -208722530.97,
+          -157587508.53
+        ],
+        [
+          "CROSS_NEG",
+          "all",
+          "negative",
+          "2026-05-11T00:00:00",
+          "2026-05-31T00:00:00",
+          336,
+          -680035231.24,
+          -515651483.39
+        ]
+      ],
+      "columns": [
+        "event_id",
+        "primary_sector",
+        "direction",
+        "start_date",
+        "end_date",
+        "distinct_effect_id_count",
+        "full_ebitda_impact_jpy",
+        "management_ebitda_impact_jpy"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "varchar",
+        "date",
+        "date",
+        "int",
+        "decimal",
+        "decimal"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| event_id  | primary_sector | direction | start_date             | end_date              | distinct_effect_id_count | full_ebitda_impact_jpy | management_ebitda_impact_jpy |\r\n|:----------|:---------------|:----------|:-----------------------|:----------------------|-------------------------:|-----------------------:|-----------------------------:|\r\n| CROSS_POS | all            | positive  | 9/1/2026 12:00:00 AM   | 9/21/2026 12:00:00 AM |                      336 |           584435114.92 |                 438898434.77 |\r\n| ENE_POS   | energy         | positive  | 6/2/2026 12:00:00 AM   | 6/22/2026 12:00:00 AM |                       84 |           210155445.28 |                 157280607.47 |\r\n| MTL_POS   | metals         | positive  | 3/3/2026 12:00:00 AM   | 3/23/2026 12:00:00 AM |                       84 |           182646287.72 |                 135652789.94 |\r\n| FOD_POS   | foods          | positive  | 7/6/2026 12:00:00 AM   | 7/26/2026 12:00:00 AM |                       84 |           119698730.65 |                  91134062.87 |\r\n| FIN_POS   | finance        | positive  | 8/4/2026 12:00:00 AM   | 8/24/2026 12:00:00 AM |                       84 |           116692616.68 |                  87351407.02 |\r\n| FOD_NEG   | foods          | negative  | 2/9/2026 12:00:00 AM   | 3/1/2026 12:00:00 AM  |                       84 |          -114461186.25 |                 -87630294.31 |\r\n| FIN_NEG   | finance        | negative  | 4/13/2026 12:00:00 AM  | 5/3/2026 12:00:00 AM  |                       84 |          -124852353.72 |                 -94382719.37 |\r\n| ENE_NEG   | energy         | negative  | 1/14/2026 12:00:00 AM  | 2/3/2026 12:00:00 AM  |                       84 |          -188475012.78 |                -143866099.63 |\r\n| MTL_NEG   | metals         | negative  | 11/12/2025 12:00:00 AM | 12/2/2025 12:00:00 AM |                       84 |          -208722530.97 |                -157587508.53 |\r\n| CROSS_NEG | all            | negative  | 5/11/2026 12:00:00 AM  | 5/31/2026 12:00:00 AM |                      336 |          -680035231.24 |                -515651483.39 |"
+    },
+    {
+      "execution_index": 1,
+      "sql": "SELECT e.event_id,\n       e.primary_sector,\n       e.direction,\n       COUNT(DISTINCT f.effect_id) AS distinct_effect_id_count,\n       SUM(f.delta_ebitda_full_jpy) AS [全額EBITDA影響JPY],\n       SUM(f.delta_management_jpy) AS [持分管理EBITDA影響JPY],\n       CAST(NULL AS varchar(200)) AS [不足event_id・除外理由]\nFROM dbo.semantic_risk_events AS e\nINNER JOIN dbo.semantic_event_financial_effects AS f\n    ON f.event_id = e.event_id\nWHERE e.start_date <= CAST('2026-09-30' AS date)\n  AND e.end_date >= CAST('2025-10-01' AS date)\n  AND f.effect_date >= CAST('2025-10-01' AS date)\n  AND f.effect_date <= CAST('2026-09-30' AS date)\nGROUP BY e.event_id, e.primary_sector, e.direction\nORDER BY [全額EBITDA影響JPY] DESC, e.event_id ASC",
+      "rows": [
+        [
+          "CROSS_POS",
+          "all",
+          "positive",
+          336,
+          584435114.92,
+          438898434.77,
+          {}
+        ],
+        [
+          "ENE_POS",
+          "energy",
+          "positive",
+          84,
+          210155445.28,
+          157280607.47,
+          {}
+        ],
+        [
+          "MTL_POS",
+          "metals",
+          "positive",
+          84,
+          182646287.72,
+          135652789.94,
+          {}
+        ],
+        [
+          "FOD_POS",
+          "foods",
+          "positive",
+          84,
+          119698730.65,
+          91134062.87,
+          {}
+        ],
+        [
+          "FIN_POS",
+          "finance",
+          "positive",
+          84,
+          116692616.68,
+          87351407.02,
+          {}
+        ],
+        [
+          "FOD_NEG",
+          "foods",
+          "negative",
+          84,
+          -114461186.25,
+          -87630294.31,
+          {}
+        ],
+        [
+          "FIN_NEG",
+          "finance",
+          "negative",
+          84,
+          -124852353.72,
+          -94382719.37,
+          {}
+        ],
+        [
+          "ENE_NEG",
+          "energy",
+          "negative",
+          84,
+          -188475012.78,
+          -143866099.63,
+          {}
+        ],
+        [
+          "MTL_NEG",
+          "metals",
+          "negative",
+          84,
+          -208722530.97,
+          -157587508.53,
+          {}
+        ],
+        [
+          "CROSS_NEG",
+          "all",
+          "negative",
+          336,
+          -680035231.24,
+          -515651483.39,
+          {}
+        ]
+      ],
+      "columns": [
+        "event_id",
+        "primary_sector",
+        "direction",
+        "distinct_effect_id_count",
+        "全額EBITDA影響JPY",
+        "持分管理EBITDA影響JPY",
+        "不足event_id・除外理由"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "varchar",
+        "int",
+        "decimal",
+        "decimal",
+        "varchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| event_id  | primary_sector | direction | distinct_effect_id_count | 全額EBITDA影響JPY | 持分管理EBITDA影響JPY | 不足event_id・除外理由 |\r\n|:----------|:---------------|:----------|-------------------------:|--------------:|----------------:|:----------------|\r\n| CROSS_POS | all            | positive  |                      336 |  584435114.92 |    438898434.77 |                 |\r\n| ENE_POS   | energy         | positive  |                       84 |  210155445.28 |    157280607.47 |                 |\r\n| MTL_POS   | metals         | positive  |                       84 |  182646287.72 |    135652789.94 |                 |\r\n| FOD_POS   | foods          | positive  |                       84 |  119698730.65 |     91134062.87 |                 |\r\n| FIN_POS   | finance        | positive  |                       84 |  116692616.68 |     87351407.02 |                 |\r\n| FOD_NEG   | foods          | negative  |                       84 | -114461186.25 |    -87630294.31 |                 |\r\n| FIN_NEG   | finance        | negative  |                       84 | -124852353.72 |    -94382719.37 |                 |\r\n| ENE_NEG   | energy         | negative  |                       84 | -188475012.78 |   -143866099.63 |                 |\r\n| MTL_NEG   | metals         | negative  |                       84 | -208722530.97 |   -157587508.53 |                 |\r\n| CROSS_NEG | all            | negative  |                      336 | -680035231.24 |   -515651483.39 |                 |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "SELECT TOP 1\n    from_currency,\n    to_currency,\n    fx_rate,\n    observation_date,\n    fill_days,\n    source,\n    rate_date,\n    rate_method\nFROM dbo.fx_rates\nWHERE from_currency = 'USD'\n  AND to_currency = 'JPY'\n  AND rate_date = '2026-09-05'\n  AND observation_date <= '2026-09-05'\n  AND fill_days <= 5\nORDER BY observation_date DESC, fill_days ASC",
+      "rows": [
+        [
+          "USD",
+          "JPY",
+          156.24677336,
+          "2026-09-04T00:00:00",
+          1,
+          "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+JPY.EUR.SP00.A?startPeriod=2025-09-25&endPeriod=2026-09-30&format=csvdata",
+          "2026-09-05T00:00:00",
+          "ECB EUR cross JPY/USD; previous observation <=5 days"
+        ]
+      ],
+      "columns": [
+        "from_currency",
+        "to_currency",
+        "fx_rate",
+        "observation_date",
+        "fill_days",
+        "source",
+        "rate_date",
+        "rate_method"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "decimal",
+        "date",
+        "bigint",
+        "varchar",
+        "date",
+        "varchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| from_currency | to_currency | fx_rate      | observation_date     | fill_days | source                                                                                                                          | rate_date            | rate_method                                          |\r\n|:--------------|:------------|-------------:|:---------------------|----------:|:--------------------------------------------------------------------------------------------------------------------------------|:---------------------|:-----------------------------------------------------|\r\n| USD           | JPY         | 156.24677336 | 9/4/2026 12:00:00 AM |         1 | https://data-api.ecb.europa.eu/service/data/EXR/D.USD+JPY.EUR.SP00.A?startPeriod=2025-09-25&endPeriod=2026-09-30&format=csvdata | 9/5/2026 12:00:00 AM | ECB EUR cross JPY/USD; previous observation <=5 days |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "SELECT kpi_code, scenario_tag, definition, currency_code, COUNT(*) AS daily_rows, MIN(kpi_date) AS first_kpi_date, MAX(kpi_date) AS last_kpi_date\nFROM dbo.kpi_snapshot\nWHERE kpi_date >= '2025-10-01'\n  AND kpi_date <= '2026-09-30'\n  AND (kpi_code LIKE 'EBITDA%' OR kpi_code LIKE 'CF%')\nGROUP BY kpi_code, scenario_tag, definition, currency_code\nORDER BY kpi_code, scenario_tag, definition, currency_code",
+      "rows": [
+        [
+          "CF_FULL_CONSOLIDATED",
+          "actual",
+          "full controlled-entity consolidation",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "CF_FULL_CONSOLIDATED",
+          "baseline",
+          "full controlled-entity consolidation",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "CF_MANAGEMENT_WEIGHTED",
+          "actual",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "CF_MANAGEMENT_WEIGHTED",
+          "baseline",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "EBITDA_FULL_CONSOLIDATED",
+          "actual",
+          "full controlled-entity consolidation",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "EBITDA_FULL_CONSOLIDATED",
+          "baseline",
+          "full controlled-entity consolidation",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "EBITDA_MANAGEMENT_WEIGHTED",
+          "actual",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ],
+        [
+          "EBITDA_MANAGEMENT_WEIGHTED",
+          "baseline",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          "JPY",
+          365,
+          "2025-10-01T00:00:00",
+          "2026-09-30T00:00:00"
+        ]
+      ],
+      "columns": [
+        "kpi_code",
+        "scenario_tag",
+        "definition",
+        "currency_code",
+        "daily_rows",
+        "first_kpi_date",
+        "last_kpi_date"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "varchar",
+        "varchar",
+        "int",
+        "date",
+        "date"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| kpi_code                   | scenario_tag | definition                                                                  | currency_code | daily_rows | first_kpi_date        | last_kpi_date         |\r\n|:---------------------------|:-------------|:----------------------------------------------------------------------------|:--------------|-----------:|:----------------------|:----------------------|\r\n| CF_FULL_CONSOLIDATED       | actual       | full controlled-entity consolidation                                        | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| CF_FULL_CONSOLIDATED       | baseline     | full controlled-entity consolidation                                        | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| CF_MANAGEMENT_WEIGHTED     | actual       | simplified ownership-weighted management contribution; NOT statutory EBITDA | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| CF_MANAGEMENT_WEIGHTED     | baseline     | simplified ownership-weighted management contribution; NOT statutory EBITDA | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| EBITDA_FULL_CONSOLIDATED   | actual       | full controlled-entity consolidation                                        | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| EBITDA_FULL_CONSOLIDATED   | baseline     | full controlled-entity consolidation                                        | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| EBITDA_MANAGEMENT_WEIGHTED | actual       | simplified ownership-weighted management contribution; NOT statutory EBITDA | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |\r\n| EBITDA_MANAGEMENT_WEIGHTED | baseline     | simplified ownership-weighted management contribution; NOT statutory EBITDA | JPY           |        365 | 10/1/2025 12:00:00 AM | 9/30/2026 12:00:00 AM |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "SELECT entity_id, entity_name, ownership_ratio, consolidation_type FROM dbo.company_master WHERE consolidation_type = 'FULL_CONTROL' AND ownership_ratio >= 0.51 AND valid_from <= CAST('2026-09-30' AS date) AND (valid_to IS NULL OR valid_to >= CAST('2025-10-01' AS date)) ORDER BY entity_id",
+      "rows": [
+        [
+          "SUB_ENE_JP_01",
+          "Orivexa Energy Japan KK",
+          1.0,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_ENE_US_01",
+          "Orivexa Energy USA Inc.",
+          0.51,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_FIN_JP_01",
+          "Nuvellora Finance Japan KK",
+          1.0,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_FIN_US_01",
+          "Nuvellora Finance USA Inc.",
+          0.51,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_FOD_JP_01",
+          "Caldriva Foods Japan KK",
+          0.51,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_FOD_US_01",
+          "Caldriva Foods USA Inc.",
+          1.0,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_MTL_JP_01",
+          "Veltrona Metals Japan KK",
+          1.0,
+          "FULL_CONTROL"
+        ],
+        [
+          "SUB_MTL_US_01",
+          "Veltrona Metals USA Inc.",
+          0.51,
+          "FULL_CONTROL"
+        ]
+      ],
+      "columns": [
+        "entity_id",
+        "entity_name",
+        "ownership_ratio",
+        "consolidation_type"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "decimal",
+        "varchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| entity_id     | entity_name                | ownership_ratio | consolidation_type |\r\n|:--------------|:---------------------------|----------------:|:-------------------|\r\n| SUB_ENE_JP_01 | Orivexa Energy Japan KK    |               1 | FULL_CONTROL       |\r\n| SUB_ENE_US_01 | Orivexa Energy USA Inc.    |            0.51 | FULL_CONTROL       |\r\n| SUB_FIN_JP_01 | Nuvellora Finance Japan KK |               1 | FULL_CONTROL       |\r\n| SUB_FIN_US_01 | Nuvellora Finance USA Inc. |            0.51 | FULL_CONTROL       |\r\n| SUB_FOD_JP_01 | Caldriva Foods Japan KK    |            0.51 | FULL_CONTROL       |\r\n| SUB_FOD_US_01 | Caldriva Foods USA Inc.    |               1 | FULL_CONTROL       |\r\n| SUB_MTL_JP_01 | Veltrona Metals Japan KK   |               1 | FULL_CONTROL       |\r\n| SUB_MTL_US_01 | Veltrona Metals USA Inc.   |            0.51 | FULL_CONTROL       |"
+    },
+    {
+      "execution_index": 1,
+      "sql": "SELECT\n  kpi_code,\n  scenario_tag,\n  CASE\n    WHEN kpi_code LIKE 'CF%' THEN CONCAT(definition, '; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow')\n    ELSE definition\n  END AS definition,\n  SUM(amount_group) AS amount_group_total_jpy,\n  currency_code\nFROM dbo.kpi_snapshot\nWHERE kpi_date >= '2025-10-01'\n  AND kpi_date <= '2026-09-30'\n  AND scenario_tag IN ('actual', 'baseline')\n  AND kpi_code IN (\n    'EBITDA_FULL_CONSOLIDATED',\n    'EBITDA_MANAGEMENT_WEIGHTED',\n    'CF_FULL_CONSOLIDATED',\n    'CF_MANAGEMENT_WEIGHTED'\n  )\nGROUP BY\n  kpi_code,\n  scenario_tag,\n  definition,\n  currency_code\nORDER BY\n  CASE WHEN kpi_code LIKE 'EBITDA%' THEN 1 ELSE 2 END,\n  kpi_code,\n  CASE WHEN scenario_tag = 'actual' THEN 1 ELSE 2 END",
+      "rows": [
+        [
+          "EBITDA_FULL_CONSOLIDATED",
+          "actual",
+          "full controlled-entity consolidation",
+          44757399732.84,
+          "JPY"
+        ],
+        [
+          "EBITDA_FULL_CONSOLIDATED",
+          "baseline",
+          "full controlled-entity consolidation",
+          44860317852.64,
+          "JPY"
+        ],
+        [
+          "EBITDA_MANAGEMENT_WEIGHTED",
+          "actual",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          33547898914.09,
+          "JPY"
+        ],
+        [
+          "EBITDA_MANAGEMENT_WEIGHTED",
+          "baseline",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA",
+          33636699717.29,
+          "JPY"
+        ],
+        [
+          "CF_FULL_CONSOLIDATED",
+          "actual",
+          "full controlled-entity consolidation; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow",
+          35805919787.41,
+          "JPY"
+        ],
+        [
+          "CF_FULL_CONSOLIDATED",
+          "baseline",
+          "full controlled-entity consolidation; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow",
+          35888254306.84,
+          "JPY"
+        ],
+        [
+          "CF_MANAGEMENT_WEIGHTED",
+          "actual",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow",
+          26838319120.68,
+          "JPY"
+        ],
+        [
+          "CF_MANAGEMENT_WEIGHTED",
+          "baseline",
+          "simplified ownership-weighted management contribution; NOT statutory EBITDA; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow",
+          26909359783.28,
+          "JPY"
+        ]
+      ],
+      "columns": [
+        "kpi_code",
+        "scenario_tag",
+        "definition",
+        "amount_group_total_jpy",
+        "currency_code"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "varchar",
+        "decimal",
+        "varchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| kpi_code                   | scenario_tag | definition                                                                                                                                                                                   | amount_group_total_jpy | currency_code |\r\n|:---------------------------|:-------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------:|:--------------|\r\n| EBITDA_FULL_CONSOLIDATED   | actual       | full controlled-entity consolidation                                                                                                                                                         |         44757399732.84 | JPY           |\r\n| EBITDA_FULL_CONSOLIDATED   | baseline     | full controlled-entity consolidation                                                                                                                                                         |         44860317852.64 | JPY           |\r\n| EBITDA_MANAGEMENT_WEIGHTED | actual       | simplified ownership-weighted management contribution; NOT statutory EBITDA                                                                                                                  |         33547898914.09 | JPY           |\r\n| EBITDA_MANAGEMENT_WEIGHTED | baseline     | simplified ownership-weighted management contribution; NOT statutory EBITDA                                                                                                                  |         33636699717.29 | JPY           |\r\n| CF_FULL_CONSOLIDATED       | actual       | full controlled-entity consolidation; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow                                        |         35805919787.41 | JPY           |\r\n| CF_FULL_CONSOLIDATED       | baseline     | full controlled-entity consolidation; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow                                        |         35888254306.84 | JPY           |\r\n| CF_MANAGEMENT_WEIGHTED     | actual       | simplified ownership-weighted management contribution; NOT statutory EBITDA; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow |         26838319120.68 | JPY           |\r\n| CF_MANAGEMENT_WEIGHTED     | baseline     | simplified ownership-weighted management contribution; NOT statutory EBITDA; simplified CF simulation: EBITDA at 80% plus event CF effects; not formal operating cash flow or free cash flow |         26909359783.28 | JPY           |"
+    },
+    {
+      "execution_index": 1,
+      "sql": "SELECT TOP 30 pair_id, posting_date, side, amount_group, currency_code FROM dbo.intercompany_transactions WHERE posting_date >= '2025-10-01' AND posting_date < '2026-10-01'",
+      "rows": [
+        [
+          "IC_JP_2025-10-15",
+          "2025-10-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2025-10-15",
+          "2025-10-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2025-10-15",
+          "2025-10-15T00:00:00",
+          "sale",
+          15154878.68,
+          "USD"
+        ],
+        [
+          "IC_US_2025-10-15",
+          "2025-10-15T00:00:00",
+          "purchase",
+          15154878.68,
+          "USD"
+        ],
+        [
+          "IC_JP_2025-11-15",
+          "2025-11-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2025-11-15",
+          "2025-11-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2025-11-15",
+          "2025-11-15T00:00:00",
+          "sale",
+          15386332.42,
+          "USD"
+        ],
+        [
+          "IC_US_2025-11-15",
+          "2025-11-15T00:00:00",
+          "purchase",
+          15386332.42,
+          "USD"
+        ],
+        [
+          "IC_JP_2025-12-15",
+          "2025-12-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2025-12-15",
+          "2025-12-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2025-12-15",
+          "2025-12-15T00:00:00",
+          "sale",
+          15512635.07,
+          "USD"
+        ],
+        [
+          "IC_US_2025-12-15",
+          "2025-12-15T00:00:00",
+          "purchase",
+          15512635.07,
+          "USD"
+        ],
+        [
+          "IC_JP_2026-01-15",
+          "2026-01-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2026-01-15",
+          "2026-01-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2026-01-15",
+          "2026-01-15T00:00:00",
+          "sale",
+          15855987.61,
+          "USD"
+        ],
+        [
+          "IC_US_2026-01-15",
+          "2026-01-15T00:00:00",
+          "purchase",
+          15855987.61,
+          "USD"
+        ],
+        [
+          "IC_JP_2026-02-15",
+          "2026-02-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2026-02-15",
+          "2026-02-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2026-02-15",
+          "2026-02-15T00:00:00",
+          "sale",
+          15328780.98,
+          "USD"
+        ],
+        [
+          "IC_US_2026-02-15",
+          "2026-02-15T00:00:00",
+          "purchase",
+          15328780.98,
+          "USD"
+        ],
+        [
+          "IC_JP_2026-03-15",
+          "2026-03-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2026-03-15",
+          "2026-03-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2026-03-15",
+          "2026-03-15T00:00:00",
+          "sale",
+          15933252.0,
+          "USD"
+        ],
+        [
+          "IC_US_2026-03-15",
+          "2026-03-15T00:00:00",
+          "purchase",
+          15933252.0,
+          "USD"
+        ],
+        [
+          "IC_JP_2026-04-15",
+          "2026-04-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2026-04-15",
+          "2026-04-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_US_2026-04-15",
+          "2026-04-15T00:00:00",
+          "sale",
+          15909168.08,
+          "USD"
+        ],
+        [
+          "IC_US_2026-04-15",
+          "2026-04-15T00:00:00",
+          "purchase",
+          15909168.08,
+          "USD"
+        ],
+        [
+          "IC_JP_2026-05-15",
+          "2026-05-15T00:00:00",
+          "sale",
+          14500000.0,
+          "JPY"
+        ],
+        [
+          "IC_JP_2026-05-15",
+          "2026-05-15T00:00:00",
+          "purchase",
+          14500000.0,
+          "JPY"
+        ]
+      ],
+      "columns": [
+        "pair_id",
+        "posting_date",
+        "side",
+        "amount_group",
+        "currency_code"
+      ],
+      "columns_types": [
+        "varchar",
+        "date",
+        "varchar",
+        "decimal",
+        "varchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| pair_id          | posting_date           | side     | amount_group | currency_code |\r\n|:-----------------|:-----------------------|:---------|-------------:|:--------------|\r\n| IC_JP_2025-10-15 | 10/15/2025 12:00:00 AM | sale     |     14500000 | JPY           |\r\n| IC_JP_2025-10-15 | 10/15/2025 12:00:00 AM | purchase |     14500000 | JPY           |\r\n| IC_US_2025-10-15 | 10/15/2025 12:00:00 AM | sale     |  15154878.68 | USD           |\r\n| IC_US_2025-10-15 | 10/15/2025 12:00:00 AM | purchase |  15154878.68 | USD           |\r\n| IC_JP_2025-11-15 | 11/15/2025 12:00:00 AM | sale     |     14500000 | JPY           |\r\n| IC_JP_2025-11-15 | 11/15/2025 12:00:00 AM | purchase |     14500000 | JPY           |\r\n| IC_US_2025-11-15 | 11/15/2025 12:00:00 AM | sale     |  15386332.42 | USD           |\r\n| IC_US_2025-11-15 | 11/15/2025 12:00:00 AM | purchase |  15386332.42 | USD           |\r\n| IC_JP_2025-12-15 | 12/15/2025 12:00:00 AM | sale     |     14500000 | JPY           |\r\n| IC_JP_2025-12-15 | 12/15/2025 12:00:00 AM | purchase |     14500000 | JPY           |\r\n| IC_US_2025-12-15 | 12/15/2025 12:00:00 AM | sale     |  15512635.07 | USD           |\r\n| IC_US_2025-12-15 | 12/15/2025 12:00:00 AM | purchase |  15512635.07 | USD           |\r\n| IC_JP_2026-01-15 | 1/15/2026 12:00:00 AM  | sale     |     14500000 | JPY           |\r\n| IC_JP_2026-01-15 | 1/15/2026 12:00:00 AM  | purchase |     14500000 | JPY           |\r\n| IC_US_2026-01-15 | 1/15/2026 12:00:00 AM  | sale     |  15855987.61 | USD           |\r\n| IC_US_2026-01-15 | 1/15/2026 12:00:00 AM  | purchase |  15855987.61 | USD           |\r\n| IC_JP_2026-02-15 | 2/15/2026 12:00:00 AM  | sale     |     14500000 | JPY           |\r\n| IC_JP_2026-02-15 | 2/15/2026 12:00:00 AM  | purchase |     14500000 | JPY           |\r\n| IC_US_2026-02-15 | 2/15/2026 12:00:00 AM  | sale     |  15328780.98 | USD           |\r\n| IC_US_2026-02-15 | 2/15/2026 12:00:00 AM  | purchase |  15328780.98 | USD           |\r\n| IC_JP_2026-03-15 | 3/15/2026 12:00:00 AM  | sale     |     14500000 | JPY           |\r\n| IC_JP_2026-03-15 | 3/15/2026 12:00:00 AM  | purchase |     14500000 | JPY           |\r\n| IC_US_2026-03-15 | 3/15/2026 12:00:00 AM  | sale     |     15933252 | USD           |\r\n| IC_US_2026-03-15 | 3/15/2026 12:00:00 AM  | purchase |     15933252 | USD           |\r\n| IC_JP_2026-04-15 | 4/15/2026 12:00:00 AM  | sale     |     14500000 | JPY           |\r\n| IC_JP_2026-04-15 | 4/15/2026 12:00:00 AM  | purchase |     14500000 | JPY           |\r\n| IC_US_2026-04-15 | 4/15/2026 12:00:00 AM  | sale     |  15909168.08 | USD           |\r\n| IC_US_2026-04-15 | 4/15/2026 12:00:00 AM  | purchase |  15909168.08 | USD           |\r\n| IC_JP_2026-05-15 | 5/15/2026 12:00:00 AM  | sale     |     14500000 | JPY           |\r\n| IC_JP_2026-05-15 | 5/15/2026 12:00:00 AM  | purchase |     14500000 | JPY           |"
+    },
+    {
+      "execution_index": 2,
+      "sql": "WITH interco AS (SELECT pair_id, SUM(CASE WHEN side = 'sale' THEN amount_group ELSE 0 END) AS seller_sales_jpy, SUM(CASE WHEN side = 'purchase' THEN amount_group ELSE 0 END) AS buyer_immediate_cost_jpy, COUNT(CASE WHEN side = 'sale' THEN 1 END) AS seller_rows, COUNT(CASE WHEN side = 'purchase' THEN 1 END) AS buyer_rows FROM dbo.intercompany_transactions WHERE posting_date >= '2025-10-01' AND posting_date < '2026-10-01' GROUP BY pair_id), elimination AS (SELECT pair_id, SUM(CASE WHEN elimination_type = 'sale' THEN amount_group ELSE 0 END) AS elimination_sale_jpy, SUM(CASE WHEN elimination_type = 'purchase' THEN amount_group ELSE 0 END) AS elimination_purchase_jpy, SUM(amount_group) AS elimination_amount_jpy, COUNT(CASE WHEN elimination_type = 'sale' THEN 1 END) AS elimination_sale_rows, COUNT(CASE WHEN elimination_type = 'purchase' THEN 1 END) AS elimination_purchase_rows FROM dbo.group_consolidation_entries WHERE posting_date >= '2025-10-01' AND posting_date < '2026-10-01' GROUP BY pair_id), pairs AS (SELECT pair_id FROM interco UNION SELECT pair_id FROM elimination) SELECT p.pair_id, CAST(COALESCE(i.seller_sales_jpy, 0) AS decimal(38,2)) AS seller_sales_jpy, CAST(COALESCE(i.buyer_immediate_cost_jpy, 0) AS decimal(38,2)) AS buyer_immediate_cost_jpy, CAST(COALESCE(e.elimination_sale_jpy, 0) AS decimal(38,2)) AS elimination_sale_jpy, CAST(COALESCE(e.elimination_purchase_jpy, 0) AS decimal(38,2)) AS elimination_purchase_jpy, CAST(COALESCE(e.elimination_amount_jpy, 0) AS decimal(38,2)) AS elimination_amount_jpy, CAST(COALESCE(i.seller_sales_jpy, 0) - COALESCE(i.buyer_immediate_cost_jpy, 0) AS decimal(38,2)) AS seller_buyer_difference_jpy, CAST(COALESCE(i.seller_sales_jpy, 0) - COALESCE(i.buyer_immediate_cost_jpy, 0) + COALESCE(e.elimination_amount_jpy, 0) AS decimal(38,2)) AS post_elimination_residual_jpy, CASE WHEN COALESCE(i.seller_rows, 0) > 0 AND COALESCE(i.buyer_rows, 0) > 0 AND COALESCE(i.seller_sales_jpy, 0) = COALESCE(i.buyer_immediate_cost_jpy, 0) THEN N'一致' ELSE N'不一致または片側欠落' END AS sale_purchase_check, CASE WHEN COALESCE(e.elimination_sale_rows, 0) > 0 AND COALESCE(e.elimination_purchase_rows, 0) > 0 AND COALESCE(e.elimination_sale_jpy, 0) + COALESCE(e.elimination_purchase_jpy, 0) = 0 AND COALESCE(i.seller_sales_jpy, 0) - COALESCE(i.buyer_immediate_cost_jpy, 0) + COALESCE(e.elimination_amount_jpy, 0) = 0 THEN N'逆符号対・残差ゼロ' ELSE N'要確認' END AS elimination_check, N'判別不能：指定2実テーブルにサービス取引を識別する列がないため、対象年度の全内部取引を集計' AS service_scope_note FROM pairs p LEFT JOIN interco i ON i.pair_id = p.pair_id LEFT JOIN elimination e ON e.pair_id = p.pair_id ORDER BY p.pair_id",
+      "rows": [
+        [
+          "IC_JP_2025-10-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2025-11-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2025-12-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-01-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-02-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-03-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-04-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-05-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-06-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-07-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-08-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_JP_2026-09-15",
+          14500000.0,
+          14500000.0,
+          -14500000.0,
+          14500000.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2025-10-15",
+          15154878.68,
+          15154878.68,
+          -15154878.68,
+          15154878.68,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2025-11-15",
+          15386332.42,
+          15386332.42,
+          -15386332.42,
+          15386332.42,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2025-12-15",
+          15512635.07,
+          15512635.07,
+          -15512635.07,
+          15512635.07,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-01-15",
+          15855987.61,
+          15855987.61,
+          -15855987.61,
+          15855987.61,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-02-15",
+          15328780.98,
+          15328780.98,
+          -15328780.98,
+          15328780.98,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-03-15",
+          15933252.0,
+          15933252.0,
+          -15933252.0,
+          15933252.0,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-04-15",
+          15909168.08,
+          15909168.08,
+          -15909168.08,
+          15909168.08,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-05-15",
+          15854833.16,
+          15854833.16,
+          -15854833.16,
+          15854833.16,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-06-15",
+          16018781.77,
+          16018781.77,
+          -16018781.77,
+          16018781.77,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-07-15",
+          16238821.67,
+          16238821.67,
+          -16238821.67,
+          16238821.67,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-08-15",
+          15901270.86,
+          15901270.86,
+          -15901270.86,
+          15901270.86,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ],
+        [
+          "IC_US_2026-09-15",
+          15500476.64,
+          15500476.64,
+          -15500476.64,
+          15500476.64,
+          0.0,
+          0.0,
+          0.0,
+          "一致",
+          "逆符号対・残差ゼロ"
+        ]
+      ],
+      "columns": [
+        "pair_id",
+        "seller_sales_jpy",
+        "buyer_immediate_cost_jpy",
+        "elimination_sale_jpy",
+        "elimination_purchase_jpy",
+        "elimination_amount_jpy",
+        "seller_buyer_difference_jpy",
+        "post_elimination_residual_jpy",
+        "sale_purchase_check",
+        "elimination_check"
+      ],
+      "columns_types": [
+        "varchar",
+        "decimal",
+        "decimal",
+        "decimal",
+        "decimal",
+        "decimal",
+        "decimal",
+        "decimal",
+        "nvarchar",
+        "nvarchar"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| pair_id          | seller_sales_jpy | buyer_immediate_cost_jpy | elimination_sale_jpy | elimination_purchase_jpy | elimination_amount_jpy | seller_buyer_difference_jpy | post_elimination_residual_jpy | sale_purchase_check | elimination_check |\r\n|:-----------------|-----------------:|-------------------------:|---------------------:|-------------------------:|-----------------------:|----------------------------:|------------------------------:|:--------------------|:------------------|\r\n| IC_JP_2025-10-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2025-11-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2025-12-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-01-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-02-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-03-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-04-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-05-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-06-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-07-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-08-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_JP_2026-09-15 |         14500000 |                 14500000 |            -14500000 |                 14500000 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2025-10-15 |      15154878.68 |              15154878.68 |         -15154878.68 |              15154878.68 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2025-11-15 |      15386332.42 |              15386332.42 |         -15386332.42 |              15386332.42 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2025-12-15 |      15512635.07 |              15512635.07 |         -15512635.07 |              15512635.07 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-01-15 |      15855987.61 |              15855987.61 |         -15855987.61 |              15855987.61 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-02-15 |      15328780.98 |              15328780.98 |         -15328780.98 |              15328780.98 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-03-15 |         15933252 |                 15933252 |            -15933252 |                 15933252 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-04-15 |      15909168.08 |              15909168.08 |         -15909168.08 |              15909168.08 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-05-15 |      15854833.16 |              15854833.16 |         -15854833.16 |              15854833.16 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-06-15 |      16018781.77 |              16018781.77 |         -16018781.77 |              16018781.77 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-07-15 |      16238821.67 |              16238821.67 |         -16238821.67 |              16238821.67 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-08-15 |      15901270.86 |              15901270.86 |         -15901270.86 |              15901270.86 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |\r\n| IC_US_2026-09-15 |      15500476.64 |              15500476.64 |         -15500476.64 |              15500476.64 |                      0 |                           0 |                             0 | 一致                  | 逆符号対・残差ゼロ         |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "WITH activity_ids AS (\n    SELECT DISTINCT activity_id\n    FROM dbo.semantic_business_activities\n    WHERE activity_id IS NOT NULL\n), extension_rows AS (\n    SELECT 'raw_metals_jp_extension' AS table_name, activity_id FROM dbo.raw_metals_jp_extension\n    UNION ALL\n    SELECT 'raw_metals_us_extension', activity_id FROM dbo.raw_metals_us_extension\n    UNION ALL\n    SELECT 'raw_energy_jp_extension', activity_id FROM dbo.raw_energy_jp_extension\n    UNION ALL\n    SELECT 'raw_energy_us_extension', activity_id FROM dbo.raw_energy_us_extension\n    UNION ALL\n    SELECT 'raw_foods_jp_extension', activity_id FROM dbo.raw_foods_jp_extension\n    UNION ALL\n    SELECT 'raw_foods_us_extension', activity_id FROM dbo.raw_foods_us_extension\n    UNION ALL\n    SELECT 'raw_finance_jp_extension', activity_id FROM dbo.raw_finance_jp_extension\n    UNION ALL\n    SELECT 'raw_finance_us_extension', activity_id FROM dbo.raw_finance_us_extension\n), counts AS (\n    SELECT\n        r.table_name,\n        COUNT(*) AS extension_total_count,\n        SUM(CASE WHEN r.activity_id IS NOT NULL THEN 1 ELSE 0 END) AS non_null_activity_id_count,\n        SUM(CASE WHEN a.activity_id IS NOT NULL THEN 1 ELSE 0 END) AS activity_join_success_count\n    FROM extension_rows r\n    LEFT JOIN activity_ids a\n        ON a.activity_id = r.activity_id\n    GROUP BY r.table_name\n)\nSELECT\n    table_name,\n    extension_total_count,\n    non_null_activity_id_count,\n    activity_join_success_count,\n    non_null_activity_id_count - activity_join_success_count AS activity_join_failure_count\nFROM counts\nORDER BY CASE table_name\n    WHEN 'raw_metals_jp_extension' THEN 1\n    WHEN 'raw_metals_us_extension' THEN 2\n    WHEN 'raw_energy_jp_extension' THEN 3\n    WHEN 'raw_energy_us_extension' THEN 4\n    WHEN 'raw_foods_jp_extension' THEN 5\n    WHEN 'raw_foods_us_extension' THEN 6\n    WHEN 'raw_finance_jp_extension' THEN 7\n    WHEN 'raw_finance_us_extension' THEN 8\nEND",
+      "rows": [
+        [
+          "raw_metals_jp_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_metals_us_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_energy_jp_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_energy_us_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_foods_jp_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_foods_us_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_finance_jp_extension",
+          365,
+          365,
+          365,
+          0
+        ],
+        [
+          "raw_finance_us_extension",
+          365,
+          365,
+          365,
+          0
+        ]
+      ],
+      "columns": [
+        "table_name",
+        "extension_total_count",
+        "non_null_activity_id_count",
+        "activity_join_success_count",
+        "activity_join_failure_count"
+      ],
+      "columns_types": [
+        "varchar",
+        "int",
+        "int",
+        "int",
+        "int"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| table_name               | extension_total_count | non_null_activity_id_count | activity_join_success_count | activity_join_failure_count |\r\n|:-------------------------|----------------------:|---------------------------:|----------------------------:|----------------------------:|\r\n| raw_metals_jp_extension  |                   365 |                        365 |                         365 |                           0 |\r\n| raw_metals_us_extension  |                   365 |                        365 |                         365 |                           0 |\r\n| raw_energy_jp_extension  |                   365 |                        365 |                         365 |                           0 |\r\n| raw_energy_us_extension  |                   365 |                        365 |                         365 |                           0 |\r\n| raw_foods_jp_extension   |                   365 |                        365 |                         365 |                           0 |\r\n| raw_foods_us_extension   |                   365 |                        365 |                         365 |                           0 |\r\n| raw_finance_jp_extension |                   365 |                        365 |                         365 |                           0 |\r\n| raw_finance_us_extension |                   365 |                        365 |                         365 |                           0 |"
+    },
+    {
+      "execution_index": 0,
+      "sql": "SELECT TOP 1\n    e.event_id,\n    v.evidence_id,\n    v.is_synthetic AS evidence_is_synthetic,\n    v.excerpt,\n    a.activity_id,\n    c.contract_id,\n    f.effect_id,\n    f.effect_date,\n    m.metric_id,\n    m.metric_date,\n    m.metric_code,\n    m.scenario_tag,\n    k.kpi_id,\n    k.kpi_code,\n    k.kpi_date,\n    CAST('2026-09-01' AS date) AS target_period_start,\n    CAST('2026-09-30' AS date) AS target_period_end\nFROM dbo.semantic_risk_events AS e\nINNER JOIN dbo.semantic_event_financial_effects AS f\n    ON f.event_id = e.event_id\nINNER JOIN dbo.semantic_event_evidence AS v\n    ON v.evidence_id = f.evidence_id\nINNER JOIN dbo.semantic_business_activities AS a\n    ON a.activity_id = f.activity_id\nINNER JOIN dbo.semantic_contracts AS c\n    ON c.contract_id = f.contract_id\nINNER JOIN dbo.semantic_financial_metrics_daily AS m\n    ON m.entity_id = f.entity_id\n   AND m.metric_date = f.effect_date\n   AND m.metric_code = 'EBITDA'\n   AND m.scenario_tag = 'actual'\nINNER JOIN dbo.semantic_metric_kpi_links AS l\n    ON l.metric_id = m.metric_id\nINNER JOIN dbo.kpi_snapshot AS k\n    ON k.kpi_id = l.kpi_id\nWHERE e.event_id = 'FOD_NEG'\nORDER BY f.effect_id ASC",
+      "rows": [
+        [
+          "FOD_NEG",
+          "SUB_FOD_JP_01_FOD_NEG_0",
+          true,
+          "SYNTHETIC operations_log: SYNTHETIC: cold chain spoilage incident; designed causal mechanism=cost.",
+          "SUB_FOD_JP_01_A133_0",
+          "SUB_FOD_JP_01_C04",
+          "SUB_FOD_JP_01_A133_0_FOD_NEG_F",
+          "2026-02-11T00:00:00",
+          "SUB_FOD_JP_01_2026-02-11_ebitda_actual",
+          "2026-02-11T00:00:00"
+        ]
+      ],
+      "columns": [
+        "event_id",
+        "evidence_id",
+        "evidence_is_synthetic",
+        "excerpt",
+        "activity_id",
+        "contract_id",
+        "effect_id",
+        "effect_date",
+        "metric_id",
+        "metric_date"
+      ],
+      "columns_types": [
+        "varchar",
+        "varchar",
+        "bit",
+        "varchar",
+        "varchar",
+        "varchar",
+        "varchar",
+        "date",
+        "varchar",
+        "date"
+      ],
+      "is_success": true,
+      "content_format": "markdown",
+      "content": "| event_id | evidence_id             | evidence_is_synthetic | excerpt                                                                                            | activity_id          | contract_id       | effect_id                      | effect_date           | metric_id                              | metric_date           |\r\n|:---------|:------------------------|:----------------------|:---------------------------------------------------------------------------------------------------|:---------------------|:------------------|:-------------------------------|:----------------------|:---------------------------------------|:----------------------|\r\n| FOD_NEG  | SUB_FOD_JP_01_FOD_NEG_0 | True                  | SYNTHETIC operations_log: SYNTHETIC: cold chain spoilage incident; designed causal mechanism=cost. | SUB_FOD_JP_01_A133_0 | SUB_FOD_JP_01_C04 | SUB_FOD_JP_01_A133_0_FOD_NEG_F | 2/11/2026 12:00:00 AM | SUB_FOD_JP_01_2026-02-11_ebitda_actual | 2/11/2026 12:00:00 AM |"
+    }
+  ],
+  "source_expansion": [
+    {
+      "attachedCount": 4,
+      "skippedCount": 1,
+      "attached": [
+        {
+          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "type": "LakehouseTables"
+        }
+      ],
+      "skipped": [
+        {
+          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "type": "LakehouseTables"
+        }
+      ]
+    },
+    {
+      "attachedCount": 4,
+      "skippedCount": 1,
+      "attached": [
+        {
+          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "type": "LakehouseTables"
+        }
+      ],
+      "skipped": [
+        {
+          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "type": "LakehouseTables"
+        }
+      ]
+    },
+    {
+      "attachedCount": 4,
+      "skippedCount": 1,
+      "attached": [
+        {
+          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "type": "LakehouseTables"
+        },
+        {
+          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "type": "LakehouseTables"
+        }
+      ],
+      "skipped": [
+        {
+          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "type": "LakehouseTables"
+        }
+      ]
+    },
+    {
+      "attachedCount": 0,
+      "skippedCount": 1,
+      "attached": [],
+      "skipped": [
+        {
+          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "type": "LakehouseTables"
+        }
+      ]
+    }
+  ]
+}

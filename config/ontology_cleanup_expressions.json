@@ -1,0 +1,63 @@
+{
+  "sequence": {
+    "maxParallelism": 1,
+    "operations": [
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Metals_JP_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Metals_US_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Energy_JP_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Energy_US_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Foods_JP_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Foods_US_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Finance_JP_01"
+          }
+        }
+      },
+      {
+        "delete": {
+          "object": {
+            "expression": "DB_LH_Finance_US_01"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,120 @@
+table Activity
+	lineageTag: e96d7e39-444f-56db-8073-0d02cd414a19
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: f3722173-ad9f-5b86-8c1f-cee64f562a29
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: 9eac68d9-b520-5b27-9c36-67336b32f5c8
+
+	column sector_code
+		dataType: string
+		sourceColumn: sector_code
+		lineageTag: 70054e33-620e-5335-b0b3-c52b72640aaa
+
+	column activity_date
+		dataType: dateTime
+		sourceColumn: activity_date
+		lineageTag: 46f87673-2416-53b5-8830-9f5e66209cf4
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: 3924363a-7ad8-52a6-b38d-8d1039b3331a
+
+	column activity_type
+		dataType: string
+		sourceColumn: activity_type
+		lineageTag: 49b49b15-7b8b-55f3-9f10-2bace68e82d0
+
+	column volume
+		dataType: double
+		sourceColumn: volume
+		lineageTag: 7d84d66e-c7b0-5556-b6ff-f7d5f2788e86
+
+	column unit
+		dataType: string
+		sourceColumn: unit
+		lineageTag: 72cac7f6-be4f-59dc-a9e9-6a1c388d25c9
+
+	column baseline_revenue_local
+		dataType: double
+		sourceColumn: baseline_revenue_local
+		lineageTag: c2540d24-b070-58f0-ba71-d1e05302933d
+
+	column baseline_cost_local
+		dataType: double
+		sourceColumn: baseline_cost_local
+		lineageTag: a1cec596-2dc6-5d09-ac46-19d4c5d8515d
+
+	column revenue_local
+		dataType: double
+		sourceColumn: revenue_local
+		lineageTag: a55c4b55-98cd-5a21-a0f6-1699d6300e9d
+
+	column cost_local
+		dataType: double
+		sourceColumn: cost_local
+		lineageTag: 2c7ef418-b942-5a81-9026-438b27f7f05e
+
+	column baseline_ebitda_local
+		dataType: double
+		sourceColumn: baseline_ebitda_local
+		lineageTag: e9f88efc-8df1-51ef-9bac-90c8358bc9d2
+
+	column ebitda_local
+		dataType: double
+		sourceColumn: ebitda_local
+		lineageTag: bcd02668-595d-5214-8b16-e0f66964d0fd
+
+	column baseline_cf_local
+		dataType: double
+		sourceColumn: baseline_cf_local
+		lineageTag: 34364e14-e824-506a-a403-a6ea92c37aba
+
+	column cf_local
+		dataType: double
+		sourceColumn: cf_local
+		lineageTag: 5c19a07d-4f40-56d9-b09f-b2fc8e453788
+
+	column currency_code
+		dataType: string
+		sourceColumn: currency_code
+		lineageTag: f278b622-53d4-59b0-b876-f139c5f74365
+
+	column interco_flag
+		dataType: boolean
+		sourceColumn: interco_flag
+		lineageTag: 043a14f6-0b64-5428-9ffd-14eca43138aa
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: e187aefa-9fdb-5b1a-94ff-7e26a1ac6c17
+
+	partition Activity = entity
+		mode: directLake
+		source
+			entityName: semantic_business_activities
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

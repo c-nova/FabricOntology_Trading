@@ -1,0 +1,76 @@
+entity Shipment
+	lineageTag: 1b41e92d-1953-5da0-9334-f2e4d18c0072
+	backingTable: Shipment
+	keyProperty: shipment_id
+
+	property shipment_id
+		dataType: string
+		lineageTag: 49660b24-13de-57fa-9cec-3fa89605d4ae
+		backingConfiguration
+			valueColumn: Shipment.shipment_id
+
+	property activity_id
+		dataType: string
+		lineageTag: fde688a1-03ee-5cfa-a96d-c0997b2c963a
+		backingConfiguration
+			valueColumn: Shipment.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 8e838c0c-722a-510b-bbca-203afb1fa6e8
+		backingConfiguration
+			valueColumn: Shipment.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 50c6f6fe-c559-56fa-b9e8-aeea55264b4e
+		backingConfiguration
+			valueColumn: Shipment.contract_id
+
+	property origin_country
+		dataType: string
+		lineageTag: a3b1cc56-d725-5673-9703-6586a602e9ec
+		backingConfiguration
+			valueColumn: Shipment.origin_country
+
+	property destination_country
+		dataType: string
+		lineageTag: 8a68663b-736b-5b4b-9b0e-35fbf4a2e475
+		backingConfiguration
+			valueColumn: Shipment.destination_country
+
+	property etd
+		dataType: dateTime
+		lineageTag: 7f736603-bf68-5d17-9f10-01a4d7a7dbb0
+		backingConfiguration
+			valueColumn: Shipment.etd
+
+	property eta
+		dataType: dateTime
+		lineageTag: bd438ce7-6e20-5199-bbd6-6c7778e283cb
+		backingConfiguration
+			valueColumn: Shipment.eta
+
+	property delay_days
+		dataType: int64
+		lineageTag: c240d5b3-5569-5da6-82b0-a675021e9121
+		backingConfiguration
+			valueColumn: Shipment.delay_days
+
+	property volume
+		dataType: double
+		lineageTag: d9b3d551-8a17-510d-bd3b-ba459d421646
+		backingConfiguration
+			valueColumn: Shipment.volume
+
+	property unit
+		dataType: string
+		lineageTag: 696e34a1-2b56-55b1-be0d-b607aa543e86
+		backingConfiguration
+			valueColumn: Shipment.unit
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 44501d24-c7c4-536c-bb81-d8ff598514ce
+		backingConfiguration
+			valueColumn: Shipment.source_lakehouse

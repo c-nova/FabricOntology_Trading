@@ -1,0 +1,65 @@
+table FinanceUSExtension
+	lineageTag: a9d42e45-02b3-5cd0-8995-6e0a8dbeed42
+
+	column extension_id
+		dataType: string
+		sourceColumn: extension_id
+		lineageTag: 9eb7a825-c9af-526d-8aa6-f9d9e067b033
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: f471d929-12a6-5d8f-91e7-66bf71ed64b8
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: c5cc3b9a-f7ec-5164-b6a2-ae199e198d96
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: 53afd05f-a07f-5d68-ba04-72c85ec3f0d1
+
+	column observation_date
+		dataType: dateTime
+		sourceColumn: observation_date
+		lineageTag: 7d1ccc3a-5ead-56a5-adf4-c7819c73b3e8
+
+	column notional_local
+		dataType: double
+		sourceColumn: notional_local
+		lineageTag: 9800c008-c189-5cc6-a505-80b7f94bf506
+
+	column credit_spread_bps
+		dataType: double
+		sourceColumn: credit_spread_bps
+		lineageTag: 6e0603b3-df99-53b3-9595-357f6b3ee90a
+
+	column hedge_coverage
+		dataType: double
+		sourceColumn: hedge_coverage
+		lineageTag: 6d17dd94-b596-5abe-853e-ee2ed24fd5b3
+
+	partition FinanceUSExtension = entity
+		mode: directLake
+		source
+			entityName: raw_finance_us_extension
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

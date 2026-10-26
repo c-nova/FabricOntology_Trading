@@ -1,0 +1,42 @@
+model Model
+
+ref table Company
+ref table RiskEvent
+ref table Activity
+ref table Contract
+ref table Shipment
+ref table Evidence
+ref table FinancialEffect
+ref table FinancialMetric
+ref table GroupKPI
+ref table MetalsJPExtension
+ref table MetalsUSExtension
+ref table EnergyJPExtension
+ref table EnergyUSExtension
+ref table FoodsJPExtension
+ref table FoodsUSExtension
+ref table FinanceJPExtension
+ref table FinanceUSExtension
+ref table Link_EventImpactsActivity
+ref table Link_EffectRealizedInMetric
+ref table Link_MetricRollsUpToGroupKPI
+
+ref entity Company
+ref entity RiskEvent
+ref entity Activity
+ref entity Contract
+ref entity Shipment
+ref entity Evidence
+ref entity FinancialEffect
+ref entity FinancialMetric
+ref entity GroupKPI
+ref entity MetalsJPExtension
+ref entity MetalsUSExtension
+ref entity EnergyJPExtension
+ref entity EnergyUSExtension
+ref entity FoodsJPExtension
+ref entity FoodsUSExtension
+ref entity FinanceJPExtension
+ref entity FinanceUSExtension
+
+ref namespace default

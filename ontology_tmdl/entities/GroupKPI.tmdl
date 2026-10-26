@@ -1,0 +1,58 @@
+entity GroupKPI
+	lineageTag: 1a86ff2d-3cdd-563a-b6ad-395f00e84c4a
+	backingTable: GroupKPI
+	keyProperty: kpi_id
+
+	property kpi_id
+		dataType: string
+		lineageTag: 544d7f15-0a9d-57c4-864c-460b4e1d3da6
+		backingConfiguration
+			valueColumn: GroupKPI.kpi_id
+
+	property kpi_date
+		dataType: dateTime
+		lineageTag: d6039d76-0730-559d-9bba-716d5d03416f
+		backingConfiguration
+			valueColumn: GroupKPI.kpi_date
+
+	property fiscal_year
+		dataType: int64
+		lineageTag: c8d6b83a-e2f6-5ebf-afc8-9d0a5b7c4ecb
+		backingConfiguration
+			valueColumn: GroupKPI.fiscal_year
+
+	property fiscal_period
+		dataType: int64
+		lineageTag: f66c260b-f127-5289-bc4e-c58b0ae69930
+		backingConfiguration
+			valueColumn: GroupKPI.fiscal_period
+
+	property kpi_code
+		dataType: string
+		lineageTag: 1dd4ad1a-2715-53c9-bc60-3033e68da58b
+		backingConfiguration
+			valueColumn: GroupKPI.kpi_code
+
+	property amount_group
+		dataType: double
+		lineageTag: aad86732-79c0-5871-9414-391c09110a44
+		backingConfiguration
+			valueColumn: GroupKPI.amount_group
+
+	property currency_code
+		dataType: string
+		lineageTag: 8aaff5b6-dbe4-5da9-9040-b9cc5eb6782e
+		backingConfiguration
+			valueColumn: GroupKPI.currency_code
+
+	property scenario_tag
+		dataType: string
+		lineageTag: 550c57a9-56b1-500d-abdc-57739191f319
+		backingConfiguration
+			valueColumn: GroupKPI.scenario_tag
+
+	property definition
+		dataType: string
+		lineageTag: 5a4f0e63-2757-5e89-ad9a-c50f523c5928
+		backingConfiguration
+			valueColumn: GroupKPI.definition

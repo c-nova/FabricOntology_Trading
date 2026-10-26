@@ -1,0 +1,90 @@
+table RiskEvent
+	lineageTag: d6a37a3e-4386-5c9d-91fd-148c63095c35
+
+	column event_id
+		dataType: string
+		sourceColumn: event_id
+		lineageTag: 4c34f6f2-de12-5647-aedb-f411c39385d2
+
+	column primary_sector
+		dataType: string
+		sourceColumn: primary_sector
+		lineageTag: 6ce6d125-dd50-5628-b052-df11b42455c0
+
+	column start_date
+		dataType: dateTime
+		sourceColumn: start_date
+		lineageTag: f4f7e00a-f1bd-55ad-bfb4-00078b2b535d
+
+	column end_date
+		dataType: dateTime
+		sourceColumn: end_date
+		lineageTag: 9c27cdb0-3c5e-51fb-b6d5-dc111735dcbe
+
+	column severity
+		dataType: int64
+		sourceColumn: severity
+		lineageTag: 2800eeaf-da21-5989-84ed-66b8a33d264e
+
+	column direction
+		dataType: string
+		sourceColumn: direction
+		lineageTag: ae14e45f-1a24-5bfd-a057-01a4f8f1a00b
+
+	column confidence
+		dataType: double
+		sourceColumn: confidence
+		lineageTag: bd00e6d3-4cb1-557f-ab85-f552982ee550
+
+	column event_type
+		dataType: string
+		sourceColumn: event_type
+		lineageTag: 0199423d-aee0-510f-a4a8-943b00ffea3a
+
+	column region_code
+		dataType: string
+		sourceColumn: region_code
+		lineageTag: c280757f-7183-5e5f-b804-faac29de64f0
+
+	column narrative
+		dataType: string
+		sourceColumn: narrative
+		lineageTag: a5b7c600-7c56-532f-a257-8635d2444acb
+
+	column is_synthetic
+		dataType: boolean
+		sourceColumn: is_synthetic
+		lineageTag: d5fc3813-a732-5f07-b391-896974e2f2ea
+
+	column causal_status
+		dataType: string
+		sourceColumn: causal_status
+		lineageTag: 02fc11b3-248d-5682-b72e-cdeffd0091e6
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: d654c100-1e39-516e-a239-c36d2191573b
+
+	partition RiskEvent = entity
+		mode: directLake
+		source
+			entityName: semantic_risk_events
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

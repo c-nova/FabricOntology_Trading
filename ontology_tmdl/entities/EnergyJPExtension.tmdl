@@ -1,0 +1,46 @@
+entity EnergyJPExtension
+	lineageTag: 72832717-f6dd-5965-b8a7-380452aa4d2c
+	backingTable: EnergyJPExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: af4e90c5-ebec-590e-b578-aac7478ed418
+		backingConfiguration
+			valueColumn: EnergyJPExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: a34b9cc3-00a3-5119-9737-6c3b25cf8122
+		backingConfiguration
+			valueColumn: EnergyJPExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 98676b4c-0da8-5c92-97d9-d0d5f939ec4f
+		backingConfiguration
+			valueColumn: EnergyJPExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: bffb20fd-325b-5791-8149-4093cd8ccf32
+		backingConfiguration
+			valueColumn: EnergyJPExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: c819a58c-2e81-5db1-acd0-4ee4962799cb
+		backingConfiguration
+			valueColumn: EnergyJPExtension.observation_date
+
+	property storage_fill_percent
+		dataType: double
+		lineageTag: 148f78a4-8b0d-5dd7-8bb3-17e92104bbf0
+		backingConfiguration
+			valueColumn: EnergyJPExtension.storage_fill_percent
+
+	property dispatch_mmbtu
+		dataType: double
+		lineageTag: 829f8f7b-f339-5803-bb31-9d7b376aecaa
+		backingConfiguration
+			valueColumn: EnergyJPExtension.dispatch_mmbtu

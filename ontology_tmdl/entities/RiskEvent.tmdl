@@ -1,0 +1,82 @@
+entity RiskEvent
+	lineageTag: ba2a5147-6e18-5284-9534-4517f201e8d7
+	backingTable: RiskEvent
+	keyProperty: event_id
+
+	property event_id
+		dataType: string
+		lineageTag: 00bc89e0-c76d-55f9-8890-72768f1dd123
+		backingConfiguration
+			valueColumn: RiskEvent.event_id
+
+	property primary_sector
+		dataType: string
+		lineageTag: 4294b597-b20f-52ae-89c1-fd235971aec9
+		backingConfiguration
+			valueColumn: RiskEvent.primary_sector
+
+	property start_date
+		dataType: dateTime
+		lineageTag: 38e57e0f-8ed9-5858-828a-898b129168f6
+		backingConfiguration
+			valueColumn: RiskEvent.start_date
+
+	property end_date
+		dataType: dateTime
+		lineageTag: c8289e7b-6290-5965-9d9f-2f108110f819
+		backingConfiguration
+			valueColumn: RiskEvent.end_date
+
+	property severity
+		dataType: int64
+		lineageTag: 1cccdb56-e4c8-5eff-b81f-29027a16ee21
+		backingConfiguration
+			valueColumn: RiskEvent.severity
+
+	property direction
+		dataType: string
+		lineageTag: 3c4be5e1-a043-5c0e-b7f5-8714bf564270
+		backingConfiguration
+			valueColumn: RiskEvent.direction
+
+	property confidence
+		dataType: double
+		lineageTag: 21ba9288-7469-57bb-9b3e-64a8d0230c5b
+		backingConfiguration
+			valueColumn: RiskEvent.confidence
+
+	property event_type
+		dataType: string
+		lineageTag: 1a2b57ff-8d75-562e-a901-d768564bde5a
+		backingConfiguration
+			valueColumn: RiskEvent.event_type
+
+	property region_code
+		dataType: string
+		lineageTag: 653e8da8-43ab-5eea-b997-ee8360f1fbe7
+		backingConfiguration
+			valueColumn: RiskEvent.region_code
+
+	property narrative
+		dataType: string
+		lineageTag: b7d68b82-b0f7-57c6-870d-de2320500941
+		backingConfiguration
+			valueColumn: RiskEvent.narrative
+
+	property is_synthetic
+		dataType: boolean
+		lineageTag: 4c20a0a7-1ec3-5171-87b5-f27009f91aa2
+		backingConfiguration
+			valueColumn: RiskEvent.is_synthetic
+
+	property causal_status
+		dataType: string
+		lineageTag: a583a15f-6a54-5e21-aae6-a9090a3fd655
+		backingConfiguration
+			valueColumn: RiskEvent.causal_status
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 3635512c-6170-5df8-bab7-63b6b714e4b4
+		backingConfiguration
+			valueColumn: RiskEvent.source_lakehouse

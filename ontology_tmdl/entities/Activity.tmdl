@@ -1,0 +1,118 @@
+entity Activity
+	lineageTag: 39026b4d-dab6-5abb-9803-1d181ad690df
+	backingTable: Activity
+	keyProperty: activity_id
+
+	property activity_id
+		dataType: string
+		lineageTag: 4a42200c-629e-5955-b824-92bf3293eeba
+		backingConfiguration
+			valueColumn: Activity.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: c7d9ef26-7be0-52c2-b563-3adb5992953e
+		backingConfiguration
+			valueColumn: Activity.entity_id
+
+	property sector_code
+		dataType: string
+		lineageTag: 7b5f64c4-f3b9-534b-8de5-e6c36dc446c6
+		backingConfiguration
+			valueColumn: Activity.sector_code
+
+	property activity_date
+		dataType: dateTime
+		lineageTag: d0dfe7e6-98fa-5937-bea0-f010703750d8
+		backingConfiguration
+			valueColumn: Activity.activity_date
+
+	property contract_id
+		dataType: string
+		lineageTag: 0fcfc046-cfc6-5c39-ac31-ce09ec450003
+		backingConfiguration
+			valueColumn: Activity.contract_id
+
+	property activity_type
+		dataType: string
+		lineageTag: 8b4c5548-a3af-59d3-abc8-72c2af9b85cf
+		backingConfiguration
+			valueColumn: Activity.activity_type
+
+	property volume
+		dataType: double
+		lineageTag: f226d7bb-8ca2-5e2c-949f-21cd7ac93d1f
+		backingConfiguration
+			valueColumn: Activity.volume
+
+	property unit
+		dataType: string
+		lineageTag: 19864d2c-0491-5a40-b91c-0f6ef10899a2
+		backingConfiguration
+			valueColumn: Activity.unit
+
+	property baseline_revenue_local
+		dataType: double
+		lineageTag: 028c28dd-d1fe-51f4-b817-86f16ca188ae
+		backingConfiguration
+			valueColumn: Activity.baseline_revenue_local
+
+	property baseline_cost_local
+		dataType: double
+		lineageTag: 83d10c7e-34b9-5158-abba-34d03af8f093
+		backingConfiguration
+			valueColumn: Activity.baseline_cost_local
+
+	property revenue_local
+		dataType: double
+		lineageTag: 268bf3cc-335b-52da-964d-a99832292768
+		backingConfiguration
+			valueColumn: Activity.revenue_local
+
+	property cost_local
+		dataType: double
+		lineageTag: 71e9cf67-c4ac-5d92-a7e7-9054a49ae714
+		backingConfiguration
+			valueColumn: Activity.cost_local
+
+	property baseline_ebitda_local
+		dataType: double
+		lineageTag: c048f7dc-5851-5160-9474-d1e35be78f0f
+		backingConfiguration
+			valueColumn: Activity.baseline_ebitda_local
+
+	property ebitda_local
+		dataType: double
+		lineageTag: 418b7553-4fec-5c97-8fce-58059d643133
+		backingConfiguration
+			valueColumn: Activity.ebitda_local
+
+	property baseline_cf_local
+		dataType: double
+		lineageTag: 9154c60f-7ad5-53eb-a8f6-352963922b03
+		backingConfiguration
+			valueColumn: Activity.baseline_cf_local
+
+	property cf_local
+		dataType: double
+		lineageTag: 3e6cf734-904c-5edd-867f-59ac878f5ab5
+		backingConfiguration
+			valueColumn: Activity.cf_local
+
+	property currency_code
+		dataType: string
+		lineageTag: b37bb502-0c09-5e34-881c-66350fec7db9
+		backingConfiguration
+			valueColumn: Activity.currency_code
+
+	property interco_flag
+		dataType: boolean
+		lineageTag: 7b658e75-931e-547a-b730-7bc9ff5f0e4c
+		backingConfiguration
+			valueColumn: Activity.interco_flag
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 42975f1e-fd9f-58e9-8110-fc1d0ec6d655
+		backingConfiguration
+			valueColumn: Activity.source_lakehouse

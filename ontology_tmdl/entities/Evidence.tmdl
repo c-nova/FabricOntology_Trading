@@ -1,0 +1,58 @@
+entity Evidence
+	lineageTag: b25dcb08-849f-52d9-b66d-23f2a118a2c4
+	backingTable: Evidence
+	keyProperty: evidence_id
+
+	property evidence_id
+		dataType: string
+		lineageTag: 09aeb7ab-5d0a-5f3e-bd43-c9808be8e74a
+		backingConfiguration
+			valueColumn: Evidence.evidence_id
+
+	property event_id
+		dataType: string
+		lineageTag: 187619d9-babd-50e2-b517-ccf4c121949d
+		backingConfiguration
+			valueColumn: Evidence.event_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 0154645a-43e5-5062-afa9-94bc133596eb
+		backingConfiguration
+			valueColumn: Evidence.entity_id
+
+	property recorded_date
+		dataType: dateTime
+		lineageTag: 45184afb-245d-588f-840e-a085f96c10a8
+		backingConfiguration
+			valueColumn: Evidence.recorded_date
+
+	property evidence_type
+		dataType: string
+		lineageTag: a23ecfa0-b01e-51fc-bc4b-7303e3b1fc31
+		backingConfiguration
+			valueColumn: Evidence.evidence_type
+
+	property source_record
+		dataType: string
+		lineageTag: a9454168-ea3b-531e-9605-c06374a0129e
+		backingConfiguration
+			valueColumn: Evidence.source_record
+
+	property excerpt
+		dataType: string
+		lineageTag: a868e266-4969-5c19-8def-f2eb171e65b9
+		backingConfiguration
+			valueColumn: Evidence.excerpt
+
+	property is_synthetic
+		dataType: boolean
+		lineageTag: 0a904c6a-9eec-566f-b0b0-0a91c65f770d
+		backingConfiguration
+			valueColumn: Evidence.is_synthetic
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 1cd7c93a-d42d-52f9-bb6e-51c5c294963b
+		backingConfiguration
+			valueColumn: Evidence.source_lakehouse

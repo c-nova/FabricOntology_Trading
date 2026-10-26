@@ -1,0 +1,85 @@
+table Link_EventImpactsActivity
+	lineageTag: 298739b5-87a6-5e64-9659-26e868d08798
+
+	column bridge_id
+		dataType: string
+		sourceColumn: bridge_id
+		lineageTag: 728d044b-b3a6-5905-9ef3-94ba2055700e
+
+	column event_id
+		dataType: string
+		sourceColumn: event_id
+		lineageTag: 55dbda0c-f4b7-5564-984d-c65eba27576e
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: 0221d764-aae5-55a5-9968-18e54b4859a3
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: 43529151-041c-5267-867f-c0fb1910452e
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: b34e3613-2ed2-57b3-b67a-6e73c6fb58ab
+
+	column impact_channel
+		dataType: string
+		sourceColumn: impact_channel
+		lineageTag: 993fed02-f3b5-5fa9-ba00-7730acbafdfa
+
+	column lag_days
+		dataType: int64
+		sourceColumn: lag_days
+		lineageTag: 2580ceef-8422-5e3f-a137-d916e28f9c33
+
+	column impact_weight
+		dataType: double
+		sourceColumn: impact_weight
+		lineageTag: 7caa4757-8b8d-5110-8e7d-dfb8d911120e
+
+	column decay_half_life_days
+		dataType: int64
+		sourceColumn: decay_half_life_days
+		lineageTag: a816ced7-7ad7-5909-8a95-e58a28bfde65
+
+	column evidence_id
+		dataType: string
+		sourceColumn: evidence_id
+		lineageTag: 13b289bb-e4ad-5c1c-af49-03cb006db2e2
+
+	column causal_mechanism
+		dataType: string
+		sourceColumn: causal_mechanism
+		lineageTag: 1a72a531-ab83-53ed-90f2-0f52677d0360
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: 332c1955-ed0e-5e5e-a31e-78f62ca3f3cf
+
+	partition Link_EventImpactsActivity = entity
+		mode: directLake
+		source
+			entityName: semantic_event_impact_bridge
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

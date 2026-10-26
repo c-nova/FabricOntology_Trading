@@ -1,0 +1,254 @@
+[
+  {
+    "slide": 1,
+    "title": "Trading Ontology デモ説明者ガイド",
+    "sources": [
+      "config/deployment_manifest.json",
+      "config/step3_deployment.json"
+    ]
+  },
+  {
+    "slide": 2,
+    "title": "10分デモの進行と画面切替",
+    "sources": [
+      "prompts/demo_questions_ja.txt",
+      "reports/step3_ui_verification.json"
+    ]
+  },
+  {
+    "slide": 3,
+    "title": "架空の8社を同じ尺度で比較",
+    "sources": [
+      "docs/architecture.md",
+      "config/subsidiaries.json",
+      "data/ecb_fx_raw.csv"
+    ]
+  },
+  {
+    "slide": 4,
+    "title": "売上とEBITDAの違い",
+    "sources": [
+      "説明用の単純化した数値例",
+      "docs/architecture.md"
+    ]
+  },
+  {
+    "slide": 5,
+    "title": "食品損失によるEBITDAの変化",
+    "sources": [
+      "前ページから継続する説明用の数値例",
+      "data/demo_dataset.json:semantic_financial_metrics_daily",
+      "prompts/da_instructions_ja.txt"
+    ]
+  },
+  {
+    "slide": 6,
+    "title": "51%所有の金額を区別",
+    "sources": [
+      "config/subsidiaries.json",
+      "reports/da_qa_published.json"
+    ]
+  },
+  {
+    "slide": 7,
+    "title": "通貨と現金の読み違い",
+    "sources": [
+      "data/ecb_fx_raw.csv",
+      "reports/da_qa_final_draft.json"
+    ]
+  },
+  {
+    "slide": 8,
+    "title": "入力① 年間と月次の稼ぎ",
+    "sources": [
+      "Q1: 本ファイルのコピー用質問",
+      "reports/da_qa_published.json"
+    ]
+  },
+  {
+    "slide": 9,
+    "title": "Step01は基準値と実績の比較",
+    "sources": [
+      "data/demo_dataset.json:semantic_financial_metrics_daily",
+      "reports/da_qa_published.json"
+    ]
+  },
+  {
+    "slide": 10,
+    "title": "入力② 増減の理由を比較",
+    "sources": [
+      "Q2: 本ファイルのコピー用質問",
+      "reports/qa_expected_event_totals.json"
+    ]
+  },
+  {
+    "slide": 11,
+    "title": "Step02は10イベントの増減",
+    "sources": [
+      "reports/qa_expected_event_totals.json",
+      "data/demo_dataset.json:semantic_risk_events"
+    ]
+  },
+  {
+    "slide": 12,
+    "title": "入力③ 食品損失の根拠",
+    "sources": [
+      "Q3: 本ファイルのコピー用質問",
+      "reports/step3_live_audit.json"
+    ]
+  },
+  {
+    "slide": 13,
+    "title": "食品損失の回答を読む",
+    "sources": [
+      "reports/step3_live_audit.json:exact_*,representative_path"
+    ]
+  },
+  {
+    "slide": 14,
+    "title": "Step03で食品損失の経路を表示",
+    "sources": [
+      "reports/step3_food_loss_dag.svg",
+      "reports/step3_live_audit.json",
+      "reports/step3_ui_verification.json"
+    ]
+  },
+  {
+    "slide": 15,
+    "title": "矢印は3種類の意味を持つ",
+    "sources": [
+      "reports/step3_live_audit.json:diagram_relations",
+      "scripts/step3_food_loss_runtime.py:197-267"
+    ]
+  },
+  {
+    "slide": 16,
+    "title": "代表記録から読める範囲",
+    "sources": [
+      "reports/step3_live_audit.json:representative_path,cold_chain_observation",
+      "reports/da_qa_published.json"
+    ]
+  },
+  {
+    "slide": 17,
+    "title": "4つの金額は合算しない",
+    "sources": [
+      "reports/step3_live_audit.json:exact_*"
+    ]
+  },
+  {
+    "slide": 18,
+    "title": "Notebookは保存結果から開始",
+    "sources": [
+      "scripts/build_step3_notebook.py:39-64",
+      "scripts/step3_food_loss_runtime.py",
+      "reports/step3_ui_verification.json"
+    ]
+  },
+  {
+    "slide": 19,
+    "title": "入力④ 影響点の特定と対応案",
+    "sources": [
+      "Q4: 本ファイルのコピー用質問",
+      "data/demo_dataset.json:semantic_event_financial_effects"
+    ]
+  },
+  {
+    "slide": 20,
+    "title": "影響が大きい契約と繰り返し影響を受けた契約",
+    "sources": [
+      "data/demo_dataset.json:semantic_event_financial_effects,semantic_contracts",
+      "説明者の公開済みDA実行例（優先度の列）、2026-10-26"
+    ]
+  },
+  {
+    "slide": 21,
+    "title": "優先度別の対応案（DA実行例）",
+    "sources": [
+      "説明者の公開済みDA実行例（対応案の部分）、2026-10-26",
+      "data/demo_dataset.json:semantic_event_financial_effects"
+    ]
+  },
+  {
+    "slide": 22,
+    "title": "説明の価値と追加質問",
+    "sources": [
+      "docs/architecture.md:112-143",
+      "reports/qa_expected_event_totals.json"
+    ]
+  },
+  {
+    "slide": 23,
+    "title": "コピー用質問の使い分け",
+    "sources": [
+      "prompts/demo_questions_ja.txt",
+      "prompts/da_instructions_ja.txt",
+      "説明者の現在環境での表示確認（色と配置は未固定）"
+    ]
+  },
+  {
+    "slide": 24,
+    "title": "10イベントの照合用金額",
+    "sources": [
+      "reports/qa_expected_event_totals.json",
+      "data/demo_dataset.json:semantic_risk_events"
+    ]
+  },
+  {
+    "slide": 25,
+    "title": "想定質問への短い回答",
+    "sources": [
+      "docs/architecture.md",
+      "reports/step3_live_audit.json",
+      "scripts/step3_food_loss_runtime.py"
+    ]
+  },
+  {
+    "slide": 26,
+    "title": "実演前の制約と確認先",
+    "sources": [
+      "config/deployment_manifest.json:limitations",
+      "config/step3_deployment.json",
+      "docs/architecture.md:135-144"
+    ]
+  },
+  {
+    "slide": 27,
+    "title": "保存済みDA応答の実例",
+    "sources": [
+      "reports/da_qa_published.json:messages[0:2]"
+    ]
+  },
+  {
+    "slide": 28,
+    "title": "社内にないイベントを集める方法",
+    "sources": [
+      "提案段階の構成（このデモでは未実装）",
+      "data/demo_dataset.json:semantic_risk_events"
+    ]
+  },
+  {
+    "slide": 29,
+    "title": "原本を分離した分析構成",
+    "sources": [
+      "docs/architecture.md:81-123",
+      "config/deployment_manifest.json"
+    ]
+  },
+  {
+    "slide": 30,
+    "title": "4つの用語を食品の例で区別",
+    "sources": [
+      "reports/step3_live_audit.json:diagram_relations",
+      "config/deployment_manifest.json"
+    ]
+  },
+  {
+    "slide": 31,
+    "title": "関係照会と金額照合を分離",
+    "sources": [
+      "scripts/step3_food_loss_runtime.py:85-182",
+      "reports/step3_live_audit.json"
+    ]
+  }
+]

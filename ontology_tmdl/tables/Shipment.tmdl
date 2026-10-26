@@ -1,0 +1,85 @@
+table Shipment
+	lineageTag: 799dae5c-2ad8-5a08-905e-5323e7c144a1
+
+	column shipment_id
+		dataType: string
+		sourceColumn: shipment_id
+		lineageTag: dab1b8ad-d9bb-5451-bfa7-fa1346cb2f38
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: 0496b9e9-b475-5d44-83fd-d2693ff58954
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: b03b9962-fed0-5da8-9d6f-d4f7d6f2fc19
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: e96aff23-fc12-54ef-80a7-f087b8365569
+
+	column origin_country
+		dataType: string
+		sourceColumn: origin_country
+		lineageTag: 3cc3d7e6-af11-5fed-a44f-e942e43b6217
+
+	column destination_country
+		dataType: string
+		sourceColumn: destination_country
+		lineageTag: 46a96695-fe7b-575f-b00e-82861a152cba
+
+	column etd
+		dataType: dateTime
+		sourceColumn: etd
+		lineageTag: 39e6dfd3-0c53-5f42-80bc-720aa09baae6
+
+	column eta
+		dataType: dateTime
+		sourceColumn: eta
+		lineageTag: c8363a50-ff3c-51d4-bbb6-931d84e361ad
+
+	column delay_days
+		dataType: int64
+		sourceColumn: delay_days
+		lineageTag: 634528d2-375e-533d-9106-97f7a03fea41
+
+	column volume
+		dataType: double
+		sourceColumn: volume
+		lineageTag: 68106ef7-f31f-5a68-93ec-75828dbfed50
+
+	column unit
+		dataType: string
+		sourceColumn: unit
+		lineageTag: 1ed13829-c205-5b16-b0f2-c68a0c261a99
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: 6f1bef77-06e6-5635-9cb7-90108116bc9e
+
+	partition Shipment = entity
+		mode: directLake
+		source
+			entityName: semantic_shipments
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

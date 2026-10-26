@@ -1,0 +1,52 @@
+{
+  "MTL_NEG": {
+    "full_jpy": "-208722530.97",
+    "management_jpy": "-157587508.53",
+    "effects": 84
+  },
+  "MTL_POS": {
+    "full_jpy": "182646287.72",
+    "management_jpy": "135652789.94",
+    "effects": 84
+  },
+  "CROSS_NEG": {
+    "full_jpy": "-680035231.24",
+    "management_jpy": "-515651483.39",
+    "effects": 336
+  },
+  "CROSS_POS": {
+    "full_jpy": "584435114.92",
+    "management_jpy": "438898434.77",
+    "effects": 336
+  },
+  "ENE_NEG": {
+    "full_jpy": "-188475012.78",
+    "management_jpy": "-143866099.63",
+    "effects": 84
+  },
+  "ENE_POS": {
+    "full_jpy": "210155445.28",
+    "management_jpy": "157280607.47",
+    "effects": 84
+  },
+  "FOD_NEG": {
+    "full_jpy": "-114461186.25",
+    "management_jpy": "-87630294.31",
+    "effects": 84
+  },
+  "FOD_POS": {
+    "full_jpy": "119698730.65",
+    "management_jpy": "91134062.87",
+    "effects": 84
+  },
+  "FIN_NEG": {
+    "full_jpy": "-124852353.72",
+    "management_jpy": "-94382719.37",
+    "effects": 84
+  },
+  "FIN_POS": {
+    "full_jpy": "116692616.68",
+    "management_jpy": "87351407.02",
+    "effects": 84
+  }
+}

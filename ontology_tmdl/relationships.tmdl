@@ -1,0 +1,209 @@
+relationship R_EventImpactsActivity_A
+	isActive: false
+	fromColumn: Link_EventImpactsActivity.event_id
+	toColumn: RiskEvent.event_id
+
+relationship R_EventImpactsActivity_B
+	isActive: false
+	fromColumn: Link_EventImpactsActivity.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_ActivityUnderContract
+	isActive: false
+	fromColumn: Activity.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_ShipmentForActivity
+	isActive: false
+	fromColumn: Shipment.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_ShipmentUnderContract
+	isActive: false
+	fromColumn: Shipment.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_EvidenceSupportsEvent
+	isActive: false
+	fromColumn: Evidence.event_id
+	toColumn: RiskEvent.event_id
+
+relationship R_EventHasEffect
+	isActive: false
+	fromColumn: FinancialEffect.event_id
+	toColumn: RiskEvent.event_id
+
+relationship R_EffectExplainedByEvidence
+	isActive: false
+	fromColumn: FinancialEffect.evidence_id
+	toColumn: Evidence.evidence_id
+
+relationship R_EffectOnActivity
+	isActive: false
+	fromColumn: FinancialEffect.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_EffectOnContract
+	isActive: false
+	fromColumn: FinancialEffect.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_ContractOwnedByCompany
+	isActive: false
+	fromColumn: Contract.entity_id
+	toColumn: Company.entity_id
+
+relationship R_ActivityOwnedByCompany
+	isActive: false
+	fromColumn: Activity.entity_id
+	toColumn: Company.entity_id
+
+relationship R_EffectOwnedByCompany
+	isActive: false
+	fromColumn: FinancialEffect.entity_id
+	toColumn: Company.entity_id
+
+relationship R_MetricForCompany
+	isActive: false
+	fromColumn: FinancialMetric.entity_id
+	toColumn: Company.entity_id
+
+relationship R_EffectRealizedInMetric_A
+	isActive: false
+	fromColumn: Link_EffectRealizedInMetric.effect_id
+	toColumn: FinancialEffect.effect_id
+
+relationship R_EffectRealizedInMetric_B
+	isActive: false
+	fromColumn: Link_EffectRealizedInMetric.metric_id
+	toColumn: FinancialMetric.metric_id
+
+relationship R_MetricRollsUpToGroupKPI_A
+	isActive: false
+	fromColumn: Link_MetricRollsUpToGroupKPI.metric_id
+	toColumn: FinancialMetric.metric_id
+
+relationship R_MetricRollsUpToGroupKPI_B
+	isActive: false
+	fromColumn: Link_MetricRollsUpToGroupKPI.kpi_id
+	toColumn: GroupKPI.kpi_id
+
+relationship R_MetalsJPExtensionForActivity
+	isActive: false
+	fromColumn: MetalsJPExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_MetalsJPExtensionForCompany
+	isActive: false
+	fromColumn: MetalsJPExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_MetalsJPExtensionForContract
+	isActive: false
+	fromColumn: MetalsJPExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_MetalsUSExtensionForActivity
+	isActive: false
+	fromColumn: MetalsUSExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_MetalsUSExtensionForCompany
+	isActive: false
+	fromColumn: MetalsUSExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_MetalsUSExtensionForContract
+	isActive: false
+	fromColumn: MetalsUSExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_EnergyJPExtensionForActivity
+	isActive: false
+	fromColumn: EnergyJPExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_EnergyJPExtensionForCompany
+	isActive: false
+	fromColumn: EnergyJPExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_EnergyJPExtensionForContract
+	isActive: false
+	fromColumn: EnergyJPExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_EnergyUSExtensionForActivity
+	isActive: false
+	fromColumn: EnergyUSExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_EnergyUSExtensionForCompany
+	isActive: false
+	fromColumn: EnergyUSExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_EnergyUSExtensionForContract
+	isActive: false
+	fromColumn: EnergyUSExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_FoodsJPExtensionForActivity
+	isActive: false
+	fromColumn: FoodsJPExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_FoodsJPExtensionForCompany
+	isActive: false
+	fromColumn: FoodsJPExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_FoodsJPExtensionForContract
+	isActive: false
+	fromColumn: FoodsJPExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_FoodsUSExtensionForActivity
+	isActive: false
+	fromColumn: FoodsUSExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_FoodsUSExtensionForCompany
+	isActive: false
+	fromColumn: FoodsUSExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_FoodsUSExtensionForContract
+	isActive: false
+	fromColumn: FoodsUSExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_FinanceJPExtensionForActivity
+	isActive: false
+	fromColumn: FinanceJPExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_FinanceJPExtensionForCompany
+	isActive: false
+	fromColumn: FinanceJPExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_FinanceJPExtensionForContract
+	isActive: false
+	fromColumn: FinanceJPExtension.contract_id
+	toColumn: Contract.contract_id
+
+relationship R_FinanceUSExtensionForActivity
+	isActive: false
+	fromColumn: FinanceUSExtension.activity_id
+	toColumn: Activity.activity_id
+
+relationship R_FinanceUSExtensionForCompany
+	isActive: false
+	fromColumn: FinanceUSExtension.entity_id
+	toColumn: Company.entity_id
+
+relationship R_FinanceUSExtensionForContract
+	isActive: false
+	fromColumn: FinanceUSExtension.contract_id
+	toColumn: Contract.contract_id

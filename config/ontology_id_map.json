@@ -1,0 +1,470 @@
+{
+  "entityTypes": {
+    "Company": {
+      "id": "100000000000001",
+      "properties": {
+        "entity_id": "100000000000002",
+        "entity_name": "100000000000003",
+        "sector_code": "100000000000004",
+        "country_code": "100000000000005",
+        "currency_code": "100000000000006",
+        "ownership_ratio": "100000000000007",
+        "valid_from": "100000000000008",
+        "valid_to": "100000000000009",
+        "company_code": "100000000000010",
+        "consolidation_type": "100000000000011"
+      },
+      "key": "entity_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "company_master"
+    },
+    "RiskEvent": {
+      "id": "100000000000012",
+      "properties": {
+        "event_id": "100000000000013",
+        "primary_sector": "100000000000014",
+        "start_date": "100000000000015",
+        "end_date": "100000000000016",
+        "severity": "100000000000017",
+        "direction": "100000000000018",
+        "confidence": "100000000000019",
+        "event_type": "100000000000020",
+        "region_code": "100000000000021",
+        "narrative": "100000000000022",
+        "is_synthetic": "100000000000023",
+        "causal_status": "100000000000024",
+        "source_lakehouse": "100000000000025"
+      },
+      "key": "event_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_risk_events"
+    },
+    "Activity": {
+      "id": "100000000000026",
+      "properties": {
+        "activity_id": "100000000000027",
+        "entity_id": "100000000000028",
+        "sector_code": "100000000000029",
+        "activity_date": "100000000000030",
+        "contract_id": "100000000000031",
+        "activity_type": "100000000000032",
+        "volume": "100000000000033",
+        "unit": "100000000000034",
+        "baseline_revenue_local": "100000000000035",
+        "baseline_cost_local": "100000000000036",
+        "revenue_local": "100000000000037",
+        "cost_local": "100000000000038",
+        "baseline_ebitda_local": "100000000000039",
+        "ebitda_local": "100000000000040",
+        "baseline_cf_local": "100000000000041",
+        "cf_local": "100000000000042",
+        "currency_code": "100000000000043",
+        "interco_flag": "100000000000044",
+        "source_lakehouse": "100000000000045"
+      },
+      "key": "activity_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_business_activities"
+    },
+    "Contract": {
+      "id": "100000000000046",
+      "properties": {
+        "contract_id": "100000000000047",
+        "entity_id": "100000000000048",
+        "commodity": "100000000000049",
+        "contract_type": "100000000000050",
+        "strike_price": "100000000000051",
+        "price_index": "100000000000052",
+        "start_date": "100000000000053",
+        "end_date": "100000000000054",
+        "currency_code": "100000000000055",
+        "source_lakehouse": "100000000000056"
+      },
+      "key": "contract_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_contracts"
+    },
+    "Shipment": {
+      "id": "100000000000057",
+      "properties": {
+        "shipment_id": "100000000000058",
+        "activity_id": "100000000000059",
+        "entity_id": "100000000000060",
+        "contract_id": "100000000000061",
+        "origin_country": "100000000000062",
+        "destination_country": "100000000000063",
+        "etd": "100000000000064",
+        "eta": "100000000000065",
+        "delay_days": "100000000000066",
+        "volume": "100000000000067",
+        "unit": "100000000000068",
+        "source_lakehouse": "100000000000069"
+      },
+      "key": "shipment_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_shipments"
+    },
+    "Evidence": {
+      "id": "100000000000070",
+      "properties": {
+        "evidence_id": "100000000000071",
+        "event_id": "100000000000072",
+        "entity_id": "100000000000073",
+        "recorded_date": "100000000000074",
+        "evidence_type": "100000000000075",
+        "source_record": "100000000000076",
+        "excerpt": "100000000000077",
+        "is_synthetic": "100000000000078",
+        "source_lakehouse": "100000000000079"
+      },
+      "key": "evidence_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_event_evidence"
+    },
+    "FinancialEffect": {
+      "id": "100000000000080",
+      "properties": {
+        "effect_id": "100000000000081",
+        "bridge_id": "100000000000082",
+        "event_id": "100000000000083",
+        "evidence_id": "100000000000084",
+        "activity_id": "100000000000085",
+        "contract_id": "100000000000086",
+        "entity_id": "100000000000087",
+        "effect_date": "100000000000088",
+        "delta_revenue_local": "100000000000089",
+        "delta_cost_local": "100000000000090",
+        "delta_ebitda_local": "100000000000091",
+        "delta_cf_local": "100000000000092",
+        "currency_code": "100000000000093",
+        "fx_rate_to_group": "100000000000094",
+        "ownership_ratio": "100000000000095",
+        "delta_ebitda_full_jpy": "100000000000096",
+        "delta_management_jpy": "100000000000097",
+        "delta_cf_full_jpy": "100000000000098",
+        "attribution_method": "100000000000099",
+        "source_lakehouse": "100000000000100"
+      },
+      "key": "effect_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_event_financial_effects"
+    },
+    "FinancialMetric": {
+      "id": "100000000000101",
+      "properties": {
+        "metric_id": "100000000000102",
+        "metric_date": "100000000000103",
+        "entity_id": "100000000000104",
+        "metric_code": "100000000000105",
+        "amount_local": "100000000000106",
+        "currency_code": "100000000000107",
+        "fx_rate_to_group": "100000000000108",
+        "amount_group": "100000000000109",
+        "management_contribution_jpy": "100000000000110",
+        "scenario_tag": "100000000000111",
+        "interco_flag": "100000000000112",
+        "source_lakehouse": "100000000000113"
+      },
+      "key": "metric_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "semantic_financial_metrics_daily"
+    },
+    "GroupKPI": {
+      "id": "100000000000114",
+      "properties": {
+        "kpi_id": "100000000000115",
+        "kpi_date": "100000000000116",
+        "fiscal_year": "100000000000117",
+        "fiscal_period": "100000000000118",
+        "kpi_code": "100000000000119",
+        "amount_group": "100000000000120",
+        "currency_code": "100000000000121",
+        "scenario_tag": "100000000000122",
+        "definition": "100000000000123"
+      },
+      "key": "kpi_id",
+      "lakehouse": "LH_Group_SAP",
+      "table": "kpi_snapshot"
+    },
+    "MetalsJPExtension": {
+      "id": "100000000000139",
+      "properties": {
+        "extension_id": "100000000000140",
+        "activity_id": "100000000000141",
+        "entity_id": "100000000000142",
+        "contract_id": "100000000000143",
+        "observation_date": "100000000000144",
+        "purity_percent": "100000000000145",
+        "smelter_utilization": "100000000000146"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Metals_JP_01",
+      "table": "metals_quality"
+    },
+    "MetalsUSExtension": {
+      "id": "100000000000150",
+      "properties": {
+        "extension_id": "100000000000151",
+        "activity_id": "100000000000152",
+        "entity_id": "100000000000153",
+        "contract_id": "100000000000154",
+        "observation_date": "100000000000155",
+        "purity_percent": "100000000000156",
+        "smelter_utilization": "100000000000157"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Metals_US_01",
+      "table": "metals_quality"
+    },
+    "EnergyJPExtension": {
+      "id": "100000000000161",
+      "properties": {
+        "extension_id": "100000000000162",
+        "activity_id": "100000000000163",
+        "entity_id": "100000000000164",
+        "contract_id": "100000000000165",
+        "observation_date": "100000000000166",
+        "storage_fill_percent": "100000000000167",
+        "dispatch_mmbtu": "100000000000168"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Energy_JP_01",
+      "table": "energy_dispatch"
+    },
+    "EnergyUSExtension": {
+      "id": "100000000000172",
+      "properties": {
+        "extension_id": "100000000000173",
+        "activity_id": "100000000000174",
+        "entity_id": "100000000000175",
+        "contract_id": "100000000000176",
+        "observation_date": "100000000000177",
+        "storage_fill_percent": "100000000000178",
+        "dispatch_mmbtu": "100000000000179"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Energy_US_01",
+      "table": "energy_dispatch"
+    },
+    "FoodsJPExtension": {
+      "id": "100000000000183",
+      "properties": {
+        "extension_id": "100000000000184",
+        "activity_id": "100000000000185",
+        "entity_id": "100000000000186",
+        "contract_id": "100000000000187",
+        "observation_date": "100000000000188",
+        "temperature_c": "100000000000189",
+        "spoilage_percent": "100000000000190"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Foods_JP_01",
+      "table": "foods_cold_chain"
+    },
+    "FoodsUSExtension": {
+      "id": "100000000000194",
+      "properties": {
+        "extension_id": "100000000000195",
+        "activity_id": "100000000000196",
+        "entity_id": "100000000000197",
+        "contract_id": "100000000000198",
+        "observation_date": "100000000000199",
+        "temperature_c": "100000000000200",
+        "spoilage_percent": "100000000000201"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Foods_US_01",
+      "table": "foods_cold_chain"
+    },
+    "FinanceJPExtension": {
+      "id": "100000000000205",
+      "properties": {
+        "extension_id": "100000000000206",
+        "activity_id": "100000000000207",
+        "entity_id": "100000000000208",
+        "contract_id": "100000000000209",
+        "observation_date": "100000000000210",
+        "notional_local": "100000000000211",
+        "credit_spread_bps": "100000000000212",
+        "hedge_coverage": "100000000000213"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Finance_JP_01",
+      "table": "finance_exposure"
+    },
+    "FinanceUSExtension": {
+      "id": "100000000000217",
+      "properties": {
+        "extension_id": "100000000000218",
+        "activity_id": "100000000000219",
+        "entity_id": "100000000000220",
+        "contract_id": "100000000000221",
+        "observation_date": "100000000000222",
+        "notional_local": "100000000000223",
+        "credit_spread_bps": "100000000000224",
+        "hedge_coverage": "100000000000225"
+      },
+      "key": "extension_id",
+      "lakehouse": "LH_Finance_US_01",
+      "table": "finance_exposure"
+    }
+  },
+  "relationshipTypes": {
+    "EventImpactsActivity": {
+      "id": "100000000000124",
+      "contextualization": "56bdd544-f0f3-5937-81df-16a058e9e92a"
+    },
+    "ActivityUnderContract": {
+      "id": "100000000000125",
+      "contextualization": "be2f62c6-fb69-578a-8619-35b80b35c65b"
+    },
+    "ShipmentForActivity": {
+      "id": "100000000000126",
+      "contextualization": "60a90a32-0163-5a84-b431-32672f00ed3e"
+    },
+    "ShipmentUnderContract": {
+      "id": "100000000000127",
+      "contextualization": "bb584c0f-fd8c-5051-a72a-c8218bf4a20d"
+    },
+    "EvidenceSupportsEvent": {
+      "id": "100000000000128",
+      "contextualization": "b05f9c41-5887-5ee0-9135-57b704499230"
+    },
+    "EventHasEffect": {
+      "id": "100000000000129",
+      "contextualization": "0757da44-c624-5d83-9172-60f5f2f1d347"
+    },
+    "EffectExplainedByEvidence": {
+      "id": "100000000000130",
+      "contextualization": "17ba23c9-91a4-50e5-b95f-8b2601f4bdcd"
+    },
+    "EffectOnActivity": {
+      "id": "100000000000131",
+      "contextualization": "08f0d225-779d-531c-926a-9baf29ca9e01"
+    },
+    "EffectOnContract": {
+      "id": "100000000000132",
+      "contextualization": "be5bbb57-c5c9-5e56-b287-819ab58510c5"
+    },
+    "ContractOwnedByCompany": {
+      "id": "100000000000133",
+      "contextualization": "6862496b-9a89-5f01-9cb9-08ba198e77f7"
+    },
+    "ActivityOwnedByCompany": {
+      "id": "100000000000134",
+      "contextualization": "53fc40c6-b98d-5d6b-af30-d0c7d2ac1027"
+    },
+    "EffectOwnedByCompany": {
+      "id": "100000000000135",
+      "contextualization": "3e149797-fe88-5800-b658-a416b868af84"
+    },
+    "MetricForCompany": {
+      "id": "100000000000136",
+      "contextualization": "e3fc8eac-12bb-5966-89af-44705d3af1c0"
+    },
+    "EffectRealizedInMetric": {
+      "id": "100000000000137",
+      "contextualization": "15b1991c-ba23-56bf-b298-e9ae850c554f"
+    },
+    "MetricRollsUpToGroupKPI": {
+      "id": "100000000000138",
+      "contextualization": "79e61afc-9468-566d-b1e1-3497d308c8fc"
+    },
+    "MetalsJPExtensionForActivity": {
+      "id": "100000000000147",
+      "contextualization": "e6bdbd1c-48f8-503e-9ae9-24f97653091e"
+    },
+    "MetalsJPExtensionForCompany": {
+      "id": "100000000000148",
+      "contextualization": "af2c8549-91d7-5b5c-9b6a-aa6d51e53ad5"
+    },
+    "MetalsJPExtensionForContract": {
+      "id": "100000000000149",
+      "contextualization": "cf8130ed-d602-5e83-8a87-744ed49c03b4"
+    },
+    "MetalsUSExtensionForActivity": {
+      "id": "100000000000158",
+      "contextualization": "f6c2c7bb-7033-5472-bbdd-2b6896d6c5a2"
+    },
+    "MetalsUSExtensionForCompany": {
+      "id": "100000000000159",
+      "contextualization": "25f8693b-9798-56f0-80ee-72f449e781c4"
+    },
+    "MetalsUSExtensionForContract": {
+      "id": "100000000000160",
+      "contextualization": "73761652-13f2-5c82-bfb2-d11bba6d3d97"
+    },
+    "EnergyJPExtensionForActivity": {
+      "id": "100000000000169",
+      "contextualization": "a7afdbad-3096-5388-87a2-acb622279692"
+    },
+    "EnergyJPExtensionForCompany": {
+      "id": "100000000000170",
+      "contextualization": "4c2510df-47ec-5e3b-9fe8-c0bf5afea73b"
+    },
+    "EnergyJPExtensionForContract": {
+      "id": "100000000000171",
+      "contextualization": "c29ba85c-8275-5a25-905a-07c7b2a037d4"
+    },
+    "EnergyUSExtensionForActivity": {
+      "id": "100000000000180",
+      "contextualization": "629efa22-99c3-5abd-bd42-6d1a51552bba"
+    },
+    "EnergyUSExtensionForCompany": {
+      "id": "100000000000181",
+      "contextualization": "6a2ccfa9-60dd-5361-9470-f050b8903d9f"
+    },
+    "EnergyUSExtensionForContract": {
+      "id": "100000000000182",
+      "contextualization": "074031af-b628-53ad-98d6-8988df93e005"
+    },
+    "FoodsJPExtensionForActivity": {
+      "id": "100000000000191",
+      "contextualization": "b0a30efc-7346-591d-9e32-68fe2b852793"
+    },
+    "FoodsJPExtensionForCompany": {
+      "id": "100000000000192",
+      "contextualization": "9f11184f-1e65-523a-aca9-f6f65c427043"
+    },
+    "FoodsJPExtensionForContract": {
+      "id": "100000000000193",
+      "contextualization": "e55b3f7d-51eb-523f-9390-9c69d63d7e29"
+    },
+    "FoodsUSExtensionForActivity": {
+      "id": "100000000000202",
+      "contextualization": "1a4ef968-06cc-571e-97de-68b395223b2e"
+    },
+    "FoodsUSExtensionForCompany": {
+      "id": "100000000000203",
+      "contextualization": "438b2ac5-1c7e-5f00-a4b1-c798557cdd1f"
+    },
+    "FoodsUSExtensionForContract": {
+      "id": "100000000000204",
+      "contextualization": "1e74886e-d708-5d63-83e3-a17f3f92980d"
+    },
+    "FinanceJPExtensionForActivity": {
+      "id": "100000000000214",
+      "contextualization": "bc6414cc-918f-5a7a-a478-c2e779a64290"
+    },
+    "FinanceJPExtensionForCompany": {
+      "id": "100000000000215",
+      "contextualization": "639d8952-af2f-5c61-8b33-78185f30de4c"
+    },
+    "FinanceJPExtensionForContract": {
+      "id": "100000000000216",
+      "contextualization": "1e896dd9-5119-5752-98ca-34643eb5c56b"
+    },
+    "FinanceUSExtensionForActivity": {
+      "id": "100000000000226",
+      "contextualization": "bd4b9871-70a4-54f8-8ce3-8abf2910fc93"
+    },
+    "FinanceUSExtensionForCompany": {
+      "id": "100000000000227",
+      "contextualization": "06a9390e-23c6-5216-bfb4-14e309ae79f6"
+    },
+    "FinanceUSExtensionForContract": {
+      "id": "100000000000228",
+      "contextualization": "8b0f6ae8-e2e9-51a0-b4c9-3bbbbcf36ee8"
+    }
+  }
+}

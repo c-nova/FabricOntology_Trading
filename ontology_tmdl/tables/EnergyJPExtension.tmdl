@@ -1,0 +1,60 @@
+table EnergyJPExtension
+	lineageTag: 621ccf09-c46c-5b91-a382-a20716cb513a
+
+	column extension_id
+		dataType: string
+		sourceColumn: extension_id
+		lineageTag: e2759966-0766-5474-b8dd-f3da41aab375
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: 4f052738-3223-545f-951f-acbef08ac726
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: ea922325-de6c-5b71-808f-6caaefe936cd
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: a571976c-a15e-5145-86a3-bd9cb43cc864
+
+	column observation_date
+		dataType: dateTime
+		sourceColumn: observation_date
+		lineageTag: 2d2bed94-58e4-5a0c-9183-99cd47c48c6b
+
+	column storage_fill_percent
+		dataType: double
+		sourceColumn: storage_fill_percent
+		lineageTag: f181a96a-447e-5f33-bd98-5052ba04d685
+
+	column dispatch_mmbtu
+		dataType: double
+		sourceColumn: dispatch_mmbtu
+		lineageTag: 95d9a3f4-20dc-5213-8224-a551f5ed1050
+
+	partition EnergyJPExtension = entity
+		mode: directLake
+		source
+			entityName: raw_energy_jp_extension
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

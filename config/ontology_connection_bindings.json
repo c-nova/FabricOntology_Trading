@@ -1,0 +1,1042 @@
+[
+  {
+    "alter": {
+      "object": {
+        "table": "Company",
+        "partition": "Company"
+      },
+      "partition": {
+        "name": "Company",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "company_master",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "RiskEvent",
+        "partition": "RiskEvent"
+      },
+      "partition": {
+        "name": "RiskEvent",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_risk_events",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Activity",
+        "partition": "Activity"
+      },
+      "partition": {
+        "name": "Activity",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_business_activities",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Contract",
+        "partition": "Contract"
+      },
+      "partition": {
+        "name": "Contract",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_contracts",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Shipment",
+        "partition": "Shipment"
+      },
+      "partition": {
+        "name": "Shipment",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_shipments",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Evidence",
+        "partition": "Evidence"
+      },
+      "partition": {
+        "name": "Evidence",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_event_evidence",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FinancialEffect",
+        "partition": "FinancialEffect"
+      },
+      "partition": {
+        "name": "FinancialEffect",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_event_financial_effects",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FinancialMetric",
+        "partition": "FinancialMetric"
+      },
+      "partition": {
+        "name": "FinancialMetric",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_financial_metrics_daily",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "GroupKPI",
+        "partition": "GroupKPI"
+      },
+      "partition": {
+        "name": "GroupKPI",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "kpi_snapshot",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "MetalsJPExtension",
+        "partition": "MetalsJPExtension"
+      },
+      "partition": {
+        "name": "MetalsJPExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_metals_jp_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "MetalsUSExtension",
+        "partition": "MetalsUSExtension"
+      },
+      "partition": {
+        "name": "MetalsUSExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_metals_us_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "EnergyJPExtension",
+        "partition": "EnergyJPExtension"
+      },
+      "partition": {
+        "name": "EnergyJPExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_energy_jp_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "EnergyUSExtension",
+        "partition": "EnergyUSExtension"
+      },
+      "partition": {
+        "name": "EnergyUSExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_energy_us_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FoodsJPExtension",
+        "partition": "FoodsJPExtension"
+      },
+      "partition": {
+        "name": "FoodsJPExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_foods_jp_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FoodsUSExtension",
+        "partition": "FoodsUSExtension"
+      },
+      "partition": {
+        "name": "FoodsUSExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_foods_us_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FinanceJPExtension",
+        "partition": "FinanceJPExtension"
+      },
+      "partition": {
+        "name": "FinanceJPExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_finance_jp_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "FinanceUSExtension",
+        "partition": "FinanceUSExtension"
+      },
+      "partition": {
+        "name": "FinanceUSExtension",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "raw_finance_us_extension",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Link_EventImpactsActivity",
+        "partition": "Link_EventImpactsActivity"
+      },
+      "partition": {
+        "name": "Link_EventImpactsActivity",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_event_impact_bridge",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Link_EffectRealizedInMetric",
+        "partition": "Link_EffectRealizedInMetric"
+      },
+      "partition": {
+        "name": "Link_EffectRealizedInMetric",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_effect_metric_links",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "alter": {
+      "object": {
+        "table": "Link_MetricRollsUpToGroupKPI",
+        "partition": "Link_MetricRollsUpToGroupKPI"
+      },
+      "partition": {
+        "name": "Link_MetricRollsUpToGroupKPI",
+        "mode": "directLake",
+        "source": {
+          "type": "entity",
+          "entityName": "semantic_metric_kpi_links",
+          "schemaName": "dbo",
+          "expressionSource": "DB_LH_Group_SAP"
+        },
+        "annotations": [
+          {
+            "name": "ONT_WorkspaceId",
+            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+          },
+          {
+            "name": "ONT_ItemId",
+            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+          },
+          {
+            "name": "ONT_ItemKind",
+            "value": "Lakehouse"
+          },
+          {
+            "name": "ONT_ItemName",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_WorkspaceName",
+            "value": "Trading"
+          },
+          {
+            "name": "ONT_SqlEndpoint",
+            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+          },
+          {
+            "name": "ONT_SqlDatabase",
+            "value": "LH_Group_SAP"
+          },
+          {
+            "name": "ONT_PinnedAtUtc",
+            "value": "2026-10-23T09:57:03.432Z"
+          }
+        ]
+      }
+    }
+  }
+]

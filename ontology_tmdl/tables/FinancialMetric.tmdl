@@ -1,0 +1,85 @@
+table FinancialMetric
+	lineageTag: c21e80ca-e62b-5d6c-be16-98187bb4ee7c
+
+	column metric_id
+		dataType: string
+		sourceColumn: metric_id
+		lineageTag: 3f3b28a1-8af0-5ebf-a2b9-da5155c55584
+
+	column metric_date
+		dataType: dateTime
+		sourceColumn: metric_date
+		lineageTag: dd20f0d1-1967-5081-bdee-52535659d028
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: 096fdcf2-7bc6-56d2-960b-b97373a9d754
+
+	column metric_code
+		dataType: string
+		sourceColumn: metric_code
+		lineageTag: 966c37e1-3d91-5f87-b744-4b74142bf17b
+
+	column amount_local
+		dataType: double
+		sourceColumn: amount_local
+		lineageTag: 14db3545-26f8-5a46-bc29-1abc780a9a6a
+
+	column currency_code
+		dataType: string
+		sourceColumn: currency_code
+		lineageTag: 4fb00213-3d15-5f6c-9f75-87a0887f5ea6
+
+	column fx_rate_to_group
+		dataType: double
+		sourceColumn: fx_rate_to_group
+		lineageTag: b6df633a-edbb-5437-95e7-218c07e040f4
+
+	column amount_group
+		dataType: double
+		sourceColumn: amount_group
+		lineageTag: d82c415c-0569-5355-8d26-64c811fdbd1f
+
+	column management_contribution_jpy
+		dataType: double
+		sourceColumn: management_contribution_jpy
+		lineageTag: c9084963-b19a-5c7b-a859-5ffe651b417a
+
+	column scenario_tag
+		dataType: string
+		sourceColumn: scenario_tag
+		lineageTag: a21fd1a9-cb75-5dec-ab63-07c0265ec739
+
+	column interco_flag
+		dataType: boolean
+		sourceColumn: interco_flag
+		lineageTag: 6ab8d2c0-a29d-5438-a3a0-8186222e03a3
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: 08ddd1e7-f6e3-5452-8c56-d0eaeaceeb4b
+
+	partition FinancialMetric = entity
+		mode: directLake
+		source
+			entityName: semantic_financial_metrics_daily
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

@@ -1,0 +1,125 @@
+table FinancialEffect
+	lineageTag: a865f9f7-929b-5e6a-8a28-1aa2225953fc
+
+	column effect_id
+		dataType: string
+		sourceColumn: effect_id
+		lineageTag: c1c032bc-fa2c-517e-9d32-9f58dc7e7c39
+
+	column bridge_id
+		dataType: string
+		sourceColumn: bridge_id
+		lineageTag: f1775414-e48e-5b6e-b285-eea8c75c85ad
+
+	column event_id
+		dataType: string
+		sourceColumn: event_id
+		lineageTag: 0d057d48-e22f-5eff-abc7-0a13bd5e95cf
+
+	column evidence_id
+		dataType: string
+		sourceColumn: evidence_id
+		lineageTag: cb3810fc-cf9a-5c48-9910-3423176cb089
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: 78402994-9f91-56c1-9a7f-90734ece8faf
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: ff3456be-c640-5e73-88bb-a5748e168d38
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: dab21e7d-2f14-5953-a773-037035f1af7f
+
+	column effect_date
+		dataType: dateTime
+		sourceColumn: effect_date
+		lineageTag: cdfb1969-aeeb-5b8f-9d04-3a5c8b62e69c
+
+	column delta_revenue_local
+		dataType: double
+		sourceColumn: delta_revenue_local
+		lineageTag: 6a51733d-800a-5376-a692-b7c2d7ac7418
+
+	column delta_cost_local
+		dataType: double
+		sourceColumn: delta_cost_local
+		lineageTag: 1a8bf5be-afcd-5eb4-9fd1-8e0dd38102ed
+
+	column delta_ebitda_local
+		dataType: double
+		sourceColumn: delta_ebitda_local
+		lineageTag: 65b5156c-dd6d-5b4d-90c2-efc590c24ecf
+
+	column delta_cf_local
+		dataType: double
+		sourceColumn: delta_cf_local
+		lineageTag: f5d14110-e865-5248-a726-0068b287a719
+
+	column currency_code
+		dataType: string
+		sourceColumn: currency_code
+		lineageTag: 55e80bec-9fc1-5216-ad3b-917bcc321816
+
+	column fx_rate_to_group
+		dataType: double
+		sourceColumn: fx_rate_to_group
+		lineageTag: a95314f7-8b7d-5229-b1a7-6ffcead8175b
+
+	column ownership_ratio
+		dataType: double
+		sourceColumn: ownership_ratio
+		lineageTag: 6710cd2b-4ed4-5bb5-9feb-1c10c393fbc1
+
+	column delta_ebitda_full_jpy
+		dataType: double
+		sourceColumn: delta_ebitda_full_jpy
+		lineageTag: 32f853a9-841e-53ab-b50b-862fb7fab023
+
+	column delta_management_jpy
+		dataType: double
+		sourceColumn: delta_management_jpy
+		lineageTag: ad4a9cca-fe8b-56b8-816d-e2d15a2c83b8
+
+	column delta_cf_full_jpy
+		dataType: double
+		sourceColumn: delta_cf_full_jpy
+		lineageTag: af0a4e51-aa8d-5f25-9e52-77eaf7650ada
+
+	column attribution_method
+		dataType: string
+		sourceColumn: attribution_method
+		lineageTag: be5268e3-463c-50e7-96a8-e4deded49f35
+
+	column source_lakehouse
+		dataType: string
+		sourceColumn: source_lakehouse
+		lineageTag: e26ea7bc-12fd-5b3d-8968-16df23dd6fc1
+
+	partition FinancialEffect = entity
+		mode: directLake
+		source
+			entityName: semantic_event_financial_effects
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

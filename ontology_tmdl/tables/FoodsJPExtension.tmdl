@@ -1,0 +1,60 @@
+table FoodsJPExtension
+	lineageTag: d8446364-971b-5bcc-8b81-865b2944ddab
+
+	column extension_id
+		dataType: string
+		sourceColumn: extension_id
+		lineageTag: bb90a468-292b-5724-a8fe-4687de237614
+
+	column activity_id
+		dataType: string
+		sourceColumn: activity_id
+		lineageTag: df60182c-51b2-5eaa-b9cc-c749874883d4
+
+	column entity_id
+		dataType: string
+		sourceColumn: entity_id
+		lineageTag: e094c423-632c-502c-a549-100dcf78ace6
+
+	column contract_id
+		dataType: string
+		sourceColumn: contract_id
+		lineageTag: c23ba98d-1dd1-5546-b155-fa7de080bc32
+
+	column observation_date
+		dataType: dateTime
+		sourceColumn: observation_date
+		lineageTag: d3f8b1a0-357e-5f3f-9932-2cec9cdc432c
+
+	column temperature_c
+		dataType: double
+		sourceColumn: temperature_c
+		lineageTag: 3c5a1acd-385c-5766-a325-c6ed41d25f73
+
+	column spoilage_percent
+		dataType: double
+		sourceColumn: spoilage_percent
+		lineageTag: 91477e63-4359-59f0-9df4-e565249e166b
+
+	partition FoodsJPExtension = entity
+		mode: directLake
+		source
+			entityName: raw_foods_jp_extension
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

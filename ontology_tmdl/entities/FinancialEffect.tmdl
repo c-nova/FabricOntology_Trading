@@ -1,0 +1,124 @@
+entity FinancialEffect
+	lineageTag: 42412986-c1f7-5084-9e23-75349a748371
+	backingTable: FinancialEffect
+	keyProperty: effect_id
+
+	property effect_id
+		dataType: string
+		lineageTag: 52586889-8f22-5b89-a64e-08e5f20b2b1e
+		backingConfiguration
+			valueColumn: FinancialEffect.effect_id
+
+	property bridge_id
+		dataType: string
+		lineageTag: 63b07c29-f2b4-5f69-ac48-05fe20547f30
+		backingConfiguration
+			valueColumn: FinancialEffect.bridge_id
+
+	property event_id
+		dataType: string
+		lineageTag: cc62916e-e857-5efa-bb94-125f53fb5ce7
+		backingConfiguration
+			valueColumn: FinancialEffect.event_id
+
+	property evidence_id
+		dataType: string
+		lineageTag: 0643726e-11ee-5d84-acf7-866043b65157
+		backingConfiguration
+			valueColumn: FinancialEffect.evidence_id
+
+	property activity_id
+		dataType: string
+		lineageTag: fe364c28-e8ce-507b-b502-7a2bdb70b903
+		backingConfiguration
+			valueColumn: FinancialEffect.activity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 6056fa75-714c-5d62-9114-93faf4cb81d7
+		backingConfiguration
+			valueColumn: FinancialEffect.contract_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 35f0ab1f-5770-536a-a663-addd7fdef5a7
+		backingConfiguration
+			valueColumn: FinancialEffect.entity_id
+
+	property effect_date
+		dataType: dateTime
+		lineageTag: 818665bc-63ec-52f8-852b-a2bd29bd4eb9
+		backingConfiguration
+			valueColumn: FinancialEffect.effect_date
+
+	property delta_revenue_local
+		dataType: double
+		lineageTag: 00cde3bc-edbc-5570-8abd-0e4d5513ead2
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_revenue_local
+
+	property delta_cost_local
+		dataType: double
+		lineageTag: ed5a6290-1d26-513e-943b-3f4e0c4f0b68
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_cost_local
+
+	property delta_ebitda_local
+		dataType: double
+		lineageTag: e1110d9b-4372-5dad-949a-c6fdae2e9a8a
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_ebitda_local
+
+	property delta_cf_local
+		dataType: double
+		lineageTag: 0795c28e-3728-5d83-bbb8-a766b9634cf0
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_cf_local
+
+	property currency_code
+		dataType: string
+		lineageTag: fcaa4861-e214-5250-b0f0-d3912319e3a5
+		backingConfiguration
+			valueColumn: FinancialEffect.currency_code
+
+	property fx_rate_to_group
+		dataType: double
+		lineageTag: 5a1ce9a8-21ea-5d6a-a529-fd4964fc998e
+		backingConfiguration
+			valueColumn: FinancialEffect.fx_rate_to_group
+
+	property ownership_ratio
+		dataType: double
+		lineageTag: 90c272a6-f79b-598b-9615-2bba2deaf031
+		backingConfiguration
+			valueColumn: FinancialEffect.ownership_ratio
+
+	property delta_ebitda_full_jpy
+		dataType: double
+		lineageTag: bd5fdcd9-e26b-598e-96ab-dc4bcdc324c8
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_ebitda_full_jpy
+
+	property delta_management_jpy
+		dataType: double
+		lineageTag: 2bbf429d-efc7-58e8-922f-cab2f199f185
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_management_jpy
+
+	property delta_cf_full_jpy
+		dataType: double
+		lineageTag: 2e711a82-008e-5676-85b7-5b86c789a78f
+		backingConfiguration
+			valueColumn: FinancialEffect.delta_cf_full_jpy
+
+	property attribution_method
+		dataType: string
+		lineageTag: 9593dda0-3b5f-5dad-bfc2-ff819870b0a5
+		backingConfiguration
+			valueColumn: FinancialEffect.attribution_method
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: a69a3925-b4c0-5d4f-9d11-103762b67be6
+		backingConfiguration
+			valueColumn: FinancialEffect.source_lakehouse

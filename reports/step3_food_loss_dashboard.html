@@ -1,0 +1,77 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><body>
+<div class="trading-step3">
+<style>
+.trading-step3{font-family:"Yu Gothic","Meiryo","Noto Sans JP",sans-serif;color:#26364d;max-width:1320px;line-height:1.65}
+.trading-step3 .hero{background:linear-gradient(110deg,#14233f,#274777);color:white;padding:26px 30px;border-radius:18px;margin-bottom:18px}
+.trading-step3 h2{font-size:25px;margin:4px 0 8px;color:inherit}
+.trading-step3 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.04em}
+.trading-step3 .cards{display:flex;flex-wrap:wrap;gap:14px;margin:16px 0}
+.trading-step3 .kcard{flex:1;min-width:240px;background:#f8fafc;border:1px solid #dfe6ef;border-radius:12px;padding:17px}
+.trading-step3 .kvalue{font-size:27px;font-weight:800;margin:7px 0}
+.trading-step3 .muted{font-size:12px;color:#67788e;margin-top:7px}
+.trading-step3 .note{padding:12px 16px;background:#edf5fb;border-left:4px solid #5397ba;border-radius:6px;margin:14px 0}
+.trading-step3 svg{width:100%;height:auto;font-family:"Yu Gothic","Meiryo","Noto Sans JP",sans-serif}
+.trading-step3 table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 20px}
+.trading-step3 td,.trading-step3 th{padding:9px 12px;border-bottom:1px solid #e1e8f1;text-align:left;overflow-wrap:anywhere}
+.trading-step3 th{background:#edf2f8}
+.trading-step3 code{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+.trading-step3 .legend{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;margin:8px 0 15px}
+.trading-step3 summary{cursor:pointer;font-weight:700;padding:10px 0}
+</style>
+<div class="hero"><div class="eyebrow">TRADING DEMO · STEP 03 · LIVE GQL → INSTANCE PATH → DAG</div>
+<h2>食品の損失は、どの根拠・活動から来たのか</h2>
+DAで「損失の大きさ」を確認した後、ここで同じOntology由来の実体グラフをたどります。<br>
+<span style="font-size:13px;color:#c5d8f1">FOD_NEG / 2025-10-01〜2026-09-30 / JPY / 読取専用</span></div>
+<div class="cards"><div class="kcard" style="border-top:4px solid #c43e57"><div class="eyebrow">イベント全体 / 84効果を一度だけ合計</div><div class="kvalue" style="color:#c43e57">-1.1446 億円</div><strong>-114,461,186.25 円</strong><div class="muted">持分管理寄与 -87,630,294.31 円</div></div><div class="kcard" style="border-top:4px solid #6d55c6"><div class="eyebrow">代表する1活動・1効果の差分</div><div class="kvalue" style="color:#6d55c6">-0.0300 億円</div><strong>-3,003,488.94 円</strong><div class="muted">所有比率 51% / 2026-02-11</div></div><div class="kcard" style="border-top:4px solid #087f8c"><div class="eyebrow">同日の全社EBITDA / actual総額</div><div class="kvalue" style="color:#087f8c">+1.1307 億円</div><strong>113,069,201.90 円</strong><div class="muted">損失差分ではなく、全8社の日次総額</div></div></div>
+<div class="note"><b>実際に照会したもの：</b>OntologyからマテリアライズされたGraphModelへ
+GQLを実行し、84個の効果と実在の経路を取得。図の関係線はSQL JOINから作っていません。
+<br><b>金額は別に照合：</b>元のDelta DECIMAL値をSparkで読み取り、effect_idごとに一度だけ合計。
+Graphの浮動小数値とも全84効果で小数点以下2桁まで一致しました。</div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 530" role="img" aria-label="食品損失の実Ontology由来グラフ経路、8ノードのDAG"><defs><marker id="arr-association" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#7c8b9f"/></marker><marker id="arr-attribution" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#8b5cf6"/></marker><marker id="arr-aggregation" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#0d9488"/></marker></defs><rect width="1190" height="530" rx="18" fill="#f6f8fc"/><text x="26" y="35" font-size="17" font-weight="700" fill="#334155">実体の関係をたどる：金額の大きさ → 根拠・活動・契約 → 指標・KPI</text><path d="M245 142 L322 142" fill="none" stroke="#7c8b9f" stroke-width="2.6" stroke-dasharray="5 4" marker-end="url(#arr-association)"><title>EvidenceSupportsEvent</title></path><text x="285.0" y="120" text-anchor="middle" fill="#7c8b9f" font-size="13" font-weight="600">根拠として関連</text><path d="M550 142 L627 142" fill="none" stroke="#8b5cf6" stroke-width="2.6"  marker-end="url(#arr-attribution)"><title>EventHasEffect</title></path><text x="590.0" y="120" text-anchor="middle" fill="#8b5cf6" font-size="13" font-weight="600">設計上の損失配賦</text><path d="M855 142 L932 142" fill="none" stroke="#0d9488" stroke-width="2.6"  marker-end="url(#arr-aggregation)"><title>EffectRealizedInMetric</title></path><text x="895.0" y="120" text-anchor="middle" fill="#0d9488" font-size="13" font-weight="600">日次指標に対応</text><path d="M1047 200 L1047 368" fill="none" stroke="#0d9488" stroke-width="2.6"  marker-end="url(#arr-aggregation)"><title>MetricRollsUpToGroupKPI</title></path><text x="1047" y="280" text-anchor="middle" fill="#0d9488" font-size="13" font-weight="600">全社の集約先</text><path d="M742 200 C742 290 437 280 437 368" fill="none" stroke="#7c8b9f" stroke-width="2.6" stroke-dasharray="5 4" marker-end="url(#arr-association)"><title>EffectOnActivity</title></path><text x="570" y="278" text-anchor="middle" fill="#7c8b9f" font-size="13" font-weight="600">影響対象の活動</text><path d="M245 427 L322 427" fill="none" stroke="#7c8b9f" stroke-width="2.6" stroke-dasharray="5 4" marker-end="url(#arr-association)"><title>FoodsJPExtensionForActivity</title></path><text x="285.0" y="405" text-anchor="middle" fill="#7c8b9f" font-size="13" font-weight="600">活動の観測</text><path d="M550 427 L627 427" fill="none" stroke="#7c8b9f" stroke-width="2.6" stroke-dasharray="5 4" marker-end="url(#arr-association)"><title>ActivityUnderContract</title></path><text x="590.0" y="405" text-anchor="middle" fill="#7c8b9f" font-size="13" font-weight="600">契約に属する</text><g><title>SUB_FOD_JP_01_FOD_NEG_0</title><rect x="22" y="89" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="20" y="85" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="20" y="101" width="4" height="82" rx="2" fill="#64748b"/><text x="36" y="114" fill="#64748b" font-size="16" font-weight="700">根拠記録</text><text x="36" y="145" fill="#172b4d" font-size="17" font-weight="700">架空の業務ログ</text><text x="36" y="175" fill="#64748b" font-size="12.5">SIM:// 原記録を下表で確認</text></g><g><title>FOD_NEG</title><rect x="327" y="89" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="325" y="85" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="325" y="101" width="4" height="82" rx="2" fill="#8b5cf6"/><text x="341" y="114" fill="#8b5cf6" font-size="16" font-weight="700">食品の損失イベント</text><text x="341" y="145" fill="#172b4d" font-size="17" font-weight="700">FOD_NEG</text><text x="341" y="175" fill="#64748b" font-size="12.5">コールドチェーン損耗（架空）</text></g><g><title>SUB_FOD_JP_01_A133_0_FOD_NEG_F</title><rect x="632" y="89" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="630" y="85" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="630" y="101" width="4" height="82" rx="2" fill="#dc4960"/><text x="646" y="114" fill="#dc4960" font-size="16" font-weight="700">代表1効果の配賦</text><text x="646" y="145" fill="#172b4d" font-size="17" font-weight="700">-3,003,488.94 円</text><text x="646" y="175" fill="#64748b" font-size="12.5">EBITDA差分 / 84効果のうち1件</text></g><g><title>SUB_FOD_JP_01_2026-02-11_ebitda_actual</title><rect x="937" y="89" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="935" y="85" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="935" y="101" width="4" height="82" rx="2" fill="#0d9488"/><text x="951" y="114" fill="#0d9488" font-size="16" font-weight="700">子会社の日次EBITDA</text><text x="951" y="145" fill="#172b4d" font-size="17" font-weight="700">3,711,231.19 円</text><text x="951" y="175" fill="#64748b" font-size="12.5">2026-02-11 / actual総額</text></g><g><title>SUB_FOD_JP_01_A133_0_X</title><rect x="22" y="374" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="20" y="370" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="20" y="386" width="4" height="82" rx="2" fill="#64748b"/><text x="36" y="399" fill="#64748b" font-size="16" font-weight="700">食品の観測記録</text><text x="36" y="430" fill="#172b4d" font-size="17" font-weight="700">-18 °C</text><text x="36" y="460" fill="#64748b" font-size="12.5">廃棄率 3.5%（記録値）</text></g><g><title>SUB_FOD_JP_01_A133_0</title><rect x="327" y="374" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="325" y="370" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="325" y="386" width="4" height="82" rx="2" fill="#64748b"/><text x="341" y="399" fill="#64748b" font-size="16" font-weight="700">対象となる販売活動</text><text x="341" y="430" fill="#172b4d" font-size="17" font-weight="700">食品の外部販売 / 1活動</text><text x="341" y="460" fill="#64748b" font-size="12.5">2026-02-11</text></g><g><title>SUB_FOD_JP_01_C04</title><rect x="632" y="374" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="630" y="370" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="630" y="386" width="4" height="82" rx="2" fill="#64748b"/><text x="646" y="399" fill="#64748b" font-size="16" font-weight="700">活動が属する契約</text><text x="646" y="430" fill="#172b4d" font-size="17" font-weight="700">製粉用小麦</text><text x="646" y="460" fill="#64748b" font-size="12.5">milling_wheat</text></g><g><title>2026-02-11_EBITDA_FULL_CONSOLIDATED_actual</title><rect x="937" y="374" width="225" height="115" rx="14" fill="#e5eaf3"/><rect x="935" y="370" width="225" height="115" rx="14" fill="white" stroke="#dbe2ef"/><rect x="935" y="386" width="4" height="82" rx="2" fill="#0d9488"/><text x="951" y="399" fill="#0d9488" font-size="16" font-weight="700">全社の日次EBITDA</text><text x="951" y="430" fill="#172b4d" font-size="17" font-weight="700">113,069,201.90 円</text><text x="951" y="460" fill="#64748b" font-size="12.5">2026-02-11 / 全8社actual総額</text></g></svg>
+<div class="legend"><span style="color:#8b5cf6">━ 設計上の影響配賦</span>
+<span style="color:#7c8b9f">┄ 記録・対象・契約の関連</span>
+<span style="color:#0d9488">━ 指標への対応・集約先</span></div>
+<div class="note"><b>読み方：</b>これは1活動を代表例にした、取得関係の非循環な部分図です。
+1効果の差分、子会社の日次総額、全社の日次総額は別粒度です。図の金額同士を足し算しません。
+イベント全体の損失は84効果の重複なし合計です。</div>
+<h3>根拠記録（原文）</h3>
+<p>SYNTHETIC operations_log: SYNTHETIC: cold chain spoilage incident; designed causal mechanism=cost.<br><code>SIM://SUB_FOD_JP_01/FOD_NEG/operations_log</code></p>
+<p class="muted">温度 -18.0°C・廃棄率 3.5% は架空の観測値です。
+記録のない許容温度・閾値超過・実世界の腐敗原因は推定しません。商品コードも原記録のままです。</p>
+<details open><summary>実体のIDとデータリネージ（長いIDは図から分離）</summary>
+<table><thead><tr><th>実体</th><th>GQLで得たID</th></tr></thead><tbody><tr><td>根拠記録</td><td><code>SUB_FOD_JP_01_FOD_NEG_0</code></td></tr><tr><td>食品の損失イベント</td><td><code>FOD_NEG</code></td></tr><tr><td>代表1効果の配賦</td><td><code>SUB_FOD_JP_01_A133_0_FOD_NEG_F</code></td></tr><tr><td>子会社の日次EBITDA</td><td><code>SUB_FOD_JP_01_2026-02-11_ebitda_actual</code></td></tr><tr><td>食品の観測記録</td><td><code>SUB_FOD_JP_01_A133_0_X</code></td></tr><tr><td>対象となる販売活動</td><td><code>SUB_FOD_JP_01_A133_0</code></td></tr><tr><td>活動が属する契約</td><td><code>SUB_FOD_JP_01_C04</code></td></tr><tr><td>全社の日次EBITDA</td><td><code>2026-02-11_EBITDA_FULL_CONSOLIDATED_actual</code></td></tr></tbody></table></details>
+<details><summary>照会した本物の関係名・GQL・接続先</summary>
+<table><thead><tr><th>向き</th><th>Graph関係型</th><th>意味</th></tr></thead><tbody><tr><td>根拠記録 → 食品の損失イベント</td><td><code>EvidenceSupportsEvent</code></td><td>根拠として関連</td></tr><tr><td>食品の損失イベント → 代表1効果の配賦</td><td><code>EventHasEffect</code></td><td>設計上の損失配賦</td></tr><tr><td>代表1効果の配賦 → 子会社の日次EBITDA</td><td><code>EffectRealizedInMetric</code></td><td>日次指標に対応</td></tr><tr><td>子会社の日次EBITDA → 全社の日次EBITDA</td><td><code>MetricRollsUpToGroupKPI</code></td><td>全社の集約先</td></tr><tr><td>代表1効果の配賦 → 対象となる販売活動</td><td><code>EffectOnActivity</code></td><td>影響対象の活動</td></tr><tr><td>食品の観測記録 → 対象となる販売活動</td><td><code>FoodsJPExtensionForActivity</code></td><td>活動の観測</td></tr><tr><td>対象となる販売活動 → 活動が属する契約</td><td><code>ActivityUnderContract</code></td><td>契約に属する</td></tr><tr><td>代表1効果 → 根拠記録</td><td><code>EffectExplainedByEvidence</code></td><td>取得済み・図では省略</td></tr><tr><td>代表1効果 → 契約</td><td><code>EffectOnContract</code></td><td>取得済み・図では省略</td></tr><tr><td>食品イベント → 対象活動</td><td><code>EventImpactsActivity</code></td><td>取得済み・図では省略</td></tr></tbody></table>
+<p>Ontology <code>71b8b726-4f82-491b-afcb-ab5c75510e5e</code><br>GraphModel <code>06a5ee19-a046-4ad5-9be3-1251c2378a68</code></p>
+<pre style="white-space:pre-wrap;font-size:12px">MATCH (e:RiskEvent)-[:EventHasEffect]-&gt;(f:FinancialEffect)
+      -[:EffectRealizedInMetric]-&gt;(m:FinancialMetric)
+      -[:MetricRollsUpToGroupKPI]-&gt;(k:GroupKPI),
+      (f)-[:EffectOnActivity]-&gt;(a:Activity)-[:ActivityUnderContract]-&gt;(c:Contract),
+      (f)-[:EffectOnContract]-&gt;(c),
+      (f)-[:EffectExplainedByEvidence]-&gt;(v:Evidence)-[:EvidenceSupportsEvent]-&gt;(e),
+      (e)-[:EventImpactsActivity]-&gt;(a)
+WHERE e.event_id=&#x27;FOD_NEG&#x27;
+  AND m.metric_code=&#x27;EBITDA&#x27; AND m.scenario_tag=&#x27;actual&#x27;
+  AND k.kpi_code=&#x27;EBITDA_FULL_CONSOLIDATED&#x27; AND k.scenario_tag=&#x27;actual&#x27;
+RETURN e.event_id AS event_id, e.narrative AS narrative,
+       e.is_synthetic AS event_is_synthetic, v.evidence_id AS evidence_id,
+       v.source_record AS source_record, v.excerpt AS excerpt,
+       v.is_synthetic AS evidence_is_synthetic,
+       a.activity_id AS activity_id, a.activity_type AS activity_type,
+       a.activity_date AS activity_date, a.entity_id AS entity_id,
+       c.contract_id AS contract_id, c.commodity AS commodity,
+       f.effect_id AS effect_id, f.effect_date AS effect_date,
+       f.delta_ebitda_full_jpy AS graph_effect_jpy,
+       f.delta_management_jpy AS graph_management_jpy,
+       m.metric_id AS metric_id, k.kpi_id AS kpi_id
+ORDER BY f.effect_id LIMIT 1000</pre>
+<pre style="white-space:pre-wrap;font-size:12px">MATCH (x:FoodsJPExtension)-[:FoodsJPExtensionForActivity]-&gt;(a:Activity)
+WHERE a.activity_id=&#x27;SUB_FOD_JP_01_A133_0&#x27;
+RETURN x.extension_id AS extension_id, x.temperature_c AS temperature_c,
+       x.spoilage_percent AS spoilage_percent, x.observation_date AS observation_date
+LIMIT 2</pre></details>
+<p class="muted">架空デモの設計上の配賦・根拠リンクであり、実世界の因果証明ではありません。
+持分管理寄与は法定連結EBITDAではありません。Graph APIはbetaです。</p>
+<p class="muted">保存済み実行結果 / GQL読取UTC: 2026-10-26T01:25:34.097979+00:00 /
+再実行すると現在のGraphを読み直します。認証・空結果・照合不一致時はエラーで停止します。</p></div>
+</body></html>

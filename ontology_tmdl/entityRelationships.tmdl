@@ -1,0 +1,320 @@
+entityRelationship EventImpactsActivity
+	lineageTag: 178efca1-bfb0-5c2e-952e-a9d49b22004f
+	label: EventImpactsActivity
+	fromEntity: RiskEvent
+	toEntity: Activity
+	backingConfiguration
+		type: table
+		table: Link_EventImpactsActivity
+		fromRelationship: R_EventImpactsActivity_A
+		toRelationship: R_EventImpactsActivity_B
+
+entityRelationship ActivityUnderContract
+	lineageTag: ebc9ee98-6343-5e98-9a2e-0f6a536427c8
+	label: ActivityUnderContract
+	fromEntity: Activity
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_ActivityUnderContract
+
+entityRelationship ShipmentForActivity
+	lineageTag: e8ab0e0a-450e-5f7a-9399-32f40643d67f
+	label: ShipmentForActivity
+	fromEntity: Shipment
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_ShipmentForActivity
+
+entityRelationship ShipmentUnderContract
+	lineageTag: bef986df-80a2-59cb-bb1b-7c27dbce2876
+	label: ShipmentUnderContract
+	fromEntity: Shipment
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_ShipmentUnderContract
+
+entityRelationship EvidenceSupportsEvent
+	lineageTag: fec07f5b-818a-5aef-80b6-38df5ab6a783
+	label: EvidenceSupportsEvent
+	fromEntity: Evidence
+	toEntity: RiskEvent
+	backingConfiguration
+		relationship: R_EvidenceSupportsEvent
+
+entityRelationship EventHasEffect
+	lineageTag: 3d04db9a-86a9-532c-9f42-07b9fed1412b
+	label: EventHasEffect
+	fromEntity: RiskEvent
+	toEntity: FinancialEffect
+	backingConfiguration
+		relationship: R_EventHasEffect
+
+entityRelationship EffectExplainedByEvidence
+	lineageTag: 4cddedde-658d-597b-aa07-dd5cbac38d4b
+	label: EffectExplainedByEvidence
+	fromEntity: FinancialEffect
+	toEntity: Evidence
+	backingConfiguration
+		relationship: R_EffectExplainedByEvidence
+
+entityRelationship EffectOnActivity
+	lineageTag: 4290ca2f-b548-5a05-b9b4-aaa4a2324a77
+	label: EffectOnActivity
+	fromEntity: FinancialEffect
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_EffectOnActivity
+
+entityRelationship EffectOnContract
+	lineageTag: fa88491c-9864-51c3-b492-5fc6a214060b
+	label: EffectOnContract
+	fromEntity: FinancialEffect
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_EffectOnContract
+
+entityRelationship ContractOwnedByCompany
+	lineageTag: 483bbae8-6647-51ef-b2de-a203b1225f1e
+	label: ContractOwnedByCompany
+	fromEntity: Contract
+	toEntity: Company
+	backingConfiguration
+		relationship: R_ContractOwnedByCompany
+
+entityRelationship ActivityOwnedByCompany
+	lineageTag: 0ec8017d-fab4-5f80-a9c6-205cece54fd1
+	label: ActivityOwnedByCompany
+	fromEntity: Activity
+	toEntity: Company
+	backingConfiguration
+		relationship: R_ActivityOwnedByCompany
+
+entityRelationship EffectOwnedByCompany
+	lineageTag: ac073675-18f5-5c46-81d3-dcdef35effbc
+	label: EffectOwnedByCompany
+	fromEntity: FinancialEffect
+	toEntity: Company
+	backingConfiguration
+		relationship: R_EffectOwnedByCompany
+
+entityRelationship MetricForCompany
+	lineageTag: b2599be1-d8c5-5bdd-a28f-9abf8e4c951d
+	label: MetricForCompany
+	fromEntity: FinancialMetric
+	toEntity: Company
+	backingConfiguration
+		relationship: R_MetricForCompany
+
+entityRelationship EffectRealizedInMetric
+	lineageTag: 1df16469-647b-56a9-b754-976461c6ab65
+	label: EffectRealizedInMetric
+	fromEntity: FinancialEffect
+	toEntity: FinancialMetric
+	backingConfiguration
+		type: table
+		table: Link_EffectRealizedInMetric
+		fromRelationship: R_EffectRealizedInMetric_A
+		toRelationship: R_EffectRealizedInMetric_B
+
+entityRelationship MetricRollsUpToGroupKPI
+	lineageTag: 00eac0f2-8162-5e73-bf27-cc7dfb057b75
+	label: MetricRollsUpToGroupKPI
+	fromEntity: FinancialMetric
+	toEntity: GroupKPI
+	backingConfiguration
+		type: table
+		table: Link_MetricRollsUpToGroupKPI
+		fromRelationship: R_MetricRollsUpToGroupKPI_A
+		toRelationship: R_MetricRollsUpToGroupKPI_B
+
+entityRelationship MetalsJPExtensionForActivity
+	lineageTag: 612c9e00-b143-5bcd-a567-0d14a4796391
+	label: MetalsJPExtensionForActivity
+	fromEntity: MetalsJPExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_MetalsJPExtensionForActivity
+
+entityRelationship MetalsJPExtensionForCompany
+	lineageTag: b39db583-a776-5811-a503-f7b5fcabce4d
+	label: MetalsJPExtensionForCompany
+	fromEntity: MetalsJPExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_MetalsJPExtensionForCompany
+
+entityRelationship MetalsJPExtensionForContract
+	lineageTag: 40be4ce3-1aab-56e8-8935-e06845dead9a
+	label: MetalsJPExtensionForContract
+	fromEntity: MetalsJPExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_MetalsJPExtensionForContract
+
+entityRelationship MetalsUSExtensionForActivity
+	lineageTag: 04495301-f8d9-5ebc-aec5-ac7bbaaab71e
+	label: MetalsUSExtensionForActivity
+	fromEntity: MetalsUSExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_MetalsUSExtensionForActivity
+
+entityRelationship MetalsUSExtensionForCompany
+	lineageTag: 82bd2080-5d75-5aad-af13-948210f4e994
+	label: MetalsUSExtensionForCompany
+	fromEntity: MetalsUSExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_MetalsUSExtensionForCompany
+
+entityRelationship MetalsUSExtensionForContract
+	lineageTag: aef02ac2-ea70-5f34-9bba-1cb011efe0e9
+	label: MetalsUSExtensionForContract
+	fromEntity: MetalsUSExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_MetalsUSExtensionForContract
+
+entityRelationship EnergyJPExtensionForActivity
+	lineageTag: 174da734-3ee6-5c78-a1cf-3954a09bf0f1
+	label: EnergyJPExtensionForActivity
+	fromEntity: EnergyJPExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_EnergyJPExtensionForActivity
+
+entityRelationship EnergyJPExtensionForCompany
+	lineageTag: 1ebe5fb4-7506-5e90-a6f1-14b870caf650
+	label: EnergyJPExtensionForCompany
+	fromEntity: EnergyJPExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_EnergyJPExtensionForCompany
+
+entityRelationship EnergyJPExtensionForContract
+	lineageTag: 4e64f007-2797-59a9-9d3f-5640ed6821aa
+	label: EnergyJPExtensionForContract
+	fromEntity: EnergyJPExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_EnergyJPExtensionForContract
+
+entityRelationship EnergyUSExtensionForActivity
+	lineageTag: a1cc2b70-84c6-555b-94f2-9c70fc76cb26
+	label: EnergyUSExtensionForActivity
+	fromEntity: EnergyUSExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_EnergyUSExtensionForActivity
+
+entityRelationship EnergyUSExtensionForCompany
+	lineageTag: 5c17e0b7-2c60-593e-8b33-a8d0acd6b45e
+	label: EnergyUSExtensionForCompany
+	fromEntity: EnergyUSExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_EnergyUSExtensionForCompany
+
+entityRelationship EnergyUSExtensionForContract
+	lineageTag: 1506cd8a-cdbc-5365-844a-258e1f6c428f
+	label: EnergyUSExtensionForContract
+	fromEntity: EnergyUSExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_EnergyUSExtensionForContract
+
+entityRelationship FoodsJPExtensionForActivity
+	lineageTag: d8831c7c-476a-564c-b36a-cc8b2825f4a5
+	label: FoodsJPExtensionForActivity
+	fromEntity: FoodsJPExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_FoodsJPExtensionForActivity
+
+entityRelationship FoodsJPExtensionForCompany
+	lineageTag: ddf684cb-19a1-59bd-b01a-57a1a27afbc2
+	label: FoodsJPExtensionForCompany
+	fromEntity: FoodsJPExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_FoodsJPExtensionForCompany
+
+entityRelationship FoodsJPExtensionForContract
+	lineageTag: 6d947aea-e6a5-5415-bfab-92a2991d2936
+	label: FoodsJPExtensionForContract
+	fromEntity: FoodsJPExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_FoodsJPExtensionForContract
+
+entityRelationship FoodsUSExtensionForActivity
+	lineageTag: d6dc6ed4-7f0c-513f-a054-bdc4048d1f06
+	label: FoodsUSExtensionForActivity
+	fromEntity: FoodsUSExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_FoodsUSExtensionForActivity
+
+entityRelationship FoodsUSExtensionForCompany
+	lineageTag: 0a455349-fd77-5a20-80df-637a0204ab82
+	label: FoodsUSExtensionForCompany
+	fromEntity: FoodsUSExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_FoodsUSExtensionForCompany
+
+entityRelationship FoodsUSExtensionForContract
+	lineageTag: 94e8cbef-79f9-56b4-af73-7763a43bd5ac
+	label: FoodsUSExtensionForContract
+	fromEntity: FoodsUSExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_FoodsUSExtensionForContract
+
+entityRelationship FinanceJPExtensionForActivity
+	lineageTag: 587e559a-f8b9-5857-9f5f-2384c024ac4b
+	label: FinanceJPExtensionForActivity
+	fromEntity: FinanceJPExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_FinanceJPExtensionForActivity
+
+entityRelationship FinanceJPExtensionForCompany
+	lineageTag: 8f13ba47-b3fd-5044-ab73-b5145e2af2fe
+	label: FinanceJPExtensionForCompany
+	fromEntity: FinanceJPExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_FinanceJPExtensionForCompany
+
+entityRelationship FinanceJPExtensionForContract
+	lineageTag: 01c9d5e1-3e0a-5a8c-82f1-118b71614528
+	label: FinanceJPExtensionForContract
+	fromEntity: FinanceJPExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_FinanceJPExtensionForContract
+
+entityRelationship FinanceUSExtensionForActivity
+	lineageTag: 5bfd9833-0e2d-57ef-93a6-58e98be69467
+	label: FinanceUSExtensionForActivity
+	fromEntity: FinanceUSExtension
+	toEntity: Activity
+	backingConfiguration
+		relationship: R_FinanceUSExtensionForActivity
+
+entityRelationship FinanceUSExtensionForCompany
+	lineageTag: a7a1bf5f-1e55-513b-87f2-d0bd0b3886cc
+	label: FinanceUSExtensionForCompany
+	fromEntity: FinanceUSExtension
+	toEntity: Company
+	backingConfiguration
+		relationship: R_FinanceUSExtensionForCompany
+
+entityRelationship FinanceUSExtensionForContract
+	lineageTag: 17ebb6ed-5a3d-5028-8911-8e15530b9b54
+	label: FinanceUSExtensionForContract
+	fromEntity: FinanceUSExtension
+	toEntity: Contract
+	backingConfiguration
+		relationship: R_FinanceUSExtensionForContract

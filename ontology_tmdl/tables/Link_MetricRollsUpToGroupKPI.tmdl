@@ -1,0 +1,35 @@
+table Link_MetricRollsUpToGroupKPI
+	lineageTag: 3f9090b0-8946-503b-a089-9e057d91235a
+
+	column metric_id
+		dataType: string
+		sourceColumn: metric_id
+		lineageTag: ad705a42-9305-58e4-9f7d-4c41a6f1c838
+
+	column kpi_id
+		dataType: string
+		sourceColumn: kpi_id
+		lineageTag: 9e5a65ef-2e9e-5334-a710-41fedf29fcc5
+
+	partition Link_MetricRollsUpToGroupKPI = entity
+		mode: directLake
+		source
+			entityName: semantic_metric_kpi_links
+			schemaName: dbo
+			expressionSource: DB_LH_Group_SAP
+
+		annotation ONT_WorkspaceId = fb31bf6e-8199-4559-b1ce-541d04d20f04
+
+		annotation ONT_ItemId = 48b1c2cc-3591-472a-b647-e186ccb28c6c
+
+		annotation ONT_ItemKind = Lakehouse
+
+		annotation ONT_ItemName = LH_Group_SAP
+
+		annotation ONT_WorkspaceName = Trading
+
+		annotation ONT_SqlEndpoint = jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com
+
+		annotation ONT_SqlDatabase = LH_Group_SAP
+
+		annotation ONT_PinnedAtUtc = 2026-10-23T09:57:03.432Z

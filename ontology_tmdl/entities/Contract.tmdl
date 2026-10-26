@@ -1,0 +1,64 @@
+entity Contract
+	lineageTag: 2d6e75d5-fb78-52fe-8e90-7af08c8d3ded
+	backingTable: Contract
+	keyProperty: contract_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 47c7db84-aaa7-5d72-b675-f32b582bd2ef
+		backingConfiguration
+			valueColumn: Contract.contract_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 3398f047-2f82-5604-8313-ae7a7de04d4f
+		backingConfiguration
+			valueColumn: Contract.entity_id
+
+	property commodity
+		dataType: string
+		lineageTag: da457202-79ef-526c-9c58-f4cf540c5d4f
+		backingConfiguration
+			valueColumn: Contract.commodity
+
+	property contract_type
+		dataType: string
+		lineageTag: 3490cf08-1f04-582d-b4c0-83e568364d56
+		backingConfiguration
+			valueColumn: Contract.contract_type
+
+	property strike_price
+		dataType: double
+		lineageTag: 0506d400-1f4a-513f-a3f7-b4316f8a6eee
+		backingConfiguration
+			valueColumn: Contract.strike_price
+
+	property price_index
+		dataType: string
+		lineageTag: 495feaad-d8fe-57bc-ab6b-542000f013ce
+		backingConfiguration
+			valueColumn: Contract.price_index
+
+	property start_date
+		dataType: dateTime
+		lineageTag: 7baaa3bb-63b1-5f81-83c4-5cd4facffa6f
+		backingConfiguration
+			valueColumn: Contract.start_date
+
+	property end_date
+		dataType: dateTime
+		lineageTag: 18c81e14-eb3a-5ea4-87bb-48519b3c8556
+		backingConfiguration
+			valueColumn: Contract.end_date
+
+	property currency_code
+		dataType: string
+		lineageTag: 88eda528-7b53-5709-b6dd-41a1821fa081
+		backingConfiguration
+			valueColumn: Contract.currency_code
+
+	property source_lakehouse
+		dataType: string
+		lineageTag: 38839cee-b224-5779-a006-74c60847518a
+		backingConfiguration
+			valueColumn: Contract.source_lakehouse

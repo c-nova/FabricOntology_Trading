@@ -1,0 +1,46 @@
+entity MetalsUSExtension
+	lineageTag: 028a2ff9-f59b-54ee-853a-51af9825e97f
+	backingTable: MetalsUSExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: 49f391c4-e2fe-58e7-a0be-a6025f30cb36
+		backingConfiguration
+			valueColumn: MetalsUSExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: c95bbf40-581d-5e08-bda7-d85dcc2059b9
+		backingConfiguration
+			valueColumn: MetalsUSExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: 3b945eda-c915-5566-aaa7-d70773cb8c68
+		backingConfiguration
+			valueColumn: MetalsUSExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 2ad77b2e-a179-514c-9ece-10430464a1c7
+		backingConfiguration
+			valueColumn: MetalsUSExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: a63c2917-3016-521c-a9d1-224a9e578f22
+		backingConfiguration
+			valueColumn: MetalsUSExtension.observation_date
+
+	property purity_percent
+		dataType: double
+		lineageTag: 6d6d9027-be80-506e-b139-897bb28228b6
+		backingConfiguration
+			valueColumn: MetalsUSExtension.purity_percent
+
+	property smelter_utilization
+		dataType: double
+		lineageTag: 85508816-69f4-527c-9471-65d23d8e2e4f
+		backingConfiguration
+			valueColumn: MetalsUSExtension.smelter_utilization

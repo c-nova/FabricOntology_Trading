@@ -1,0 +1,46 @@
+entity FoodsJPExtension
+	lineageTag: cb33166b-7122-5c46-aaa8-01048432e653
+	backingTable: FoodsJPExtension
+	keyProperty: extension_id
+
+	property extension_id
+		dataType: string
+		lineageTag: 0858187a-0cd7-5c12-9f3c-b55a6d213f3e
+		backingConfiguration
+			valueColumn: FoodsJPExtension.extension_id
+
+	property activity_id
+		dataType: string
+		lineageTag: a6cfe758-1000-59ee-bc1a-e1eb10633d45
+		backingConfiguration
+			valueColumn: FoodsJPExtension.activity_id
+
+	property entity_id
+		dataType: string
+		lineageTag: d8d68fdb-8cde-553a-8fd8-1467b3fe26a0
+		backingConfiguration
+			valueColumn: FoodsJPExtension.entity_id
+
+	property contract_id
+		dataType: string
+		lineageTag: 3259207e-0df6-50c5-8d41-ae855cb5ab0f
+		backingConfiguration
+			valueColumn: FoodsJPExtension.contract_id
+
+	property observation_date
+		dataType: dateTime
+		lineageTag: dbde8b08-446e-57e1-be03-7384c71ada77
+		backingConfiguration
+			valueColumn: FoodsJPExtension.observation_date
+
+	property temperature_c
+		dataType: double
+		lineageTag: b79267cd-94ee-56a9-8247-631766649a7e
+		backingConfiguration
+			valueColumn: FoodsJPExtension.temperature_c
+
+	property spoilage_percent
+		dataType: double
+		lineageTag: d1e1cb45-0325-5c61-92ce-2482294e315c
+		backingConfiguration
+			valueColumn: FoodsJPExtension.spoilage_percent
