@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-26",
+  "target": "Published TradingDA_Multisector (runtime: preview). Chat cleared before the run; one run per question in the same conversation.",
+  "ground_truth": "data/demo_dataset.json (full-consolidated EBITDA, 億円): FY actual 447.57 / baseline 448.60; CROSS_NEG -6.80, CROSS_POS +5.84; finance actual 85.86 / baseline 86.10; US actual 232.88; FOD_NEG -1.1446 over 6 contracts.",
+  "casual_questions": [
+    {
+      "id": "A",
+      "question": "今期のEBITDAって、予算に対してどうだった？",
+      "verdict": "OK",
+      "seconds": 37,
+      "note": "期間を2025-10-01〜2026-09-30と明記。実績447億5,740万円、baseline 448億6,032万円、差-1億292万円（-0.2294%）。全額連結の定義と注意書きつき"
+    },
+    {
+      "id": "A2",
+      "question": "月ごとの推移をグラフで見せて",
+      "verdict": "OK（グラフの軸表記に課題）",
+      "seconds": 35,
+      "note": "12か月×actual/baselineの24行。縦軸が3B〜4.2Bの表記で、億円ではない"
+    },
+    {
+      "id": "B",
+      "question": "一番足を引っ張ったイベントは？",
+      "verdict": "OK",
+      "seconds": 29,
+      "note": "CROSS_NEG -6億8,004万円、336件。横断イベントを落とさず評価"
+    },
+    {
+      "id": "C",
+      "question": "逆に、一番プラスになったのは？",
+      "verdict": "OK",
+      "seconds": 24,
+      "note": "CROSS_POS +5億8,444万円、336件"
+    },
+    {
+      "id": "D",
+      "question": "食品の損失は、どの契約に響いたの？",
+      "verdict": "NG",
+      "seconds": 34,
+      "note": "FOD_NEGに結び付けず、食品の実績-基準の差を契約別に集計。米国の契約はUSD建てのまま。期待は6契約、各-0.165〜-0.206億円、合計-1.1446億円"
+    },
+    {
+      "id": "E",
+      "question": "金融の子会社は今期どうだった？",
+      "verdict": "OK",
+      "seconds": 25,
+      "note": "JP 41.25/41.37億円、US 44.61/44.73億円（合計85.86/86.10）。持分管理寄与とCFも併記"
+    },
+    {
+      "id": "F",
+      "question": "アメリカの会社だけだと、EBITDAはいくら？",
+      "verdict": "OK",
+      "seconds": 18,
+      "note": "全額連結232億8,821万円、持分管理寄与140億9,756万円"
+    },
+    {
+      "id": "G",
+      "question": "いま手を打つべき契約ってどれ？",
+      "verdict": "NG",
+      "seconds": 32,
+      "note": "「いま」を指示文の「直近30日」（2026-09-01〜09-30）に解釈し、0件で回答不能。期待は今期全体で契約ごとに合算"
+    },
+    {
+      "id": "H",
+      "question": "食品損失の根拠を見せて",
+      "verdict": "一部",
+      "seconds": 38,
+      "note": "食品の根拠16件にFOD_POS、CROSS_POSなど他イベントが混在。FOD_NEGに絞れていない"
+    },
+    {
+      "id": "L",
+      "question": "今期、マイナスの影響が大きかった契約のトップ5は？",
+      "verdict": "一部",
+      "seconds": 37,
+      "note": "契約×イベントの組で順位付けし、契約ごとの合計ではない。上位に金融の契約（-0.43〜-0.45億円）が出ない"
+    }
+  ],
+  "hint_retests": [
+    {
+      "id": "D+",
+      "question": "食品の損失は、どの契約に響いたの？（食品の損失＝FOD_NEG、契約ごと、金額はJPY換算）",
+      "verdict": "OK",
+      "seconds": 31,
+      "note": "6契約、-2,056万〜-1,650万円で期待値と一致"
+    },
+    {
+      "id": "G+",
+      "question": "いま手を打つべき契約ってどれ？（「いま」は今期全体、契約ごとに全ネガティブイベントを合算して、上位5件）",
+      "verdict": "OK",
+      "seconds": 29,
+      "note": "上位5件と金額が、説明者ガイドのQ4（SUB_FIN_US_01_C08 -4,535万円ほか）と一致"
+    }
+  ],
+  "summary": "10問中、OK 6、一部 2、NG 2。原因は、用語とイベントコードの対応、時間表現の既定値、集計単位の既定値、グラフの軸表記。ヒントを足すとD、Gは期待値と一致した。"
+}
