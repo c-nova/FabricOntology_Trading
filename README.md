@@ -15,12 +15,13 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（36枚、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（43枚、全ページに発表者ノート）
 
 - 経営指標に詳しくない営業向けに、EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明
 - Data Agentに入力する質問Q1〜Q4の全文と、対応する結果。質問は [`prompts/presenter_prompts_ja.txt`](prompts/presenter_prompts_ja.txt) にもあります
 - 食品損失のDAG、金額の読み方、想定質問、実演前の確認事項、顧客データへの当てはめ方
 - LakehouseとOntologyの構成の解説（9つのLakehouse、17実体と39関係の全体マップ、実体と表の対応、関係の読み方、設計判断）
+- Ontologyの新機能の解説（名前空間、ビジネスルール、共有プロパティ、継承、導入の優先順位）と、小さく始める進め方。いずれもPreviewで、このデモでの導入案は未実装です
 
 質問の流れは、Q1（月次のbaselineとactual）、Q2（10イベントの増減）、Q3（食品損失の根拠）、Q4（影響点の特定と対応案）です。
 
@@ -58,6 +59,7 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 
 - Data Agentは、Fabricで公開済みです。説明者ガイドの質問は、同日に公開済み版で実行しました。Q1、Q3、Q4の結果は元データと照合し、Q2の金額は公開済み版のQA（`reports/da_qa_published.json`）で照合済みです
 - Notebookの保存済みDAG（8ノード、7矢印）は、実Graph（GQL）の結果と、Deltaの金額照合に基づきます
+- 新機能の解説は、Microsoft Learn（2026-10-26時点）と、このデモのOntologyの実機確認（名前空間は既定値のみ、ルール0件、共有プロパティ0件、継承なし、バージョン0件）に基づきます。導入案（名前空間の分け方、ルール、共有プロパティ、継承）は、説明者の提案で、Fabricには反映していません
 - Data Agentのruntimeは Preview、Graphの公開APIは beta です。日本語での利用は動作確認した範囲（best effort）で、公式なサポート保証ではありません
 
 ## 注意

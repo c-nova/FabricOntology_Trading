@@ -1384,10 +1384,409 @@ for k, (title, body, example, accent) in enumerate([
     card(s, .63 + k * 4.14, 2.95, 3.78, 2.85, title, body, accent=accent, number=str(k + 1))
     text(s, example, .88 + k * 4.14, 5.2, 3.3, .3, 12, MUTED)
 
+# New-experience features and the minimal-start guide. Counts come from the repo's ontology
+# definition files; the live Fabric state was also checked in the browser on 2026-10-26.
+runtime_model = json.loads((PROJECT / "reports/ontology_runtime_current.json").read_text())["model"]
+runtime_status = {
+    "namespaces": len(runtime_model["namespaces"]),
+    "rules": len(runtime_model["rules"]),
+    "metrics": len(runtime_model["metrics"]),
+    "shared_properties": len(runtime_model["reusableProperties"]),
+    "entity_descriptions": sum(1 for e in runtime_model["entities"] if e.get("description")),
+    "property_descriptions": sum(1 for e in runtime_model["entities"]
+                                 for p in e["properties"] if p.get("description")),
+    "synonyms": sum(1 for e in runtime_model["entities"] if e.get("synonyms")),
+    "resource_links": sum(1 for e in runtime_model["entities"] if e.get("resourceLinks")),
+    "properties": sum(len(e["properties"]) for e in runtime_model["entities"]),
+}
+assert runtime_status == {"namespaces": 1, "rules": 0, "metrics": 0, "shared_properties": 0,
+                          "entity_descriptions": 1, "property_descriptions": 0, "synonyms": 0,
+                          "resource_links": 0, "properties": 172}
+
+property_names = {}
+for f in sorted((ONT / "entities").glob("*.tmdl")):
+    t = f.read_text()
+    property_names[re.search(r"^entity (\w+)", t, re.M).group(1)] = re.findall(r"^\tproperty (\w+)", t, re.M)
+property_users = defaultdict(list)
+for entity_name, props in property_names.items():
+    for p in props:
+        property_users[p].append(entity_name)
+SHARED_CANDIDATES = ["entity_id", "contract_id", "activity_id", "observation_date",
+                     "source_lakehouse", "currency_code", "event_id"]
+assert [len(property_users[p]) for p in SHARED_CANDIDATES] == [15, 12, 11, 8, 7, 6, 3]
+assert sum(len(v) for v in property_names.values()) == runtime_status["properties"]
+EXT_ORDER = [f"{sec}{cc}Extension" for sec in ("Metals", "Energy", "Foods", "Finance") for cc in ("JP", "US")]
+assert sorted(EXT_ORDER) == sorted(n for n in property_names if n.endswith("Extension"))
+common_extension_props = [p for p in property_names[EXT_ORDER[0]]
+                          if all(p in property_names[e] for e in EXT_ORDER)]
+assert sorted(common_extension_props) == ["activity_id", "contract_id", "entity_id",
+                                          "extension_id", "observation_date"]
+extension_specific = {e: [p for p in property_names[e] if p not in common_extension_props]
+                      for e in EXT_ORDER}
+assert sorted(len(v) for v in extension_specific.values()) == [2, 2, 2, 2, 2, 2, 3, 3]
+CURRENCY_USERS = property_users["currency_code"]
+assert sorted(CURRENCY_USERS) == ["Activity", "Company", "Contract", "FinancialEffect",
+                                  "FinancialMetric", "GroupKPI"]
+SECTOR_JP = {"Metals": "金属", "Energy": "エネルギー", "Foods": "食品", "Finance": "金融"}
+ENTITY_RELATIONS_USED_BY_Q4 = ["EventHasEffect", "EffectOnContract", "ContractOwnedByCompany"]
+assert [(rel_by_name[n]["from"], rel_by_name[n]["to"]) for n in ENTITY_RELATIONS_USED_BY_Q4] == [
+    ("RiskEvent", "FinancialEffect"), ("FinancialEffect", "Contract"), ("Contract", "Company")]
+NEW_FEATURE_SOURCES = "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview）"
+
+
+def chip(slide, label, x, y, w, color=TEAL, fill=PALE, size=10.5):
+    shp = box(slide, x, y, w, .27, fill, rounded=True, flat=True)
+    shp.adjustments[0] = .5
+    text(slide, label, x, y + .04, w, .2, size, color, True, PP_ALIGN.CENTER)
+
+
+# New 1
+s = new_slide(
+    "新しいOntologyで増えた機能",
+    "新しい体験では、定義を「整理する」「意味を足す」「運用する」ための機能が増えました。\n"
+    "このデモで使っているのは、実体、関係、データの結び付け、グラフ、DA連携が中心です。",
+    "新機能 1  |  全体像",
+    """【目安】60秒。「新しい機能は何が増えましたか」と聞かれたときの入口です。
+【話す】「Ontologyは新しい体験になり、定義を整理する機能、意味を足す機能、運用する機能が増えました。このデモは実体、関係、データの結び付けが中心です。新機能は、これから足していける状態です。」
+【指す】左から「整理する」「意味を足す」「運用する」の順です。各行の右の印は、このデモのOntologyの現状です（2026-10-26に実機で確認）。印のない行は、今回確認していません。
+【現状の数】名前空間は「既定値」の1つだけで、17実体と39関係が所属します。ルールは0件、共有プロパティは0件、メトリックは0件です。メタデータは、会社（Company）の説明が1件あるだけです。同義語、追加の属性、リソースリンクは、17実体のすべてで0件でした（17実体の詳細画面を確認）。継承はなく、バージョン履歴も0件です。172個のプロパティの説明は、リポジトリのOntology定義（reports/ontology_runtime_current.json）で0件です。
+【各機能の一言】名前空間：同じ名前の概念を領域で区別する。継承：共通の親から実体を派生する。共有プロパティ：1つの定義を複数の実体が参照する。ルール：守る条件を自然言語で書き、実体やプロパティに結ぶ。メタデータ：説明、同義語（実体型だけに付けられる）、単位などの追加の属性。メトリック：Power BIセマンティックモデルのDAXメジャーを取り込む（セマンティックモデルから生成したOntologyで使う）。リソースリンク：関連するレポートやセマンティックモデルを実体に紐付ける。バージョン履歴：名前を付けた版を保存し、復元できる。インポート／エクスポート：.ttl、.rdf、.owlのファイルを空のOntologyに取り込み、Turtle（.ttl）かRDF/XML（.rdf）で書き出せる（対応する範囲のみで、OWLの制約などは失われ得る）。Ontology agent：定義やバインディングの案を作り、確認してから反映する。MCPサーバー：外部のAIや開発ツールからOntologyを参照する。
+【表示の切替】キャンバスの右上に「完全なオントロジー」「近隣」「継承」の切替があります。「近隣」は、選んだ実体と、直接つながる実体だけを表示します。Activityを選ぶと、Activityと13実体が表示されることを確認しました。17実体が絡んで見えるときの説明に使えます。
+【旧体験】旧体験は2027-01-31に廃止されます。このデモのOntologyは新体験で、画面にも「これは新しいオントロジ エクスペリエンスです」と表示されます。お客様が旧体験で作っている場合は、画面のバナーから、新体験にコピーを作成して移行します。下流のエージェントやダッシュボードの再接続と、ルールの再作成が必要です。
+【避ける】すべてPreviewの機能です。製品の恒久的な仕様として説明せず、実演の前に現在の画面で確認します。「このデモは新機能を使っている」とは言いません。
+【つなぎ】「気になる3つ、名前空間、ルール、共有プロパティを、順に説明します。」""",
+    [NEW_FEATURE_SOURCES + " overview", "reports/ontology_runtime_current.json（namespaces、rules、metrics、reusableProperties、説明、同義語、リソースリンクの件数）",
+     "実機確認 2026-10-26：名前空間、ルール、共有プロパティ、バージョン履歴、近隣ビュー、17実体の詳細（説明、同義語、追加のメタデータ、継承、リソース）"],
+    "旧体験は2027-01-31に廃止。印はこのデモの現状（2026-10-26に実機確認）、印のない行は未確認")
+n1_cols = [
+    ("整理する", "同じ名前や共通項目を管理する", TEAL, [
+        ("名前空間", "同じ名前の概念を領域で区別", "既定値のみ"),
+        ("継承", "共通の親から実体を派生", "なし"),
+        ("共有プロパティ", "1つの定義を複数の実体で参照", "0件"),
+        ("表示の切替", "全体・近隣・継承の3つのビュー", "使える"),
+    ]),
+    ("意味を足す", "言葉の決まりや単位を持たせる", PURPLE, [
+        ("ビジネスルール", "守る条件を文章で定義", "0件"),
+        ("メタデータ", "説明・同義語・追加の属性", "説明1件のみ"),
+        ("メトリック", "DAXメジャーを取り込む", "0件"),
+        ("リソースリンク", "関連レポートを実体に紐付け", "0件"),
+    ]),
+    ("運用する", "版の管理、移行、AIとの連携", CORAL, [
+        ("バージョン履歴", "名前付きの版を保存・復元", "0版"),
+        ("インポート／エクスポート", "TTL・RDF・OWLを取り込み、TTL・RDFで出力", None),
+        ("Ontology agent", "定義やバインディングの案を作成", None),
+        ("MCPサーバー", "外部のAIからOntologyを参照", None),
+    ]),
+]
+for c, (head, sub, accent, items) in enumerate(n1_cols):
+    x = .62 + c * 4.14
+    box(s, x, 2.62, 3.94, 3.8, WHITE, rounded=True)
+    text(s, head, x + .25, 2.76, 3.4, .36, 20, accent, True)
+    text(s, sub, x + .25, 3.17, 3.5, .26, 11.5, MUTED)
+    for r, (name, desc, status) in enumerate(items):
+        y = 3.58 + r * .7
+        text(s, name, x + .25, y, 2.3 if status else 3.4, .28, 14, NAVY, True)
+        text(s, desc, x + .25, y + .3, 3.45, .26, 11, INK)
+        if status:
+            chip(s, status, x + 3.94 - .2 - 1.15, y + .02, 1.15, accent, PALE, 10)
+
+# New 2
+s = new_slide(
+    "名前空間：同じ名前を領域ごとに区別する",
+    "同じ名前で意味が違う概念を、1つのOntologyの中で区別して持てます。\n"
+    "概念は必ず1つの名前空間に属し、指定しなければ「既定値」に入ります。",
+    "新機能 2  |  名前空間（Namespace）",
+    """【目安】90秒。
+【話す】「同じ『顧客』という言葉でも、営業と経理では意味が違います。名前空間は、概念にどの領域のものかという所属を与えて、同じ名前の概念を1つのOntologyの中で区別する仕組みです。」
+【指す】左の図で、営業と経理に同じCustomerがあることを示します。次に4つの要点、右の「このデモに当てはめると」の順です。左の図は、公式ドキュメントの例を借りた一般的な例で、このデモの実体ではありません。
+【仕組み】すべてのOntologyに「既定値（Default）」の名前空間があり、削除できません。実体型と関係型は、必ず1つの名前空間に属します。作成時に「追加の構成」（公式ドキュメントの表記）で指定するか、作成後に付け替えます。付け替えで同名の概念が重複する場合は、ブロックされます。名前空間の作成と同時には、概念を割り当てられません。作成してから割り当てます。名前、説明、接頭辞は、参照を壊さずに変更でき、名前を変えると、概念への参照は自動で追従します。参照が残っている名前空間は、削除できません。エクスプローラーでは、名前空間でグループ化やフィルターができます。RDFの名前空間の考え方に沿っているので、業界の標準語彙を取り込んで対応づけるときにも使えます。
+【画面（日本語UI）】リボンの「名前空間」で作成、「名前空間の管理」で一覧と編集です。このデモは、「名前空間の管理」に「既定値」の1行だけがあり、「17件のエンティティ型; 39件のリレーションシップ」と表示されます（2026-10-26に確認）。
+【このデモの案】本体9実体をcore、業種拡張8実体を4業種（metals、energy、foods、finance）に分ける案です。実装していません。名前は説明者の設計案です。
+【注意】公式ドキュメントの制限事項として、名前空間を使う実体と関係は、グラフ上のノードとエッジのラベルに、名前空間が接頭辞として付きます。確認済みのDAの質問やGQLの問い合わせが変わり得るため、導入後はQ1～Q4を再実行します。このデモのグラフでの挙動は検証していません。
+【使いどころ】複数の部門やチームがそれぞれ概念を持つ大きなOntology、外部の標準語彙の取り込み、所有者の境界を分けたい場合に効きます。最初の検証では、既定値のままで困りません（説明者の提案）。
+【避ける】「名前空間を入れると回答が良くなる」とは言いません。整理と衝突回避のための機能です。
+【つなぎ】「次は、業務の決まりを書くルールです。」""",
+    [NEW_FEATURE_SOURCES + " how-to-use-namespaces（2026-09-10更新）", NEW_FEATURE_SOURCES + " how-to-use-ontology-graph（グラフ化の制限事項）",
+     "ontology_tmdl/namespaces/default.tmdl", "実機確認 2026-10-26：名前空間の管理（既定値のみ）"],
+    "規模が大きくなってから効く機能。最初の検証は既定値のままでよい（説明者の提案）")
+box(s, .62, 2.62, 6.2, 3.82, WHITE, rounded=True)
+text(s, "名前空間：概念に「所属」を与える", .85, 2.76, 5.7, .34, 17, TEAL, True)
+dashed_frame(s, .85, 3.2, 5.74, 1.55, TEAL)
+text(s, "1つのOntology", 1.0, 3.27, 3.0, .24, 11, MUTED)
+for k, (ns, nm_, meaning) in enumerate([("営業 名前空間", "Customer", "売上先を表す"),
+                                         ("経理 名前空間", "Customer", "請求先を表す")]):
+    bx = 1.05 + k * 2.8
+    box(s, bx, 3.62, 2.5, 1.0, PALE, rounded=True, flat=True)
+    text(s, ns, bx + .17, 3.7, 2.2, .24, 11.5, TEAL, True)
+    text(s, nm_, bx + .17, 3.97, 2.2, .3, 17, NAVY, True)
+    text(s, meaning, bx + .17, 4.32, 2.2, .24, 11, MUTED)
+text(s, "≠", 3.55, 3.9, .3, .4, 20, CORAL, True, PP_ALIGN.CENTER)
+text(s, "・全てのOntologyに「既定値」があり、削除できない\n"
+        "・概念は必ず1つに所属。作成後も付け替えられる\n"
+        "・名前を変えても、参照は自動で追従する\n"
+        "・外部の語彙（RDFなど）と対応づけられる",
+     .9, 4.95, 5.6, 1.4, 12, INK)
+box(s, 7.0, 2.62, 5.7, 3.82, WHITE, rounded=True)
+text(s, "このデモに当てはめると（案）", 7.25, 2.76, 5.2, .34, 17, TEAL, True)
+text(s, "現状：「既定値」1つに、17実体と39関係が所属（実機確認）", 7.25, 3.2, 5.3, .28, 12, INK)
+text(s, "案：本体と4つの業種に分ける", 7.25, 3.58, 5.2, .28, 12.5, NAVY, True)
+box(s, 7.25, 3.95, 5.2, .5, PALE, rounded=True, flat=True)
+text(s, "core：本体9実体（会社、イベント、契約など）", 7.42, 4.08, 4.9, .26, 11.5, INK)
+for k, (ns, sec_jp) in enumerate([("metals", "金属"), ("energy", "エネルギー"),
+                                   ("foods", "食品"), ("finance", "金融")]):
+    bx = 7.25 + k * 1.3
+    box(s, bx, 4.55, 1.2, .78, PALE, rounded=True, flat=True)
+    text(s, ns, bx + .1, 4.62, 1.0, .26, 12, PURPLE, True)
+    text(s, f"{sec_jp}\n日米の2実体", bx + .1, 4.9, 1.05, .4, 9.5, INK)
+text(s, "注意：既定値以外に入れると、グラフ上のラベルに名前空間が接頭辞で付く（公式の制限事項）。"
+        "DAの問い合わせが変わり得るため、導入後はQ1〜Q4を再実行する。",
+     7.25, 5.5, 5.2, .85, 10.5, CORAL)
+
+# New 3
+s = new_slide(
+    "ビジネスルール：業務の決まりを文章で定義する",
+    "守る条件を自然言語で書き、実体、プロパティ、関係に結び付けます。\n"
+    "Ontologyは実行せず、エージェントなどが読んで回答の根拠にします。",
+    "新機能 3  |  ルール（Business rules）",
+    """【目安】90秒。
+【話す】「いまは、数字の扱いの決まりをDAの指示文に書いています。たとえば、actualとbaselineを足さない、51%の子会社も全額連結にする、などです。ルール機能を使うと、こうした決まりをOntologyに書いて、関係する実体やプロパティに結び付けられます。」
+【指す】左の4行（DAの指示文にある決まりと、結び付ける先の案）、右の「仕組みと限界」、その下の囲みの順です。
+【仕組み】ビジネスルールは、自然言語の文章です。「名前」と「定義」が必須で、リンクする実体、プロパティ、関係、説明、追加の属性（category、owner、policyFamilyなど）は任意です。定義は、必ず守る、してはいけない、通常は守る、のどれかの形で書くと伝わります。リンクした実体やプロパティの名前を変えると、ルールの参照も更新され、リンク先を削除すると、ルールから外れます。ルールを削除すると、すべてのリンク先から外れ、元に戻せません。
+【画面（日本語UI）】エクスプローラーの「概要」の「ルール」を開き、「ルールの作成」を押します。「名前」「定義」「リンクされたオントロジー要素」「メタデータ」（説明、追加のメタデータ）を入力して「作成する」です。このデモのルールのページは「最初のルールの作成を開始する」と表示され、0件でした（2026-10-26に確認。作成画面を開いたあと、保存せずにキャンセルしました）。
+【読み取り】認可されたエージェントやアプリは、ontology MCPのlist_ontology_rulesで、ルールの名前、定義、リンク先、説明、追加の属性を取得できます。読み取り専用で、ルールの解釈と運用は利用側の役割です。
+【限界】ルールは文章で、Ontologyはデータに対して実行せず、アクションも起こしません。旧体験にあったActivatorとのルール連携は、新体験にはありません。Activatorは、Ontologyとは別に設定します。
+【このデモの案】4件は、prompts/da_instructions_ja.txtの8、12～13、15、27、34行目にある決まりを言い換えたものです。実装していません。
+【未検証】Fabric Data Agentが、Ontologyのルールを自動で読んで回答に使うかは、今回確認していません。公式ドキュメントは、エージェントが根拠づけに使えると説明しますが、利用するエージェントごとに対応が異なり得ます。当面は、DAの指示文を残して併用し、検証してから移します。
+【避ける】「ルールを書けばAIが必ず守る」「ルールで自動チェックする」とは言いません。
+【つなぎ】「次は、同じ項目を何度も定義しなくて済む共有プロパティです。」""",
+    [NEW_FEATURE_SOURCES + " how-to-use-rules（2026-09-15更新）", "prompts/da_instructions_ja.txt（8、12～13、15、27、34行目）",
+     "実機確認 2026-10-26：ルールのページ（0件）と作成画面の項目名"],
+    "決まりをDAの指示文から切り出して1か所で管理できる。エージェントが読む前提で、実行はしない")
+text(s, "ルール定義（案）", .85, 2.64, 4.6, .3, 13, TEAL, True)
+text(s, "結び付ける先", 5.6, 2.64, 2.3, .3, 13, TEAL, True)
+for i, (rule_text, links) in enumerate([
+    ("actualとbaselineは合算しない。\nactualにdeltaを再加算しない。",
+     ["FinancialMetric.scenario_tag", "GroupKPI.scenario_tag"]),
+    ("支配する子会社は、持分51%でも全額連結する。\n全額連結の値に持分比率を掛けない。",
+     ["Company.ownership_ratio"]),
+    ("横断イベントのprimary_sectorは'all'。\n4セクターに絞って落とさない。",
+     ["RiskEvent.primary_sector"]),
+    ("効果と根拠はevidence_idで結ぶ。\nevent_idだけで結ぶと件数が増える。",
+     ["EffectExplainedByEvidence（関係）"]),
+]):
+    y = 3.0 + i * .85
+    box(s, .62, y, 7.4, .77, WHITE, rounded=True)
+    text(s, rule_text, .8, y + .1, 4.65, .6, 11.5, INK)
+    for k, link in enumerate(links):
+        chip(s, link, 5.6, y + (.08 if len(links) == 2 else .25) + k * .34, 2.3, TEAL, PALE, 9.5)
+box(s, 8.2, 2.62, 4.5, 3.82, WHITE, rounded=True)
+text(s, "仕組みと限界", 8.45, 2.76, 4.0, .34, 17, TEAL, True)
+text(s, "・書く：名前と定義は必須。リンク先などは任意\n"
+        "・場所：エクスプローラーの「概要」→「ルール」\n"
+        "・読む：ontology MCPのlist_ontology_rulesで取得（読み取り専用）\n"
+        "・限界：ルールは実行されない\n"
+        "・旧体験のActivator連携は新体験にない\n"
+        "・現状：このデモは0件（実機確認）",
+     8.45, 3.2, 4.0, 2.0, 11.5, INK)
+box(s, 8.4, 5.3, 4.1, .98, PALE, rounded=True, flat=True)
+text(s, "DAがルールを自動で読むかは未検証。DAの指示文を残して併用し、検証してから移す。",
+     8.58, 5.42, 3.75, .8, 11, NAVY, True)
+
+# New 4
+s = new_slide(
+    "共有プロパティ：同じ定義を1回だけ書く",
+    "currency_codeのように、複数の実体で同じ意味の項目を、1回だけ定義して参照できます。\n"
+    "共有するのは定義だけで、データの結び付け（バインディング）は実体ごとです。",
+    "新機能 4  |  共有プロパティ（Shared properties）",
+    """【目安】90秒。
+【話す】「currency_codeのような項目は、複数の実体に同じ意味で出てきます。共有プロパティを使うと、型や説明を1回だけ定義して、各実体が参照できます。コピーではなく参照なので、定義を直すと、参照している実体に反映されます。」
+【指す】左の図で、上の共有プロパティから、下の6実体へ矢印が伸びている点を示します。次に右の棒グラフで、このデモの共通項目の数を示します。
+【仕組み】共有プロパティは、Ontologyの最上位にある定義で、データ型、説明などを持ちます。名前はOntologyの中で一意です。実体の「構成」ページで、プロパティのバインディングの管理から既存のプロパティを追加する操作を選び、共有プロパティを参照します（英語の公式ドキュメントの操作名を訳したもので、日本語UIの表記は未確認です）。データのバインディングは、その実体の中だけの設定です。共有プロパティ自体はバインドされないままで、別の実体が別々にバインドします。説明などのメタデータは、実体ごとに上書きできます（上書きには印が付き、1操作で元に戻せます）。共有側の値が変わっても、上書きした項目は維持されます。
+【参照を外す】その実体にローカルのバインディング、上書き、関係の端点がある場合だけ、選択肢が出ます。「ソフトデタッチ」は、プロパティをローカルのプロパティとして残し、バインディング、上書き、関係の端点を保持します。「完全削除」は、プロパティとローカルの設定を消します。ローカルの設定がなければ、選択なしでそのまま外れます。共有プロパティ自体を削除するときは、影響分析（バインディング、関係、上書き）が表示され、確認後は、影響を受ける実体にローカルのコピーが残ります。
+【出所】実体の構成ページで、プロパティの出所を「ローカル」「継承」「共有」で絞り込めます。
+【このデモの実測】17実体のプロパティ名を、ontology_tmdlから集計しました。entity_idは15実体、contract_idは12、activity_idは11、observation_dateは8（業種拡張の8実体）、source_lakehouseは7、currency_codeは6、event_idは3実体に出てきます。
+【向き不向き】意味が同じ項目が向きます。currency_codeとsource_lakehouseが候補です。entity_idは、会社では主キー、他の実体では会社への参照なので、意味を整理してから共有します。共有プロパティを実体のキーにできるかは、今回確認していません。
+【画面（日本語UI）】エクスプローラーの「概要」の「共有プロパティ」で一覧を開き、「新しい共有プロパティ」で作成します。このデモは「共有プロパティはまだありません」と表示されます（2026-10-26に確認）。
+【避ける】共有プロパティは、データを共有する機能ではありません。「1つの列を複数の実体で使い回す」とは言いません。
+【つなぎ】「似た機能の継承も見ます。業種拡張の8実体が題材です。」""",
+    [NEW_FEATURE_SOURCES + " how-to-reuse-properties（2026-10-20更新）", "ontology_tmdl/entities/（プロパティ名の出現数を集計）",
+     "実機確認 2026-10-26：共有プロパティのページ（0件）"],
+    "共有するのは定義（型・説明）だけ。バインディングは実体ごと。出所はローカル／継承／共有で絞り込める")
+box(s, .62, 2.62, 6.4, 3.82, WHITE, rounded=True)
+box(s, 1.0, 2.82, 5.64, .8, TEAL, rounded=True, flat=True)
+text(s, "共有プロパティ　currency_code", 1.22, 2.9, 5.2, .3, 17, WHITE, True)
+text(s, "型：string　説明：ISO 4217の通貨コード（1回だけ定義）", 1.22, 3.27, 5.2, .26, 11.5, WHITE)
+arrow(s, 3.82, 3.64, 3.82, 3.98, TEAL)
+text(s, "参照する（コピーではない）", 3.98, 3.7, 2.6, .24, 10.5, MUTED)
+box(s, 1.0, 4.02, 5.64, 1.58, PALE, rounded=True, flat=True)
+text(s, "参照する実体（このデモでは6つ）", 1.18, 4.1, 5.2, .26, 12, TEAL, True)
+for k, name in enumerate(["Company", "Contract", "Activity", "FinancialEffect", "FinancialMetric", "GroupKPI"]):
+    assert name in CURRENCY_USERS
+    bx, by = 1.18 + (k % 3) * 1.82, 4.45 + (k // 3) * .56
+    box(s, bx, by, 1.7, .46, WHITE, rounded=True, flat=True)
+    text(s, name, bx, by + .12, 1.7, .24, 11, NAVY, True, PP_ALIGN.CENTER)
+text(s, "共有するのは定義だけ。バインディングは実体ごとに別で、説明は上書きできる。\n"
+        "参照を外すとき、ローカルの設定があれば、残すか削除するかを選べる。",
+     1.0, 5.7, 5.64, .72, 10.5, INK)
+box(s, 7.2, 2.62, 5.5, 3.82, WHITE, rounded=True)
+text(s, "このデモの共通項目（17実体で集計）", 7.45, 2.76, 5.0, .34, 15, TEAL, True)
+for k, prop in enumerate(SHARED_CANDIDATES):
+    n_users = len(property_users[prop])
+    y = 3.24 + k * .33
+    text(s, prop, 7.45, y, 1.9, .26, 11.5, INK)
+    box(s, 9.4, y + .03, 2.6 * n_users / 15, .2, TEAL, flat=True)
+    text(s, f"{n_users}", 9.4 + 2.6 * n_users / 15 + .1, y, .5, .26, 11.5, NAVY, True)
+box(s, 7.4, 5.65, 5.1, .68, PALE, rounded=True, flat=True)
+text(s, "向くのは意味が同じ項目（currency_code、source_lakehouse）。entity_idは、会社では主キー、他では参照なので、意味を整理してから共有する。",
+     7.55, 5.7, 4.85, .6, 10, NAVY)
+
+# New 5
+s = new_slide(
+    "継承：共通の親から実体を派生させる",
+    "共通の項目を親の実体に持たせ、子の実体が引き継ぎます。親は1つだけです（単一継承）。\n"
+    "このデモの業種拡張8実体は、5項目が共通で、当てはめやすい題材です。",
+    "新機能 5  |  継承（Inheritance）",
+    """【目安】90秒。
+【話す】「業種拡張の8実体は、5項目が共通で、残りの2〜3項目だけが業種ごとに違います。継承は、共通の項目を親の実体に持たせて、子の実体がそれを引き継ぐ仕組みです。」
+【指す】左の図で、上の親、下の8つの子の順に示します。右の「引き継ぐ」「引き継がない」「決まり」の順に読みます。
+【このデモの実測】8つの業種拡張は、extension_id、activity_id、contract_id、entity_id、observation_dateの5項目が共通です。固有の項目は、金属が純度と製錬所の稼働率、エネルギーが貯蔵率と配分量、食品が温度と廃棄率（各2項目）、金融が想定元本、信用スプレッド、ヘッジ比率（3項目）です。日本と米国で項目は同じです。
+【仕組み】親は1つだけです（単一継承）。子は、親のプロパティ（項目ごとの説明などを含む）と、実体の説明、同義語、追加の属性を引き継ぎ、親子であることを示すis-aの関係を持ちます。引き継がないものは、データバインディングと、通常の関係です。子ごとに表を結び、関係を定義します。親の項目は、子で削除できず、名前とデータ型も変えられません。説明などは、子で上書きでき、上書きを戻すと親の値に戻ります。親の項目を直すと、上書きしていない子へ即時に反映されます。循環する継承は拒否されます。
+【画面】実体を追加するダイアログの「追加の構成」（公式ドキュメントの表記）で、継承元の実体を選びます。キャンバスの右上の「継承」ビューで、親子の関係を表示します。このデモは継承がなく（会社の詳細は「直接の親要素：なし」、子孫0）、Activityを選んで「継承」を押すと、1実体だけが表示されます（2026-10-26に確認）。
+【減らせるもの】共通5項目の定義です。関係24本（8実体×3本）と、表の結び付け8本は、子ごとに必要です。
+【既知の制限】公式のトラブルシューティングに、「親の実体を照会して、継承する実体のインスタンスを取得できない」が既知の問題として載っています。照会は子の実体に対して行います。グラフ化では、子のノードに、親の項目と子の項目が含まれます。RDFやOWLのインポートでは、複数の親を持つ定義は、1つの親だけが保持されます。
+【未確認】既存の実体を、後から派生型に付け替えられるかは、今回確認していません。実体を追加するときに継承元を選ぶ手順だけを、公式ドキュメントで確認しました。
+【避ける】「継承すると関係も引き継ぐ」とは言いません。
+【つなぎ】「5つの機能を、入れる順番と注意点にまとめます。」""",
+    [NEW_FEATURE_SOURCES + " how-to-use-inheritance（2026-10-20更新）", NEW_FEATURE_SOURCES + " resources-troubleshooting、how-to-use-ontology-graph、how-to-import-export",
+     "ontology_tmdl/entities/*Extension.tmdl（共通5項目と固有項目）", "実機確認 2026-10-26：継承ビューと会社の詳細（親なし）"],
+    "減らせるのは共通5項目の定義。関係24本と表の結び付け8本は、子ごとに必要")
+box(s, .62, 2.62, 7.3, 3.82, WHITE, rounded=True)
+box(s, 1.0, 2.8, 6.54, .92, TEAL, rounded=True, flat=True)
+text(s, "SectorExtension（案：親の実体）", 1.2, 2.87, 6.1, .32, 17, WHITE, True)
+text(s, "共通5項目：" + " ／ ".join(common_extension_props), 1.2, 3.31, 6.2, .26, 10.5, WHITE)
+arrow(s, 4.27, 3.74, 4.27, 4.08, TEAL)
+text(s, "is-a（派生）", 4.42, 3.78, 1.6, .24, 10.5, MUTED)
+box(s, 1.0, 4.12, 6.54, 1.82, PALE, rounded=True, flat=True)
+text(s, "子の実体（8つ）：共通5項目を引き継ぎ、固有項目だけを持つ", 1.18, 4.19, 6.2, .26, 12, TEAL, True)
+for k, name in enumerate(EXT_ORDER):
+    sec, cc = re.match(r"(Metals|Energy|Foods|Finance)(JP|US)", name).groups()
+    bx, by = 1.18 + (k % 4) * 1.6, 4.5 + (k // 4) * .72
+    box(s, bx, by, 1.5, .66, WHITE, rounded=True, flat=True)
+    text(s, name, bx + .06, by + .06, 1.4, .2, 9, TEAL, True, PP_ALIGN.CENTER)
+    text(s, f"{SECTOR_JP[sec]}・{'日本' if cc == 'JP' else '米国'}", bx + .06, by + .26, 1.4, .2, 9, INK, False, PP_ALIGN.CENTER)
+    text(s, f"＋固有{len(extension_specific[name])}項目", bx + .06, by + .45, 1.4, .2, 9, MUTED, False, PP_ALIGN.CENTER)
+text(s, "既知の制限：親を照会しても、子のインスタンスは返らない（公式の既知の問題）。",
+     1.0, 6.02, 6.54, .36, 10.5, CORAL)
+box(s, 8.1, 2.62, 4.6, 3.82, WHITE, rounded=True)
+text(s, "引き継ぐ", 8.35, 2.74, 4.1, .28, 13, TEAL, True)
+text(s, "・プロパティと、その説明など\n・実体の説明、同義語（子で上書き可）\n・親子（is-a）の記録", 8.35, 3.06, 4.1, .8, 11, INK)
+text(s, "引き継がない", 8.35, 3.98, 4.1, .28, 13, CORAL, True)
+text(s, "・データバインディング（子ごとに表を結ぶ）\n・通常の関係（子ごとに定義する）", 8.35, 4.3, 4.1, .6, 11, INK)
+text(s, "決まり", 8.35, 5.0, 4.1, .28, 13, NAVY, True)
+text(s, "・親の項目は、子で削除・改名・型変更できない\n・親を直すと、子へ即時に反映される\n・現状：このデモは継承なし（実機確認）", 8.35, 5.32, 4.1, 1.0, 11, INK)
+
+# New 6
+s = new_slide(
+    "新機能を入れる順番と注意点",
+    "効果が大きく、確認済みのデモに影響しにくいものから入れます。\n"
+    "以下は公式ドキュメントとこのデモの構成から整理した、説明者の提案です（実機では未検証）。",
+    "新機能 6  |  導入の優先順位",
+    """【目安】60秒。
+【話す】「新機能は、効果が大きく、いまの確認済みデモに影響しにくいものから入れるのが安全です。メタデータとルール、共有プロパティ、継承、名前空間の順を提案します。」
+【指す】上から順に、効果、このデモへの影響、入れ方の案を読みます。「影響」の印は、小が緑、中が紫、大が赤です。
+【前提】この順番は、公式ドキュメントとこのデモの構成から、説明者が整理した提案です。実機では入れて確認していません。
+【1 メタデータ】説明、同義語、追加の属性は、エージェントの回答の正確さを上げるとされています。特に、単位や用語の定義が必要な質問に効きます。同義語は、実体型にだけ付けられます（プロパティや関係には付けられません）。このデモでは、金額の列の説明に単位（円、百万円、億円）を書く、「全額連結」「持分管理」「baseline」「actual」の意味は、プロパティの説明やルールで定義する、実体名に日本語の呼び名を同義語として付ける（例：GroupKPIに「全社KPI」）、が候補です。現状は、会社の説明が1件あるだけです。
+【2 ルール】前のページのとおりです。DAが読むかを確認するまでは、DAの指示文と併用します。
+【3 共有プロパティ】currency_codeとsource_lakehouseが候補です。
+【4 継承】業種拡張の8実体が候補です。既存の実体を付け替えられるかは未確認で、バインディングと関係の作り直しが必要になる可能性があります。親の実体の照会は、既知の問題です。
+【5 名前空間】グラフ上のラベルに接頭辞が付くため、DAの問い合わせに影響する可能性があります。実体が増えて、複数チームで持つ段階で導入します。
+【どの機能でも】Previewです。Ontologyを変更したら、公開済みDAでQ1～Q4を再実行し、結果を確かめます。
+【避ける】「入れると必ず精度が上がる」とは言いません。
+【つなぎ】「最後に、小さく始める進め方を説明します。」""",
+    [NEW_FEATURE_SOURCES + " overview、how-to-add-metadata、how-to-use-rules、how-to-use-inheritance、how-to-use-namespaces",
+     NEW_FEATURE_SOURCES + " how-to-use-ontology-graph、resources-troubleshooting", "提案：説明者の整理（実機では未検証）"],
+    "どれもPreview。入れたら、DAの確認済み質問（Q1〜Q4）を必ず再実行して結果を確かめる")
+for label, x, w in [("順", .82, .4), ("機能", 1.25, 2.2), ("効果", 3.55, 3.1),
+                    ("このデモへの影響", 6.85, 2.9), ("入れ方（案）", 10.0, 2.6)]:
+    text(s, label, x, 2.64, w, .28, 13, TEAL, True)
+for i, (feat, effect, level, impact, how) in enumerate([
+    ("メタデータ", "単位や用語を、回答に反映しやすくする", "小",
+     "説明を足すだけ。構造は変わらない", "金額列の説明に単位\n実体名に日本語の同義語"),
+    ("ビジネスルール", "決まりを1か所で管理し、エージェントと共有", "小",
+     "DAが読むかは未検証。併用が前提", "前ページの4件から"),
+    ("共有プロパティ", "共通項目の定義の重複を減らす", "小",
+     "バインディングは実体ごとのまま", "currency_code、source_lakehouse"),
+    ("継承", "業種拡張8実体の共通5項目を、親に集約する", "中",
+     "付け替え可否は未確認\n親の照会は既知の問題", "業種拡張だけ。照会は子に対して行う"),
+    ("名前空間", "実体が増えたときの整理と、同名の衝突防止", "大",
+     "グラフのラベルに接頭辞が付く\nDAの問い合わせを再確認", "複数チームで持つ段階で"),
+]):
+    y = 3.0 + i * .68
+    box(s, .62, y, 12.08, .6, WHITE, rounded=True)
+    text(s, str(i + 1), .82, y + .12, .4, .36, 20, TEAL, True)
+    text(s, feat, 1.25, y + .17, 2.25, .3, 14, NAVY, True)
+    text(s, effect, 3.55, y + .08, 3.15, .5, 11, INK)
+    chip(s, level, 6.85, y + .17, .38, {"小": TEAL, "中": PURPLE, "大": CORAL}[level], PALE, 10.5)
+    text(s, impact, 7.33, y + .08, 2.55, .5, 10.5, INK)
+    text(s, how, 10.0, y + .08, 2.6, .5, 10.5, INK)
+
+# New 7
+s = new_slide(
+    "小さく始める：最小のOntologyから広げる",
+    "最初は、答えたい質問1つに必要な、数個の実体と関係だけを作ります。\n"
+    "このデモなら、17実体・39関係のうち、4実体・3関係から始められます。",
+    "導入の進め方  |  小さく始める",
+    """【目安】90秒。「作るのが大変そう」という質問に答えるページです。
+【話す】「最初から17実体、39関係を作る必要はありません。答えたい質問を1つ決めて、その質問に出てくる名詞を実体に、名詞をつなぐ動詞を関係にします。」
+【指す】左の5ステップを上から。次に右の「このデモに当てはめると」を、段階1、2、3の順に示します。
+【このデモの段階】段階1は、RiskEvent、FinancialEffect、Contract、Companyの4実体と、EventHasEffect、EffectOnContract、ContractOwnedByCompanyの3関係です。Q4（契約ごとの影響額、子会社、商品、影響したイベント）に必要な範囲です。段階2は、Step03の図が使う8実体と7関係で、Q3（根拠までの経路）に必要な範囲です。段階3が、現在の17実体と39関係です。
+【段階の数の根拠】段階1は、ontology_tmdlの関係定義から、段階2は、reports/step3_live_audit.jsonのdiagram_relationsから数えました。Q4の表の列（契約ID、子会社、商品、イベント、影響額）が、どの実体に当たるかを確かめた結果です。DAがQ4をOntologyだけで答える、という意味ではありません。DAの定量の集計は、LH_Group_SAPの表で行っています。
+【近道】既存のPower BIセマンティックモデルがあれば、「Generate Ontology」で、テーブルを実体、列をプロパティ、リレーションを関係、DAXメジャーをメトリックとして自動生成できます（Preview）。生成後に、キーの確認、関係のバインディング、名前の整理が必要です。ただし、公式ドキュメントでは、セマンティックモデルにバインドしたOntologyは、Data Agentが動作しない既知の問題があり、グラフ化の対象外とされています。DAやグラフを使うなら、このデモのように、Lakehouseの表に結びます。
+【実際の手間】定義は少なく済みます。時間がかかるのは、キーをそろえる、8社分を統合した表を作る、リンク表を用意する、といったデータ側の準備です。
+【避ける】「数日でできる」と約束しません。データの状態で大きく変わります。
+【つなぎ】「まず質問を1つ決めるところから、始められます。」""",
+    [NEW_FEATURE_SOURCES + " how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",
+     "ontology_tmdl/entityRelationships.tmdl", "reports/step3_live_audit.json:diagram_relations"],
+    "最小のOntologyで価値を確かめてから広げる。17実体・39関係は、広げた後の姿")
+box(s, .62, 2.62, 6.35, 3.82, WHITE, rounded=True)
+text(s, "進め方（5ステップ）", .85, 2.76, 5.8, .34, 17, TEAL, True)
+for i, (head, detail) in enumerate([
+    ("質問を1つ決める", "例：どの契約が、どのイベントで減ったか"),
+    ("名詞を実体にする", "質問に出てくる、イベント、効果、契約、会社"),
+    ("動詞を関係にする", "イベント → 効果 → 契約 → 会社 のつながり"),
+    ("表を1つずつ結び、質問で確かめる", "実体ごとに、Lakehouseの表とキー列を指定"),
+    ("足すのは、その後", "実体・関係を増やし、ルールなどの新機能を足す"),
+]):
+    y = 3.22 + i * .62
+    text(s, str(i + 1), .85, y + .03, .45, .4, 22, TEAL, True)
+    text(s, head, 1.4, y, 5.4, .3, 13.5, NAVY, True)
+    text(s, detail, 1.4, y + .3, 5.4, .26, 11, MUTED)
+box(s, 7.15, 2.62, 5.55, 3.82, WHITE, rounded=True)
+text(s, "このデモに当てはめると", 7.4, 2.76, 5.0, .34, 17, TEAL, True)
+for i, (big, accent, head, detail) in enumerate([
+    ("4 / 3", TEAL, "Q4：契約ごとの影響と対応", "RiskEvent → FinancialEffect → Contract → Company"),
+    ("8 / 7", PURPLE, "Q3：根拠までの経路（Step03の図）", "図の8ノード（食品日本の拡張を含む）と7本の関係"),
+    ("17 / 39", CORAL, "現在の全体", "業種拡張、出荷、会社への関係まで含む"),
+]):
+    y = 3.22 + i * .7
+    box(s, 7.4, y, 5.05, .62, PALE, rounded=True, flat=True)
+    text(s, big, 7.52, y + .13, 1.3, .36, 19, accent, True)
+    text(s, head, 8.9, y + .06, 3.5, .26, 11.5, NAVY, True)
+    text(s, detail, 8.9, y + .33, 3.5, .26, 9, INK)
+text(s, "数字は「実体の数／関係の数」",
+     7.4, 5.3, 5.0, .24, 10, MUTED)
+box(s, 7.4, 5.58, 5.05, .75, PALE, rounded=True, flat=True)
+text(s, "近道：既存のPower BIセマンティックモデルから自動生成できる（Preview）。ただしDAとの連携は既知の問題で、グラフ化も対象外。DAやグラフを使うならLakehouseへ結ぶ。",
+     7.55, 5.62, 4.78, .7, 9.5, NAVY)
+
 # Keep the business walkthrough together and place implementation material in the appendix.
 for technical_title in ["9つのLakehouseの役割分担", "原本を分離した分析構成", "4つの用語を食品の例で区別",
                         "Ontologyの全体マップ", "実体と元の表の対応", "39種類の関係と読み方",
-                        "この構成にした3つの理由", "関係照会と金額照合を分離"]:
+                        "この構成にした3つの理由", "関係照会と金額照合を分離",
+                        "新しいOntologyで増えた機能", "名前空間：同じ名前を領域ごとに区別する",
+                        "ビジネスルール：業務の決まりを文章で定義する", "共有プロパティ：同じ定義を1回だけ書く",
+                        "継承：共通の親から実体を派生させる", "新機能を入れる順番と注意点",
+                        "小さく始める：最小のOntologyから広げる"]:
     technical_index = next(i for i, meta in enumerate(slide_metadata) if meta["title"] == technical_title)
     technical_slide_id = prs.slides._sldIdLst[technical_index]
     prs.slides._sldIdLst.remove(technical_slide_id)
@@ -1399,7 +1798,7 @@ for i, (slide, meta) in enumerate(zip(prs.slides, slide_metadata), 1):
         if shape.has_text_frame and shape.left == Inches(12.17) and shape.top == Inches(7.06):
             shape.text_frame.paragraphs[0].runs[0].text = f"{i:02}"
 
-assert len(prs.slides) == 36
+assert len(prs.slides) == 43
 prs.save(OUT)
 (HERE / "slide_sources.json").write_text(
     json.dumps(slide_metadata, ensure_ascii=False, indent=2))

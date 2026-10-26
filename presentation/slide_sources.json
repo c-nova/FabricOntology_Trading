@@ -296,5 +296,70 @@
       "scripts/step3_food_loss_runtime.py:85-182",
       "reports/step3_live_audit.json"
     ]
+  },
+  {
+    "slide": 37,
+    "title": "新しいOntologyで増えた機能",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview",
+      "reports/ontology_runtime_current.json（namespaces、rules、metrics、reusableProperties、説明、同義語、リソースリンクの件数）",
+      "実機確認 2026-10-26：名前空間、ルール、共有プロパティ、バージョン履歴、近隣ビュー、17実体の詳細（説明、同義語、追加のメタデータ、継承、リソース）"
+    ]
+  },
+  {
+    "slide": 38,
+    "title": "名前空間：同じ名前を領域ごとに区別する",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-namespaces（2026-09-10更新）",
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-ontology-graph（グラフ化の制限事項）",
+      "ontology_tmdl/namespaces/default.tmdl",
+      "実機確認 2026-10-26：名前空間の管理（既定値のみ）"
+    ]
+  },
+  {
+    "slide": 39,
+    "title": "ビジネスルール：業務の決まりを文章で定義する",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-rules（2026-09-15更新）",
+      "prompts/da_instructions_ja.txt（8、12～13、15、27、34行目）",
+      "実機確認 2026-10-26：ルールのページ（0件）と作成画面の項目名"
+    ]
+  },
+  {
+    "slide": 40,
+    "title": "共有プロパティ：同じ定義を1回だけ書く",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-reuse-properties（2026-10-20更新）",
+      "ontology_tmdl/entities/（プロパティ名の出現数を集計）",
+      "実機確認 2026-10-26：共有プロパティのページ（0件）"
+    ]
+  },
+  {
+    "slide": 41,
+    "title": "継承：共通の親から実体を派生させる",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-inheritance（2026-10-20更新）",
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） resources-troubleshooting、how-to-use-ontology-graph、how-to-import-export",
+      "ontology_tmdl/entities/*Extension.tmdl（共通5項目と固有項目）",
+      "実機確認 2026-10-26：継承ビューと会社の詳細（親なし）"
+    ]
+  },
+  {
+    "slide": 42,
+    "title": "新機能を入れる順番と注意点",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview、how-to-add-metadata、how-to-use-rules、how-to-use-inheritance、how-to-use-namespaces",
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-ontology-graph、resources-troubleshooting",
+      "提案：説明者の整理（実機では未検証）"
+    ]
+  },
+  {
+    "slide": 43,
+    "title": "小さく始める：最小のOntologyから広げる",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",
+      "ontology_tmdl/entityRelationships.tmdl",
+      "reports/step3_live_audit.json:diagram_relations"
+    ]
   }
 ]
