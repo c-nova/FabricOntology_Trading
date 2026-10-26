@@ -229,6 +229,16 @@
   },
   {
     "slide": 29,
+    "title": "9つのLakehouseの役割分担",
+    "sources": [
+      "reports/cloud_validation.json",
+      "ddl/",
+      "config/sector_shortcuts.json",
+      "docs/architecture.md"
+    ]
+  },
+  {
+    "slide": 30,
     "title": "原本を分離した分析構成",
     "sources": [
       "docs/architecture.md:81-123",
@@ -236,7 +246,7 @@
     ]
   },
   {
-    "slide": 30,
+    "slide": 31,
     "title": "4つの用語を食品の例で区別",
     "sources": [
       "reports/step3_live_audit.json:diagram_relations",
@@ -244,7 +254,43 @@
     ]
   },
   {
-    "slide": 31,
+    "slide": 32,
+    "title": "Ontologyの全体マップ",
+    "sources": [
+      "ontology_tmdl/entities/",
+      "ontology_tmdl/entityRelationships.tmdl",
+      "reports/graph_edge_counts.json"
+    ]
+  },
+  {
+    "slide": 33,
+    "title": "実体と元の表の対応",
+    "sources": [
+      "ontology_tmdl/entities/",
+      "ontology_tmdl/tables/",
+      "reports/graph_node_counts.json"
+    ]
+  },
+  {
+    "slide": 34,
+    "title": "39種類の関係と読み方",
+    "sources": [
+      "ontology_tmdl/entityRelationships.tmdl",
+      "reports/graph_edge_counts.json",
+      "reports/step3_live_audit.json:diagram_relations"
+    ]
+  },
+  {
+    "slide": 35,
+    "title": "この構成にした3つの理由",
+    "sources": [
+      "docs/architecture.md",
+      "config/ontology_connection_bindings.json",
+      "config/sector_shortcuts.json"
+    ]
+  },
+  {
+    "slide": 36,
     "title": "関係照会と金額照合を分離",
     "sources": [
       "scripts/step3_food_loss_runtime.py:85-182",

@@ -15,11 +15,12 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（31枚、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（36枚、全ページに発表者ノート）
 
 - 経営指標に詳しくない営業向けに、EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明
 - Data Agentに入力する質問Q1〜Q4の全文と、対応する結果。質問は [`prompts/presenter_prompts_ja.txt`](prompts/presenter_prompts_ja.txt) にもあります
 - 食品損失のDAG、金額の読み方、想定質問、実演前の確認事項、顧客データへの当てはめ方
+- LakehouseとOntologyの構成の解説（9つのLakehouse、17実体と39関係の全体マップ、実体と表の対応、関係の読み方、設計判断）
 
 質問の流れは、Q1（月次のbaselineとactual）、Q2（10イベントの増減）、Q3（食品損失の根拠）、Q4（影響点の特定と対応案）です。
 

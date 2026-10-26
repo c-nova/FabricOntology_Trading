@@ -9,6 +9,7 @@ of the saved local SVG (reports/step3_food_loss_dag.svg), not a Fabric UI screen
 from collections import defaultdict
 from decimal import Decimal
 import json
+import re
 from pathlib import Path
 
 from pptx import Presentation
@@ -56,6 +57,41 @@ DA = manifest["data_agent"]["url"]
 ONTOLOGY = manifest["ontology"]["url"]
 NOTEBOOK = step3["url"]
 WORKSPACE = manifest["workspace"]["url"]
+
+ONT = PROJECT / "ontology_tmdl"
+node_counts = {r["entity_type"]: r["instance_count"] for r in json.loads(
+    (PROJECT / "reports/graph_node_counts.json").read_text())["result"]["data"]}
+edge_counts = {r["relationship_type"]: r["edge_count"] for r in json.loads(
+    (PROJECT / "reports/graph_edge_counts.json").read_text())["result"]["data"]}
+cloud = json.loads((PROJECT / "reports/cloud_validation.json").read_text())
+
+
+def parse_ontology():
+    entities = {}
+    for f in sorted((ONT / "entities").glob("*.tmdl")):
+        t = f.read_text()
+        name = re.search(r"^entity (\w+)", t, re.M).group(1)
+        backing = re.search(r"backingTable: (\w+)", t).group(1)
+        table_def = (ONT / "tables" / f"{backing}.tmdl").read_text()
+        entities[name] = {
+            "key": re.search(r"keyProperty: (\w+)", t).group(1),
+            "properties": len(re.findall(r"^\tproperty ", t, re.M)),
+            "table": re.search(r"entityName: (\w+)", table_def).group(1),
+            "mode": re.search(r"mode: (\w+)", table_def).group(1),
+        }
+    relationships = []
+    for block in re.split(r"\n(?=entityRelationship )", (ONT / "entityRelationships.tmdl").read_text()):
+        m = re.search(r"label: (\w+)\n\s+fromEntity: (\w+)\n\s+toEntity: (\w+)", block)
+        if m:
+            relationships.append({"name": m.group(1), "from": m.group(2), "to": m.group(3),
+                                  "link_table": "type: table" in block})
+    return entities, relationships
+
+
+ontology_entities, ontology_relationships = parse_ontology()
+assert len(ontology_entities) == 17 and len(ontology_relationships) == 39
+assert sum(node_counts.values()) == 33960 and sum(edge_counts.values()) == 65684
+assert sum(r["link_table"] for r in ontology_relationships) == 3
 
 Q1 = """2025-10-01～2026-09-30を対象に、全額連結EBITDAのbaselineとactualを月次で集計し、折れ線グラフで比較してください。横軸は「2025-10」のような年月の文字列で、2025-10から2026-09までの12か月だけを載せ、期間合計はグラフに含めないでください。縦軸は円を1億で割った億円にしてください。actualとbaselineは別系列にし、同じ行を重複集計しないでください。グラフとは別に、期間全体のactualの全額連結EBITDAと持分管理寄与EBITDAを億円で示し、51%子会社の扱いの違いを説明してください。"""
 Q2 = """2025-10-01～2026-09-30の全10イベントについて、全額連結EBITDAへの影響を符号付きの億円で集計し、棒グラフで表示してください。各effect_idは一度だけ合計し、CROSS_NEGとCROSS_POSを含めてください。グラフの項目名は次の短い日本語ラベルを使ってください。
@@ -432,7 +468,7 @@ text(s, "億円の換算：1億円＝100,000,000円 ／ 0.01億円＝100万円",
 s = new_slide(
     "原本を分離した分析構成",
     "会社ごとの原本と、共通の意味付けや集計のためのデータを区別します。\nすべてをゼロコピーで処理する構成ではありません。",
-    "構成  |  データ参照と実体照会を区別",
+    "構成の解説 2  |  データ参照と実体照会を区別",
     """【目安】60秒。
 【話す】「左が8社の原本です。上の経路は共通の分析用投影で、ここには実データのコピーを作っています。下の経路は業種別の拡張表だけをゼロコピーで参照する8つのショートカットです。両者を同じものとして説明しないでください。」
 【指す】左、中央の上下、右の順です。親LakehouseはSAP風の管理データも持ち、子会社8個と合わせて9個です。物理表95個とショートカット8個を足して物理表103個とは数えません。
@@ -462,13 +498,13 @@ arrow(s, 9.83, 5.27, 10.27, 5.27)
 s = new_slide(
     "4つの用語を食品の例で区別",
     "「Ontology」と「画面に見える図」は同じものではありません。\n定義、照会対象、表示方法を分けると説明の範囲が明確になります。",
-    "用語  |  名前より役割を説明",
+    "構成の解説 3  |  用語は名前より役割で説明",
     """【目安】45秒。
 【話す】「Ontologyは、契約や活動が何を意味し、どう関係するかの共通定義です。GraphModelには、今回の契約や活動といった実際のレコードがノードと関係として入っています。」
 【指す】左上から右上、左下、右下へ。グラフ一般は点と線からなる構造で、線のつながりをたどれます。DAGは向きがあり、ぐるっと一周して戻る閉路がない図です。
 【このデモ】Ontologyに17種類の実体と39種類の関係を定義しています。GraphModelの実体照会では33,960ノードと65,684エッジを検証していますが、表示はその全体ではありません。食品の代表1活動に関連する8ノード、7矢印を選んでDAGにしています。
 【避ける】GraphModel全体がDAGである、Ontologyが因果推論モデルである、グラフを描けば因果が証明できる、という説明はしません。
-【つなぎ】「用語を知ったら、操作はまず金額の比較からです。」""",
+【つなぎ】「次に、このデモで定義した実体と関係を、全体のマップで見ます。」""",
     ["reports/step3_live_audit.json:diagram_relations", "config/deployment_manifest.json"],
     "画面のDAGは、取得した関係のうち代表1活動を選んだ部分図")
 card(s, .62, 2.73, 5.86, 1.59, "Ontology：共通定義", "例：「活動は契約に属する」という関係")
@@ -736,7 +772,7 @@ for x, y, title, amount, sub, color in values:
 s = new_slide(
     "関係照会と金額照合を分離",
     "グラフは関係や経路の確認に使い、厳密な金額はDECIMALで計算します。\n画面上の一つの結果に、役割の異なる二つの確認処理を合わせています。",
-    "実装説明  |  技術質問が出たときに使用",
+    "構成の解説 8  |  技術質問が出たときに使用",
     """【目安】60秒。非技術者にはカード見出しだけで十分です。
 【話す】「NotebookはGQLで本物の関係を読み、その84効果がDelta側の84効果と一致するかを調べます。金額計算は小数を正確に扱うDECIMALを使用します。」
 【指す】左のGraph経路と右のDelta金額、下の一致検査です。
@@ -1095,8 +1131,263 @@ box(s, .65, 5.9, 12.04, .5, WHITE, rounded=True)
 text(s, "単独と横断：影響を受ける会社、商品、地域、契約を台帳に紐づけ、複数の業種に及ぶものを横断と判定する。",
      .85, 6.02, 11.65, .3, 13, NAVY)
 
+# Structure explanation: Lakehouses and the ontology
+JP_ENTITY = {"Evidence": "根拠", "RiskEvent": "イベント", "FinancialEffect": "効果",
+             "FinancialMetric": "日次指標", "GroupKPI": "全社KPI", "Activity": "活動",
+             "Contract": "契約", "Shipment": "出荷", "Company": "会社"}
+lh_tables, lh_rows = defaultdict(int), defaultdict(int)
+for key, rows_n in cloud["counts"].items():
+    lh_tables[key.split(".")[0]] += 1
+    lh_rows[key.split(".")[0]] += rows_n
+assert (cloud["tables"], cloud["rows"]) == (95, 90424) and lh_tables["LH_Group_SAP"] == 17
+
+s = new_slide(
+    "9つのLakehouseの役割分担",
+    "会社ごとの原本は、子会社のLakehouseに分けたまま残します。\n"
+    "全社の分析と問い合わせは、親のLakehouseに集めた表で行います。",
+    "構成の解説 1  |  Lakehouse",
+    """【目安】60秒。構成の質問が出たときに使います。
+【話す】「会社ごとの原本は、それぞれのLakehouseに分けて残しています。親のLakehouseには、全社で同じ尺度で分析するための表と、各社の業種固有データへの参照を置いています。」
+【指す】右の8つのタイル（4業種×日本、米国）、次に左の親Lakehouseの4つのまとまりの順です。
+【数字】物理表は95、行数は90,424です。内訳は親が17表（58,018行）、子会社が78表です。出荷表を持つ6社は10表、金融の2社は出荷表がなく9表です。ショートカット8本は物理表に含めません。物理表95とショートカット8本を足して103表とは言いません。
+【親の4つのまとまり】①SAP風の管理データ5表（会社マスタ、為替、仕訳、内部取引、連結消去）。②分析用の投影11表（semantic_*）。8社分を1表に統合したコピーで、source_lakehouse列に原本の場所を残します。③全社KPI（kpi_snapshot）。④業種拡張のショートカット8本（raw_*_extension）。子会社の拡張表をコピーせずに参照します。
+【各子会社】共通9表（会社プロフィール、契約、活動、出荷、イベント、根拠、影響の橋渡し、財務効果、日次指標）と、業種拡張1表です。業種拡張は、金属が品質（純度、製錬所の稼働率）、エネルギーが配分（貯蔵率、配分量）、食品がコールドチェーン（温度、廃棄率）、金融がエクスポージャ（想定元本、信用スプレッド、ヘッジ比率）です。金融は、存在しない物理出荷を補完しません。
+【実装上の注意】親と金属日本のLakehouseはスキーマ有効（Tables/dbo）、残り7つは従来形式（Tables/）でした。デプロイは、実際のLakehouseの属性を見て分岐します。
+【避ける】すべてのデータを親へコピーしたと言いません。コピーしているのは分析用の投影だけで、業種拡張は参照です。
+【つなぎ】「このデータが、どの順でOntology、DA、Notebookに流れるかを次に見ます。」""",
+    ["reports/cloud_validation.json", "ddl/", "config/sector_shortcuts.json", "docs/architecture.md"],
+    "物理表は95、行数は90,424。ショートカット8本は物理表に数えない")
+box(s, .62, 2.62, 5.25, 3.76, WHITE, rounded=True)
+text(s, "親：LH_Group_SAP", .85, 2.76, 4.8, .36, 18, TEAL, True)
+text(s, "17表とショートカット8本", .85, 3.14, 4.8, .26, 12.5, MUTED)
+for i, (head, desc) in enumerate([
+    ("SAP風の管理データ　5表", "会社マスタ、為替、仕訳、内部取引、連結消去"),
+    ("分析用の投影　11表", "8社分を1表に統合し、原本の場所を列に残す"),
+    ("全社KPI　1表", "EBITDAとCF、全額と持分管理"),
+    ("業種拡張の参照　8本", "子会社の業種拡張表を、コピーせず参照"),
+]):
+    y = 3.52 + i * .71
+    box(s, .8, y, 4.9, .6, PALE, rounded=True, flat=True)
+    text(s, head, .95, y + .05, 4.6, .26, 14, NAVY, True)
+    text(s, desc, .95, y + .32, 4.6, .24, 11, INK)
+text(s, "子会社8社のLakehouse（原本）", 6.15, 2.66, 6.4, .34, 16, TEAL, True)
+for c, (jp_sector, en_sector) in enumerate([("金属", "Metals"), ("エネルギー", "Energy"),
+                                            ("食品", "Foods"), ("金融", "Finance")]):
+    x = 6.15 + c * 1.67
+    text(s, jp_sector, x, 3.08, 1.5, .28, 13, INK, True, PP_ALIGN.CENTER)
+    for r, country in enumerate(["JP", "US"]):
+        name = f"LH_{en_sector}_{country}_01"
+        y = 3.4 + r * .92
+        box(s, x, y, 1.5, .8, WHITE, rounded=True)
+        text(s, name, x + .08, y + .12, 1.34, .24, 10, TEAL, True)
+        text(s, f"{lh_tables[name]}表／{lh_rows[name]:,}行", x + .08, y + .44, 1.34, .26, 11.5, INK)
+box(s, 6.15, 5.3, 6.52, 1.08, WHITE, rounded=True)
+text(s, "各子会社は、共通9表と業種拡張1表を持つ（金融の2社は出荷表がなく9表）。\n"
+        "業種拡張は、金属の品質、エネルギーの配分、食品の温度、金融のエクスポージャ。",
+     6.32, 5.5, 6.25, .8, 11, INK)
+
+s = new_slide(
+    "Ontologyの全体マップ",
+    "表の名前や列の組合せではなく、「何が」「何と」つながるかを定義します。\n"
+    "定義したのは17種類の実体と39種類の関係で、本体9実体と業種拡張8実体に分かれます。",
+    "構成の解説 4  |  Ontology",
+    """【目安】90秒。Ontologyの説明で最も使うページです。
+【話す】「Ontologyは、このデモの『もの』と『つながり』に名前を付けた設計図です。イベントは根拠に裏付けられ、効果を持ち、活動と契約に影響します。効果は日次指標に反映され、全社KPIに集約されます。表の名前や列の組合せではなく、何が何とつながるかを定義しています。」
+【指す】上段を左から右へ（根拠、イベント、効果、日次指標、全社KPI）。次に中段（業種拡張、活動、契約）、下段（出荷、会社）の順です。
+【数】実体は17種類（本体9、業種拡張8）、関係は39種類（本体15、業種拡張24）です。
+【色】灰色は関連、紫は影響の配賦、緑は対応と集約です。Step03の図（食品損失のDAG）と同じ色分けです。矢印の向きは関係の定義の向きで、因果の方向を証明するものではありません。
+【図に矢印を描いていない関係】EffectExplainedByEvidence（効果→根拠）、会社に結ぶ4本（契約、活動、効果、日次指標→会社）、業種拡張のForCompanyとForContract。一覧は「39種類の関係と読み方」にあります。
+【避ける】「Ontologyが因果を判定する」「OntologyがJOINを置き換える」と言いません。表のJOINでも同じ数値は作れます。Ontologyの価値は、意味と関係を名前付きで共有し、根拠までの経路を再利用できることです。
+【つなぎ】「各実体は、どの表のどの列につながっているかを次に見ます。」""",
+    ["ontology_tmdl/entities/", "ontology_tmdl/entityRelationships.tmdl", "reports/graph_edge_counts.json"],
+    "矢印は主な関係だけを描いている。全39種類は「39種類の関係と読み方」にある")
+
+
+def onode(slide, x, y, jp, en, color, w=1.62, h=.8):
+    box(slide, x, y, w, h, WHITE, rounded=True)
+    text(slide, jp, x + .12, y + .1, w - .24, .32, 15, color, True)
+    text(slide, en, x + .12, y + (h - .33), w - .24, .26, 10, MUTED)
+
+
+def olabel(slide, label, x, y, w=.95, align=PP_ALIGN.CENTER):
+    text(slide, label, x, y, w, .24, 10, MUTED, False, align)
+
+
+def olabel_on(slide, label, cx, cy, w):
+    box(slide, cx - w / 2, cy - .13, w, .26, BG, flat=True)
+    text(slide, label, cx - w / 2, cy - .1, w, .24, 10, MUTED, False, PP_ALIGN.CENTER)
+
+
+A_Y, B_Y, C_Y = 2.72, 4.2, 5.62
+XS = [.65, 3.22, 5.79, 8.36, 10.93]
+onode(s, XS[0], A_Y, "根拠", "Evidence", MUTED)
+onode(s, XS[1], A_Y, "イベント", "RiskEvent", CORAL)
+onode(s, XS[2], A_Y, "効果", "FinancialEffect", PURPLE)
+onode(s, XS[3], A_Y, "日次指標", "FinancialMetric", TEAL)
+onode(s, XS[4], A_Y, "全社KPI", "GroupKPI", TEAL)
+onode(s, XS[0], B_Y, "業種拡張 ×8", "4業種 × 日米", NAVY)
+onode(s, XS[1], B_Y, "活動", "Activity", NAVY)
+onode(s, XS[2], B_Y, "契約", "Contract", NAVY)
+onode(s, XS[1], C_Y, "出荷", "Shipment", NAVY, h=.7)
+for i, (label, color) in enumerate([("裏付ける", MUTED), ("効果を持つ", PURPLE),
+                                    ("指標に反映", TEAL), ("KPIに集約", TEAL)]):
+    arrow(s, XS[i] + 1.62 + .03, A_Y + .4, XS[i + 1] - .06, A_Y + .4, color)
+    olabel(s, label, XS[i] + 1.62, A_Y + .08)
+arrow(s, XS[0] + 1.62 + .03, B_Y + .4, XS[1] - .06, B_Y + .4, MUTED)
+olabel(s, "活動に紐づく", XS[0] + 1.62, B_Y + .5)
+arrow(s, XS[1] + 1.62 + .03, B_Y + .4, XS[2] - .06, B_Y + .4, MUTED)
+olabel(s, "契約に属する", XS[1] + 1.62, B_Y + .5)
+arrow(s, 4.03, A_Y + .83, 4.03, B_Y - .06, MUTED)
+olabel_on(s, "活動に影響", 4.03, 3.86, .85)
+arrow(s, 6.6, A_Y + .83, 6.6, B_Y - .06, MUTED)
+olabel_on(s, "契約への効果", 6.6, 3.86, 1.0)
+arrow(s, 6.0, A_Y + .83, 4.87, B_Y + .12, MUTED)
+olabel_on(s, "活動への効果", 5.43, 3.94, 1.0)
+arrow(s, 4.03, C_Y - .04, 4.03, B_Y + .86, MUTED)
+olabel_on(s, "活動の出荷", 4.03, 5.33, .9)
+arrow(s, 4.87, C_Y + .13, 5.9, B_Y + .84, MUTED)
+olabel_on(s, "契約に属する", 5.38, 5.4, 1.0)
+box(s, 6.3, C_Y, 6.25, .7, PALE, rounded=True, flat=True)
+text(s, "会社", 6.5, C_Y + .12, 1.0, .3, 15, NAVY, True)
+text(s, "Company", 6.5, C_Y + .4, 1.2, .24, 10, MUTED)
+text(s, "契約、活動、効果、日次指標の持ち主（4種類の関係）", 7.75, C_Y + .2, 4.7, .3, 11.5, INK)
+box(s, 8.36, 4.2, 4.19, 1.05, WHITE, rounded=True)
+text(s, "矢印の色と向き", 8.56, 4.3, 3.8, .28, 12.5, TEAL, True)
+text(s, "灰：関連", 8.56, 4.62, 1.1, .26, 11.5, MUTED, True)
+text(s, "紫：配賦", 9.76, 4.62, 1.1, .26, 11.5, PURPLE, True)
+text(s, "緑：集約", 10.96, 4.62, 1.1, .26, 11.5, TEAL, True)
+text(s, "向きは関係の定義の向きで、因果の証明ではない", 8.56, 4.92, 3.85, .26, 10.5, INK)
+
+s = new_slide(
+    "実体と元の表の対応",
+    "実体ごとに、元になる表とキーの列を1つずつ指定します。\n"
+    "その表の1行が、グラフの1つの点（ノード）になります。",
+    "構成の解説 5  |  Ontologyのバインディング",
+    """【目安】60秒。
+【話す】「実体ごとに、元になる表とキーの列を1つずつ指定しています。その表の1行が、グラフの1つの点になります。点の合計は33,960です。」
+【表の選び方】会社は会社マスタ（company_master）、全社KPIはkpi_snapshot、それ以外の本体の実体は、8社分を統合した分析用の投影（semantic_*）に結び付けています。業種拡張の8実体は、親にあるショートカット（raw_*_extension）に結び付けています。
+【接続】各表は、親Lakehouseに対するDirectLakeのパーティションとして定義しています（定義はontology_tmdl/tablesにあります）。
+【数の読み方】日次指標の17,520は、8社×365日×6系列（EBITDAとCFのactualとbaseline、売上と原価のactual）です。全社KPIの2,920は、8種類（EBITDAとCF、全額と持分管理、actualとbaseline）×365日です。点の数を、取引件数や事故件数として読みません。
+【リンク表】semantic_event_impact_bridge、semantic_effect_metric_links、semantic_metric_kpi_linksの3表は、点にならず、関係を表すために使います。
+【避ける】Ontologyが元の表を置き換える、と言いません。元の表がデータの正で、金額の厳密な集計はSQLのDECIMALで行います（グラフの数値は浮動小数点です）。
+【つなぎ】「次に、実体どうしの関係を見ます。」""",
+    ["ontology_tmdl/entities/", "ontology_tmdl/tables/", "reports/graph_node_counts.json"],
+    "点は合計33,960。リンク表3本は点にならず、関係を表す")
+cols = [("実体", .83, 2.0), ("意味", 2.9, 1.3), ("元の表（親Lakehouse）", 4.25, 4.3),
+        ("キー", 8.6, 1.9), ("点の数", 10.5, 1.75)]
+for label, x, w in cols:
+    text(s, label, x, 2.66, w, .3, 13, TEAL, True, PP_ALIGN.RIGHT if label == "点の数" else None)
+entity_rows = [(n, JP_ENTITY[n]) for n in ["Company", "RiskEvent", "Evidence", "Contract", "Activity",
+                                            "Shipment", "FinancialEffect", "FinancialMetric", "GroupKPI"]]
+table_rows = []
+for name, jp in entity_rows:
+    e = ontology_entities[name]
+    table_rows.append((name, jp, e["table"], e["key"], f"{node_counts[name]:,}"))
+ext_entities = [n for n in ontology_entities if n.endswith("Extension")]
+assert len(ext_entities) == 8 and {node_counts[n] for n in ext_entities} == {365}
+table_rows.append(("業種拡張（8実体）", "業種固有の観測", "raw_<業種>_<jp/us>_extension", "extension_id", "365 × 8"))
+for i, vals in enumerate(table_rows):
+    y = 3.02 + i * .335
+    if i % 2 == 0:
+        box(s, .67, y - .04, 12.0, .31, WHITE, flat=True)
+    for j, ((label, x, w), val) in enumerate(zip(cols, vals)):
+        text(s, val, x, y, w, .26, 12.5, NAVY if j == 0 else INK, j == 0,
+             PP_ALIGN.RIGHT if j == 4 else None)
+
+used_relations = {r["relation"] for r in audit["diagram_relations"]}
+assert len(used_relations) == 7
+rel_by_name = {r["name"]: r for r in ontology_relationships}
+
+
+def direction(r):
+    return f"{JP_ENTITY[r['from']]} → {JP_ENTITY[r['to']]}"
+
+
+s = new_slide(
+    "39種類の関係と読み方",
+    "関係には向きがあり、「実体 → 実体」の形で名前を付けます。\n"
+    "表の外部キー列で表すものが36種類、リンク表（※）で表すものが3種類です。",
+    "構成の解説 6  |  Ontologyの関係",
+    """【目安】60秒。
+【話す】「関係には向きがあり、『実体から実体へ』の形で名前を付けています。EventHasEffectなら、イベントから効果へ、という読み方です。」
+【数】39種類で、点と点を結ぶ線は合計65,684本です。36種類は表の外部キーの列で、3種類はリンク表で表します。
+【リンク表の3本】EventImpactsActivity（イベント→活動）、EffectRealizedInMetric（効果→日次指標）、MetricRollsUpToGroupKPI（日次指標→全社KPI）です。IDの対応を明示した表で結び、日付だけの結合が起こす曖昧さを避けます。
+【グループ】原因をたどる4本、取引をたどる5本、金額を集約する2本、会社に結ぶ4本（本体15本）に、業種拡張の24本（8実体×3本）を加えて39種類です。
+【●】Step03の図で使っている7本です（本体6本と、食品日本の業種拡張1本）。残りの関係は、図に出ていないだけで、グラフには入っています。
+【避ける】本数を取引の件数と読みません。たとえばActivityUnderContractの8,760は、活動の数と同じです（1つの活動が1つの契約に属します）。
+【つなぎ】「最後に、なぜこの構成にしたのかを3つの判断で説明します。」""",
+    ["ontology_tmdl/entityRelationships.tmdl", "reports/graph_edge_counts.json",
+     "reports/step3_live_audit.json:diagram_relations"],
+    "●はStep03の図で使う7本。※のリンク表は、IDの対応で結び、日付だけの結合を避ける")
+
+
+def rel_group(card_x, card_w, y0, title, names):
+    text(s, title, card_x + .2, y0, card_w - .4, .3, 13, TEAL, True)
+    for k, nm in enumerate(names):
+        r = rel_by_name[nm]
+        y = y0 + .34 + k * .275
+        if nm in used_relations:
+            text(s, "●", card_x + .2, y, .25, .26, 11, TEAL, True)
+        text(s, nm + (" ※" if r["link_table"] else ""), card_x + .45, y, 2.65, .26, 11, INK, True)
+        text(s, direction(r), card_x + 3.1, y, 2.25, .26, 11, MUTED)
+        text(s, f"{edge_counts[nm]:,}", card_x + card_w - .85, y, .65, .26, 11, INK, False, PP_ALIGN.RIGHT)
+    return y0 + .34 + len(names) * .275 + .12
+
+
+groups_left = [
+    ("原因をたどる", ["EvidenceSupportsEvent", "EventHasEffect", "EffectExplainedByEvidence", "EventImpactsActivity"]),
+    ("取引をたどる", ["EffectOnActivity", "EffectOnContract", "ActivityUnderContract",
+                  "ShipmentForActivity", "ShipmentUnderContract"]),
+]
+groups_right = [
+    ("金額を集約する", ["EffectRealizedInMetric", "MetricRollsUpToGroupKPI"]),
+    ("会社に結ぶ", ["ContractOwnedByCompany", "ActivityOwnedByCompany", "EffectOwnedByCompany", "MetricForCompany"]),
+]
+assert sum(len(g[1]) for g in groups_left + groups_right) == 15
+box(s, .62, 2.62, 6.0, 3.76, WHITE, rounded=True)
+box(s, 6.85, 2.62, 5.85, 3.76, WHITE, rounded=True)
+y = 2.74
+for title, names in groups_left:
+    y = rel_group(.62, 6.0, y, title, names)
+y = 2.74
+for title, names in groups_right:
+    y = rel_group(6.85, 5.85, y, title, names)
+text(s, "業種拡張（24種類）", 7.05, y, 5.4, .3, 13, TEAL, True)
+text(s, "●", 7.05, y + .34, .25, .26, 11, TEAL, True)
+text(s, "FoodsJPExtensionForActivity ほか", 7.3, y + .34, 3.6, .26, 11, INK, True)
+text(s, "各365", 11.8, y + .34, .65, .26, 11, INK, False, PP_ALIGN.RIGHT)
+text(s, "8実体が、活動、契約、会社に1本ずつ結ぶ", 7.3, y + .62, 5.2, .26, 11, MUTED)
+
+s = new_slide(
+    "この構成にした3つの理由",
+    "Ontologyの実体に結び付けられる表は、1つです。\n"
+    "8社に分かれた原本のままでは、同じ種類の実体を会社ごとに別々に定義することになります。",
+    "構成の解説 7  |  設計判断",
+    """【目安】60秒。技術に詳しい方への補足です。
+【話す】「Ontologyの実体に結び付けられる表は1つです。8社の原本をそのまま使うと、同じ種類の実体を会社ごとに別々に定義することになります。そこで3つの判断をしました。」
+【判断1：8社分を親の投影表に統合】semantic_*（9表）に8社分を統合し、source_lakehouse列で原本の場所を残しました。原本は子会社のLakehouseに残り、投影は分析用のコピーです。
+【判断2：業種拡張は別の実体にして、ショートカットで参照】金属の純度、エネルギーの貯蔵率、食品の温度、金融のスプレッドなど、項目が業種ごとに違います。そこで、日米×4業種の8実体に分け、親のショートカットで参照します。データはコピーしません。8つの子会社Lakehouseを別々のソースとして直接結ぶ方法は、最初のテストでグラフを照会できず、ショートカット方式に切り替えました。
+【判断3：多対多の関係はリンク表で明示】イベントと活動、効果と日次指標、日次指標と全社KPIの3本は、IDの対応を持つ表で結びます。日付だけで結ぶ曖昧な結合を避けます。
+【運用上の注意】公開APIで定義を取り込むと、表との結び付き（バインディング）に使う接続情報が外れます。定義を差し替えたら、バインディングを再適用し、グラフを更新してから照会します。取り込みが成功しただけでは、グラフで照会できる保証になりません。この内容は、2026年10月のPreviewでの確認結果です。
+【避ける】これらを製品の恒久的な仕様として説明しません。実演の前に、現在の製品の挙動を確認します。
+【つなぎ】「最後に、実装の技術質問が出たときの説明を用意しています。」""",
+    ["docs/architecture.md", "config/ontology_connection_bindings.json", "config/sector_shortcuts.json"],
+    "定義を差し替えたら、バインディングの再適用とグラフ更新が必要。取り込み成功だけでは照会できない")
+for k, (title, body, example, accent) in enumerate([
+    ("8社分を1表に統合", "実体1つに結べる表は1つ\n親に投影表を作成\n原本の場所は列で保持",
+     "例：semantic_risk_events", TEAL),
+    ("業種拡張を分離", "項目が業種で異なる\n日米×4業種で8実体\nデータはコピーしない",
+     "例：raw_metals_jp_extension", PURPLE),
+    ("多対多はリンク表", "イベントと活動など3本\nIDの対応で結ぶ\n日付だけの結合を避ける",
+     "例：semantic_event_impact_bridge", CORAL),
+]):
+    card(s, .63 + k * 4.14, 2.95, 3.78, 2.85, title, body, accent=accent, number=str(k + 1))
+    text(s, example, .88 + k * 4.14, 5.2, 3.3, .3, 12, MUTED)
+
 # Keep the business walkthrough together and place implementation material in the appendix.
-for technical_title in ["原本を分離した分析構成", "4つの用語を食品の例で区別", "関係照会と金額照合を分離"]:
+for technical_title in ["9つのLakehouseの役割分担", "原本を分離した分析構成", "4つの用語を食品の例で区別",
+                        "Ontologyの全体マップ", "実体と元の表の対応", "39種類の関係と読み方",
+                        "この構成にした3つの理由", "関係照会と金額照合を分離"]:
     technical_index = next(i for i, meta in enumerate(slide_metadata) if meta["title"] == technical_title)
     technical_slide_id = prs.slides._sldIdLst[technical_index]
     prs.slides._sldIdLst.remove(technical_slide_id)
@@ -1108,7 +1399,7 @@ for i, (slide, meta) in enumerate(zip(prs.slides, slide_metadata), 1):
         if shape.has_text_frame and shape.left == Inches(12.17) and shape.top == Inches(7.06):
             shape.text_frame.paragraphs[0].runs[0].text = f"{i:02}"
 
-assert len(prs.slides) == 31
+assert len(prs.slides) == 36
 prs.save(OUT)
 (HERE / "slide_sources.json").write_text(
     json.dumps(slide_metadata, ensure_ascii=False, indent=2))
