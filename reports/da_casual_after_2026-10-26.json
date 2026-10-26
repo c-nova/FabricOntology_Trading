@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-26",
+  "summary": "Instruction-only change to the Data Agent. All ten short casual questions pass (was 6 OK / 2 partial / 2 NG), four extra casual questions pass, Q1-Q4 numbers are unchanged. Results vary from run to run; see known_limits.",
+  "published": "Fifth publish of the day. Text = prompts/da_instructions_ja.txt (about 5,600 characters of the 15,000 limit). The first line of the live text keeps its original wording and differs from the repo copy, which is anonymized. Data source instructions, schema descriptions, example queries, the ontology and the lakehouses were not changed.",
+  "what_changed": [
+    "Added a section 'question reading' (rules 1-9): period defaults, metric words, event nicknames, sector and country words, aggregation unit, currency and unit format, answer format and chart axis, period sums and table choice, no carry-over from the previous question.",
+    "Added the documented workaround line 'Support group by in GQL' (Microsoft Learn, data agent with ontology: known aggregation issue)."
+  ],
+  "iterations": [
+    {
+      "publish": 1,
+      "after_publish_found": "'今期のEBITDA' answered with one day's value (1.27億円) in 3 of 4 runs; the next question carried the previous topic; raw ** in answers",
+      "fix": "rule 8 (sum the whole period, never one day), rule 9 (do not carry the previous topic), no bold markup"
+    },
+    {
+      "publish": 2,
+      "after_publish_found": "company-level questions sometimes returned daily detail or an empty result; one run printed 10x too large amounts (412.51億円)",
+      "fix": "GQL group-by line, table routing for company/sector/country questions, example for rule 9"
+    },
+    {
+      "publish": 3,
+      "after_publish_found": "one 10x slip in a company-level answer",
+      "fix": "unit conversion done in SQL, not in the sentence"
+    },
+    {
+      "publish": 4,
+      "after_publish_found": "one run answered 'only daily detail was retrieved' for the period question",
+      "fix": "retry with a SUM / GROUP BY query before answering"
+    },
+    {
+      "publish": 5,
+      "after_publish_found": "none in the final checks below",
+      "fix": "-"
+    }
+  ],
+  "final_checks_published": {
+    "casual": [
+      {
+        "question": "今期のEBITDAって、予算に対してどうだった？",
+        "runs": "3 of 3 OK",
+        "value": "447.57 vs 448.60億円, -1.03億円"
+      },
+      {
+        "question": "金融の子会社は今期どうだった？",
+        "runs": "3 of 3 OK",
+        "value": "44.61 and 41.25億円"
+      },
+      {
+        "question": "食品の損失は、どの契約に響いたの？ -> いま手を打つべき契約ってどれ？",
+        "runs": "1 of 1 OK",
+        "value": "six FOD_NEG contracts, then the four finance contracts (no carry-over)"
+      }
+    ],
+    "long_prompts": "Q1, Q2, Q3 and Q4 each OK once; Q4 tiers: 高 four finance contracts, 中 three contracts"
+  },
+  "checks_on_draft_same_text_family": "Ten baseline questions, '最近どう？', '持分で見ると', 'エネルギーの会社は', '米国/日本の会社だけで', '与信費用が増えたのは', follow-ups 'それを持分ベースで', Q1-Q4: all OK on the draft versions before each publish.",
+  "known_limits": [
+    "An LLM agent: wording and sometimes the data path differ between runs. During the iterations, about one run in five or ten failed for the period and company-level questions; the last version passed every check above, but this is a small sample.",
+    "The previous question can still influence the next one in some runs; clear the chat when changing the topic.",
+    "Priority tiers in Q4 are the agent's own judgement and vary (the two C09 contracts are 低 in some runs and 中 in others)."
+  ]
+}

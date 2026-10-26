@@ -205,6 +205,25 @@
   },
   {
     "slide": 26,
+    "title": "カジュアルな質問に答えさせる",
+    "sources": [
+      "reports/da_casual_baseline_2026-10-26.json",
+      "reports/da_casual_after_2026-10-26.json",
+      "prompts/da_instructions_ja.txt",
+      "実機確認 2026-10-26：公開済みDA（5回目の公開後）"
+    ]
+  },
+  {
+    "slide": 27,
+    "title": "カジュアルに聞くときの使い方と限界",
+    "sources": [
+      "reports/da_casual_after_2026-10-26.json:known_limits",
+      "prompts/da_instructions_ja.txt",
+      "実機確認 2026-10-26：公開済みDA（5回目の公開後）"
+    ]
+  },
+  {
+    "slide": 28,
     "title": "実演前の制約と確認先",
     "sources": [
       "config/deployment_manifest.json:limitations",
@@ -213,14 +232,14 @@
     ]
   },
   {
-    "slide": 27,
+    "slide": 29,
     "title": "保存済みDA応答の実例",
     "sources": [
       "reports/da_qa_published.json:messages[0:2]"
     ]
   },
   {
-    "slide": 28,
+    "slide": 30,
     "title": "社内にないイベントを集める方法",
     "sources": [
       "提案段階の構成（このデモでは未実装）",
@@ -228,7 +247,7 @@
     ]
   },
   {
-    "slide": 29,
+    "slide": 31,
     "title": "9つのLakehouseの役割分担",
     "sources": [
       "reports/cloud_validation.json",
@@ -238,7 +257,7 @@
     ]
   },
   {
-    "slide": 30,
+    "slide": 32,
     "title": "原本を分離した分析構成",
     "sources": [
       "docs/architecture.md:81-123",
@@ -246,7 +265,7 @@
     ]
   },
   {
-    "slide": 31,
+    "slide": 33,
     "title": "4つの用語を食品の例で区別",
     "sources": [
       "reports/step3_live_audit.json:diagram_relations",
@@ -254,7 +273,7 @@
     ]
   },
   {
-    "slide": 32,
+    "slide": 34,
     "title": "Ontologyの全体マップ",
     "sources": [
       "ontology_tmdl/entities/",
@@ -263,7 +282,7 @@
     ]
   },
   {
-    "slide": 33,
+    "slide": 35,
     "title": "実体と元の表の対応",
     "sources": [
       "ontology_tmdl/entities/",
@@ -272,7 +291,7 @@
     ]
   },
   {
-    "slide": 34,
+    "slide": 36,
     "title": "39種類の関係と読み方",
     "sources": [
       "ontology_tmdl/entityRelationships.tmdl",
@@ -281,7 +300,7 @@
     ]
   },
   {
-    "slide": 35,
+    "slide": 37,
     "title": "この構成にした3つの理由",
     "sources": [
       "docs/architecture.md",
@@ -290,7 +309,7 @@
     ]
   },
   {
-    "slide": 36,
+    "slide": 38,
     "title": "関係照会と金額照合を分離",
     "sources": [
       "scripts/step3_food_loss_runtime.py:85-182",
@@ -298,7 +317,7 @@
     ]
   },
   {
-    "slide": 37,
+    "slide": 39,
     "title": "新しいOntologyで増えた機能",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview",
@@ -307,7 +326,7 @@
     ]
   },
   {
-    "slide": 38,
+    "slide": 40,
     "title": "名前空間：同じ名前を領域ごとに区別する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-namespaces（2026-09-10更新）",
@@ -317,16 +336,16 @@
     ]
   },
   {
-    "slide": 39,
+    "slide": 41,
     "title": "ビジネスルール：業務の決まりを文章で定義する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-rules（2026-09-15更新）",
-      "prompts/da_instructions_ja.txt（8、12～13、15、27、34行目）",
+      "prompts/da_instructions_ja.txt（19、23～24、26、38、45行目）",
       "実機確認 2026-10-26：ルールのページ（0件）と作成画面の項目名"
     ]
   },
   {
-    "slide": 40,
+    "slide": 42,
     "title": "共有プロパティ：同じ定義を1回だけ書く",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-reuse-properties（2026-10-20更新）",
@@ -335,7 +354,7 @@
     ]
   },
   {
-    "slide": 41,
+    "slide": 43,
     "title": "継承：共通の親から実体を派生させる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-inheritance（2026-10-20更新）",
@@ -345,7 +364,7 @@
     ]
   },
   {
-    "slide": 42,
+    "slide": 44,
     "title": "新機能を入れる順番と注意点",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview、how-to-add-metadata、how-to-use-rules、how-to-use-inheritance、how-to-use-namespaces",
@@ -354,7 +373,7 @@
     ]
   },
   {
-    "slide": 43,
+    "slide": 45,
     "title": "小さく始める：最小のOntologyから広げる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",

@@ -17,7 +17,7 @@ DECK = HERE.parent / "decks" / "TradingOntology_Demo_Presenter_Guide_JA.pptx"
 SOFFICE = os.environ.get("SOFFICE", "/Applications/LibreOffice.app/Contents/MacOS/soffice")
 QA.mkdir(exist_ok=True)
 prs = Presentation(DECK)
-assert len(prs.slides) == 43
+assert len(prs.slides) == 45
 slide_count = len(prs.slides)
 notes = []
 out_of_bounds = []

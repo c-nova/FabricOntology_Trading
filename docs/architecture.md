@@ -143,6 +143,17 @@ confirmed success. The separate published-view (`stage=production`) Japanese
 query passed. Microsoft Copilot publication remained **OFF**; no sharing grants or
 outbound messages were made during deployment.
 
+On 2026-10-26 only the agent instructions were extended (`prompts/da_instructions_ja.txt`,
+about 5,600 of 15,000 characters) with a "question reading" section so that short casual
+questions work: default period words, metric words, event nicknames, sector and country
+words, aggregation unit, unit format and no carry-over from the previous question. Failures
+found after each publish (a one-day value for a period question, 10x unit slips, daily detail
+only, topic carry-over) led to five publishes in total. Ten casual questions went from
+6 OK / 2 partial / 2 NG to 10 OK, and Q1-Q4 numbers did not change. Results are
+non-deterministic; see `reports/da_casual_baseline_2026-10-26.json` and
+`reports/da_casual_after_2026-10-26.json` for the record and the known limits. Data, ontology,
+Lakehouses, data-source instructions and example queries were not changed.
+
 Annual actual JPY: full EBITDA **44,757,399,732.84**, ownership-weighted
 management EBITDA **33,547,898,914.09**. Accounting and live-query evidence:
 `reports/cloud_validation.json`, `reports/end_to_end_validation.json`,
