@@ -59,6 +59,7 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 
 - Data Agentは、Fabricで公開済みです。説明者ガイドの質問は、同日に公開済み版で実行しました。Q1、Q3、Q4の結果は元データと照合し、Q2の金額は公開済み版のQA（`reports/da_qa_published.json`）で照合済みです
 - Notebookの保存済みDAG（8ノード、7矢印）は、実Graph（GQL）の結果と、Deltaの金額照合に基づきます
+- カジュアルな質問への対応：公開済みDAに短い質問を10個入れたところ、OK 6、一部 2、NG 2でした（`reports/da_casual_baseline_2026-10-26.json`）。用語と既定値を足した指示文 [`prompts/da_instructions_casual_ja.txt`](prompts/da_instructions_casual_ja.txt) をDAのドラフトに反映すると、10問すべてと追加の4問がOKで、Q1〜Q4の数値は変わりませんでした（`reports/da_casual_after_draft_2026-10-26.json`）。公開済み版は変更していません。DAの指示文の先頭行は、ここでは匿名化しています
 - 新機能の解説は、Microsoft Learn（2026-10-26時点）と、このデモのOntologyの実機確認（名前空間は既定値のみ、ルール0件、共有プロパティ0件、継承なし、バージョン0件）に基づきます。導入案（名前空間の分け方、ルール、共有プロパティ、継承）は、説明者の提案で、Fabricには反映していません
 - Data Agentのruntimeは Preview、Graphの公開APIは beta です。日本語での利用は動作確認した範囲（best effort）で、公式なサポート保証ではありません
 

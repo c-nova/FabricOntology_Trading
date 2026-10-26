@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-26",
+  "target": "TradingDA_Multisector DRAFT with prompts/da_instructions_casual_ja.txt (agent instructions only; data source instructions, schema descriptions, example queries and the ontology were not changed). The published version was not changed (checked: it does not contain the new section). Draft chat cleared before each series; one run per question.",
+  "change": "Agent instructions: added a 'question reading' section (period defaults, metric words, event nicknames, sector/country words, aggregation unit, currency/units/chart axis, answer format). 2,890 -> 4,424 characters of 15,000. Two refinements after the first run: the 'profit is not EBITDA' note only when the user says 利益/儲け/稼ぎ; list all contracts when asked 'which contracts'.",
+  "casual_questions_retest": [
+    {
+      "id": "A",
+      "verdict": "OK",
+      "note": "447.57 vs 448.60億円, -1.03億円; premise line; no extra note after refinement"
+    },
+    {
+      "id": "A2",
+      "verdict": "OK",
+      "note": "12 months x actual/baseline; chart axis now 'EBITDA（億円、JPY）' instead of 3B"
+    },
+    {
+      "id": "B",
+      "verdict": "OK",
+      "note": "CROSS_NEG -6.80億円, 336 effects"
+    },
+    {
+      "id": "C",
+      "verdict": "OK",
+      "note": "CROSS_POS +5.84億円"
+    },
+    {
+      "id": "D",
+      "verdict": "OK",
+      "note": "FOD_NEG, six contracts -2,056万 to -1,650万円 (first run listed top 5 only; fixed by the 'all contracts' rule)"
+    },
+    {
+      "id": "E",
+      "verdict": "OK",
+      "note": "JP 41.25 / US 44.61億円 with differences to baseline"
+    },
+    {
+      "id": "F",
+      "verdict": "OK",
+      "note": "232.88億円"
+    },
+    {
+      "id": "G",
+      "verdict": "OK",
+      "note": "いま = whole period; top 5 equal to the Q4 list; priority criteria stated; FIN_NEG caveat added"
+    },
+    {
+      "id": "H",
+      "verdict": "OK",
+      "note": "only the four FOD_NEG evidence records"
+    },
+    {
+      "id": "L",
+      "verdict": "OK",
+      "note": "per-contract totals; FIN_US_C08 -4,535万円 first"
+    }
+  ],
+  "new_casual_questions": [
+    {
+      "question": "最近どう？",
+      "verdict": "OK",
+      "note": "2026-09-01..09-30: actual 40.19 vs baseline 34.35億円 (+5.84, 117%)"
+    },
+    {
+      "question": "持分で見ると、グループ全体の稼ぎはいくら？",
+      "verdict": "OK",
+      "note": "335.48億円 (EBITDA_MANAGEMENT_WEIGHTED) with the not-statutory note"
+    },
+    {
+      "question": "エネルギー関連でマイナスだったイベントは？",
+      "verdict": "OK",
+      "note": "ENE_NEG -1.88億円"
+    },
+    {
+      "question": "与信費用が増えたのは、どの契約？",
+      "verdict": "OK",
+      "note": "FIN_NEG, eight contracts, amounts equal to the data, and the note that 与信費増 is a counterparty servicing cost shock"
+    }
+  ],
+  "regression_long_prompts": [
+    {
+      "id": "Q1",
+      "verdict": "OK",
+      "note": "447.57 / 335.48億円; 12-month line chart with 億円 axis; 51% explanation"
+    },
+    {
+      "id": "Q2",
+      "verdict": "OK",
+      "note": "ten events, signed 億円, Japanese labels, bar chart"
+    },
+    {
+      "id": "Q3",
+      "verdict": "OK",
+      "note": "all nine values and IDs equal to the audit file"
+    },
+    {
+      "id": "Q4",
+      "verdict": "OK (tiers differ)",
+      "note": "same seven contracts and amounts; the two C09 contracts are 中 (previous reference run: 低) under the criteria the DA states"
+    }
+  ],
+  "summary": "Baseline 6 OK / 2 partial / 2 NG out of 10. After the instruction change: 10 of 10 casual questions, 4 of 4 new casual questions, Q1-Q4 numbers unchanged. Not published."
+}
