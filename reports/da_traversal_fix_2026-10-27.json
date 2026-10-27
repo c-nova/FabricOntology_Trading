@@ -1,0 +1,1820 @@
+{
+  "date": "2026-10-27",
+  "summary": "In the first eight runs of the day, the Data Agent's ontology traversal returned no_path_found in all six runs that tried it (reports/da_group_wide_2026-10-27.json). The cause was in the ontology definition: all 42 relationships were written with isActive: false, so the agent's ontology context showed every relationship join as unresolved. The relationships were set active in the production ontology, the connection annotations that the public API removes were re-applied through the authoring endpoint of the Fabric UI, and the graph data was refreshed. Eight repeat runs on the published agent found a join path in all six runs that tried a traversal. The amounts did not change.",
+  "target": "TradingDA_Multisector, published version (stage=production), runtime Preview, 2026-10-27 about 15:20 to 15:35 JST, about 15 minutes after the ontology change. The chat was cleared before every question and after the last one. The agent itself was not changed or republished: its ontology source is a reference to the live ontology plus the list of 17 selected entity types.",
+  "method": "Each question was typed into the chat of the published view. The final response object of the service was read back and reduced to the answer text, the traversal tool input and output, and the result tables of each query. The SQL text is not stored. The agent instructions and tool schemas in that object are not stored here because the first line of the live instructions names the original customer.",
+  "cause": {
+    "description": "scripts/build_semantic.py wrote isActive: false on every relationship. The agent lists a join specification in its ontology context only for active relationships. Inactive ones were printed with question marks, and the traversal planner (plan_ontology_traversal, a planner of SQL join paths over the ontology) answered that the ontology has no verified relationships to traverse.",
+    "before_fix": {
+      "relationships": 42,
+      "inactive": 42,
+      "context_chars": 16161,
+      "traversal_runs": 6,
+      "no_path_found": 6
+    }
+  },
+  "experiments_before_fix": [
+    {
+      "name": "two-entity ontology, active versus inactive relationship",
+      "result": "Same agent configuration and same question. With the relationship active the context listed the join and the traversal returned single_engine_join. With isActive: false the context showed question marks and the traversal returned no_path_found."
+    },
+    {
+      "name": "full-size copy of the production ontology with all relationships active",
+      "result": "The service accepted it without an ambiguity error. The context listed 39 of 39 relationship joins, including the three link-table joins. A multi-hop traversal was found."
+    },
+    {
+      "name": "Standard versus Preview runtime on the unchanged ontology",
+      "result": "Both runtimes returned no_path_found. The runtime was not the cause. Neither runtime has a tool that queries the graph."
+    }
+  ],
+  "fix": {
+    "ontology_update": "Public updateDefinition of the production ontology with the 42 'isActive: false' lines removed. Only relationships.tmdl changed; every other part was identical apart from the pinned time of each table.",
+    "side_effect": "The public API removes the reserved ONT_* connection annotations on create and on update: 8 per table became 1 (160 became 20), and the graph cannot be built without them. Measured on a scratch copy before the production change.",
+    "reapply": "The 20 partition scripts of config/ontology_connection_bindings.json were sent to the ontology authoring endpoint that the Fabric UI uses (20 of 20 accepted), restoring 8 annotations on each of the 20 tables.",
+    "graph": "Graph data refresh from the Fabric UI, triggered 2026-10-27 15:09 JST, completed 15:13 JST.",
+    "rollback_prepared": "The live definition before the change was saved first (identical to the 2026-10-23 readback)."
+  },
+  "verification": {
+    "ontology": {
+      "relationships": 42,
+      "inactive": 0,
+      "tables_with_eight_connection_annotations": 20,
+      "parts_changed": "relationships.tmdl, plus the pinned time of each of the 20 tables"
+    },
+    "graph": {
+      "entity_types_eligible": 17,
+      "nodes": 33960,
+      "edges": 65684,
+      "relationship_types": 39,
+      "node_and_edge_counts_per_type_equal_to_before": true,
+      "node_counts": {
+        "FinanceUSExtension": 365,
+        "Company": 8,
+        "FinanceJPExtension": 365,
+        "FoodsUSExtension": 365,
+        "FoodsJPExtension": 365,
+        "EnergyUSExtension": 365,
+        "EnergyJPExtension": 365,
+        "MetalsUSExtension": 365,
+        "MetalsJPExtension": 365,
+        "GroupKPI": 2920,
+        "FinancialMetric": 17520,
+        "FinancialEffect": 1344,
+        "Evidence": 64,
+        "Shipment": 318,
+        "Contract": 96,
+        "Activity": 8760,
+        "RiskEvent": 10
+      },
+      "edge_counts": {
+        "FinanceUSExtensionForContract": 365,
+        "EventImpactsActivity": 1344,
+        "FinanceUSExtensionForCompany": 365,
+        "FinanceUSExtensionForActivity": 365,
+        "FinanceJPExtensionForContract": 365,
+        "FinanceJPExtensionForCompany": 365,
+        "FinanceJPExtensionForActivity": 365,
+        "FoodsUSExtensionForContract": 365,
+        "FoodsUSExtensionForCompany": 365,
+        "FoodsUSExtensionForActivity": 365,
+        "FoodsJPExtensionForContract": 365,
+        "FoodsJPExtensionForCompany": 365,
+        "FoodsJPExtensionForActivity": 365,
+        "EnergyUSExtensionForContract": 365,
+        "EnergyUSExtensionForCompany": 365,
+        "EnergyUSExtensionForActivity": 365,
+        "EnergyJPExtensionForContract": 365,
+        "EnergyJPExtensionForCompany": 365,
+        "EnergyJPExtensionForActivity": 365,
+        "MetalsUSExtensionForContract": 365,
+        "MetalsUSExtensionForCompany": 365,
+        "MetalsUSExtensionForActivity": 365,
+        "MetalsJPExtensionForContract": 365,
+        "MetalsJPExtensionForCompany": 365,
+        "MetalsJPExtensionForActivity": 365,
+        "MetricRollsUpToGroupKPI": 11680,
+        "EffectRealizedInMetric": 1344,
+        "MetricForCompany": 17520,
+        "EffectOwnedByCompany": 1344,
+        "ActivityOwnedByCompany": 8760,
+        "ContractOwnedByCompany": 96,
+        "EffectOnContract": 1344,
+        "EffectOnActivity": 1344,
+        "EffectExplainedByEvidence": 1344,
+        "EventHasEffect": 1344,
+        "EvidenceSupportsEvent": 64,
+        "ShipmentUnderContract": 318,
+        "ShipmentForActivity": 318,
+        "ActivityUnderContract": 8760
+      },
+      "complete_evidence_to_kpi_paths": 1344,
+      "food_loss_path_query_rows": 84,
+      "food_loss_path_query_unique_effects": 84,
+      "food_loss_effect_sum_jpy": -114461186.25
+    }
+  },
+  "findings": [
+    "Traversal: 6 of 6 runs that tried one found a path (before the change: 0 of 6). The chosen path was single_engine_join in every run. The paths include multi-hop routes and link-table joins, for example event to bridge table to activity, and metric to KPI link table to group KPI.",
+    "The demo questions Q1 to Q4 and the action question were run once each on the same published agent after the change. Q3, Q4 and the action question tried a traversal and found a path; Q1 and Q2 did not try one. Their values equal the saved data (see demo_questions).",
+    "Amounts did not change: the sector table (24 of 24 numeric cells), the per-company table (32 of 32), the per-company amounts of the casual question, and the largest event (-6.80 oku yen, 447.57 oku yen, -1.52 percent) equal the values verified in the first eight runs. The casual answer no longer showed the effect counts.",
+    "The answers are still produced by SQL on the lakehouse tables. The ontology supplies the join path; the graph is not queried by the agent.",
+    "Chain question, two runs: both again reported no allocation outside food and no verifiable route through intercompany transactions. No intercompany row in the data involves a food subsidiary (only finance and energy pairs), so the chain stays out of scope.",
+    "Yen-appreciation what-if, two runs: both returned -14.80 oku yen as a simple sensitivity. Over the four runs of the day, three returned a figure and one declined to compute, so the question is still treated as unstable.",
+    "Response time was 24 to 66 seconds per question."
+  ],
+  "limits": [
+    "Eight runs on one day, one run per question except the repeated ones. Generated text is not deterministic.",
+    "The Data Agent runtime is Preview, the ontology is Preview, and the graph query API is beta. Japanese is verified best effort only.",
+    "The time until the published agent sees an ontology change was not measured: the first run was about 15 minutes after the change."
+  ],
+  "runs": [
+    {
+      "id": "B_sector",
+      "purpose": "Deck question 追加B (Q5), verbatim: CROSS_NEG and CROSS_POS by sector",
+      "question": "CROSS_NEGとCROSS_POSを、配賦先会社のsectorで4セクターに分類して比較してください。primary_sector='all'を除外せず、effect_idごとに一度だけ合計し、全額と持分管理のEBITDA影響を億円で示してください。時期の異なるイベントなので回復率とは呼ばないでください。",
+      "response_seconds": 28,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Company"
+          ],
+          "max_hops": 3,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "CROSS_NEGは4セクターすべてでEBITDAを押し下げ、全額連結で合計-6.80億円、持分管理で-5.16億円でした。CROSS_POSは全セクターを押し上げ、全額連結で合計+5.84億円、持分管理で+4.39億円です。両イベントは時期が異なるため、回復率としては扱っていません。\n\n前提：対象期間は2025-10-01～2026-09-30、primary_sector='all'の横断イベントを含め、配賦先会社のsectorで分類。effect_idを重複なく1回だけ集計したEBITDA影響（JPY・億円、全額連結／持分管理）です。\n\n| 配賦先セクター | CROSS_NEG 全額連結 | CROSS_NEG 持分管理 | CROSS_POS 全額連結 | CROSS_POS 持分管理 |\n|---|---:|---:|---:|---:|\n| 金属 | -2.12億円 | -1.59億円 | +1.84億円 | +1.36億円 |\n| エネルギー | -2.05億円 | -1.55億円 | +1.69億円 | +1.28億円 |\n| 食品 | -1.30億円 | -1.01億円 | +1.13億円 | +0.86億円 |\n| 金融 | -1.34億円 | -1.00億円 | +1.18億円 | +0.89億円 |\n| 4セクター合計 | -6.80億円 | -5.16億円 | +5.84億円 | +4.39億円 |\n\n比較すると、CROSS_NEGの全額連結影響が最も大きい配賦先は金属（-2.12億円）、次いでエネルギー（-2.05億円）です。CROSS_POSの最大の押上げ先も金属（+1.84億円）で、エネルギー（+1.69億円）が続きます。各イベントは4セクター合計で336件、各セクター84件のユニークeffect_idで構成されています。\n\n詳細データ：result_0.json\n\n架空の管理分析用データに基づく集計です。全額連結は支配子会社を100%連結する管理デモ値、持分管理は所有比率を反映した簡易管理寄与であり、丸め差が生じる場合があります。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "event_id",
+            "sector_code",
+            "unique_effect_id_count",
+            "full_consolidated_ebitda_impact_jpy_oku",
+            "management_ebitda_impact_jpy_oku"
+          ],
+          "rows_total": 26,
+          "rows": [
+            [
+              "CROSS_NEG",
+              "energy",
+              84,
+              -2.05,
+              -1.55
+            ],
+            [
+              "CROSS_NEG",
+              "finance",
+              84,
+              -1.34,
+              -1.0
+            ],
+            [
+              "CROSS_NEG",
+              "foods",
+              84,
+              -1.3,
+              -1.01
+            ],
+            [
+              "CROSS_NEG",
+              "metals",
+              84,
+              -2.12,
+              -1.59
+            ],
+            [
+              "CROSS_NEG",
+              "ALL_4_SECTORS",
+              336,
+              -6.8,
+              -5.16
+            ],
+            [
+              "CROSS_POS",
+              "energy",
+              84,
+              1.69,
+              1.28
+            ],
+            [
+              "CROSS_POS",
+              "finance",
+              84,
+              1.18,
+              0.89
+            ],
+            [
+              "CROSS_POS",
+              "foods",
+              84,
+              1.13,
+              0.86
+            ],
+            [
+              "CROSS_POS",
+              "metals",
+              84,
+              1.84,
+              1.36
+            ],
+            [
+              "CROSS_POS",
+              "ALL_4_SECTORS",
+              336,
+              5.84,
+              4.39
+            ],
+            [
+              "ENE_NEG",
+              "energy",
+              84,
+              -1.88,
+              -1.44
+            ],
+            [
+              "ENE_NEG",
+              "ALL_4_SECTORS",
+              84,
+              -1.88,
+              -1.44
+            ],
+            [
+              "ENE_POS",
+              "energy",
+              84,
+              2.1,
+              1.57
+            ],
+            [
+              "ENE_POS",
+              "ALL_4_SECTORS",
+              84,
+              2.1,
+              1.57
+            ],
+            [
+              "FIN_NEG",
+              "finance",
+              84,
+              -1.25,
+              -0.94
+            ],
+            [
+              "FIN_NEG",
+              "ALL_4_SECTORS",
+              84,
+              -1.25,
+              -0.94
+            ],
+            [
+              "FIN_POS",
+              "finance",
+              84,
+              1.17,
+              0.87
+            ],
+            [
+              "FIN_POS",
+              "ALL_4_SECTORS",
+              84,
+              1.17,
+              0.87
+            ],
+            [
+              "FOD_NEG",
+              "foods",
+              84,
+              -1.14,
+              -0.88
+            ],
+            [
+              "FOD_NEG",
+              "ALL_4_SECTORS",
+              84,
+              -1.14,
+              -0.88
+            ],
+            [
+              "FOD_POS",
+              "foods",
+              84,
+              1.2,
+              0.91
+            ],
+            [
+              "FOD_POS",
+              "ALL_4_SECTORS",
+              84,
+              1.2,
+              0.91
+            ],
+            [
+              "MTL_NEG",
+              "metals",
+              84,
+              -2.09,
+              -1.58
+            ],
+            [
+              "MTL_NEG",
+              "ALL_4_SECTORS",
+              84,
+              -2.09,
+              -1.58
+            ],
+            [
+              "MTL_POS",
+              "metals",
+              84,
+              1.83,
+              1.36
+            ],
+            [
+              "MTL_POS",
+              "ALL_4_SECTORS",
+              84,
+              1.83,
+              1.36
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "company",
+      "purpose": "CROSS_NEG per subsidiary, with the share of each company's annual actual EBITDA",
+      "question": "CROSS_NEGの全額連結EBITDA影響を、影響を受けた子会社ごとに億円で示してください。primary_sector='all'の横断イベントなので、セクターで絞り込まず、各effect_idは一度だけ合計してください。子会社名、セクター、国、全額の影響額、持分管理の影響額、影響を受けた契約数を1つの表にし、あわせて各社の2025-10-01〜2026-09-30のactualの全額連結EBITDA年間合計に対する影響額の割合（%）も示してください。",
+      "response_seconds": 33,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "FinancialEffect",
+          "target_entities": [
+            "Company",
+            "Contract",
+            "FinancialMetric"
+          ],
+          "max_hops": 3,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Contract",
+              "join": "semantic_event_financial_effects.contract_id = semantic_contracts.contract_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "Company",
+              "to": "FinancialMetric",
+              "join": "company_master.entity_id = semantic_financial_metrics_daily.entity_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "CROSS_NEGは8社すべてに全額連結EBITDAのマイナス影響を与えています。影響額が最も大きいのはVeltrona Metals USA Inc.の-1.06億円、年間actual EBITDA比で最も大きいのはVeltrona Metals Japan KKの-1.59%です。\n\n前提：対象期間は2025-10-01〜2026-09-30、指標はactualの全額連結EBITDA。CROSS_NEGはprimary_sector='all'の横断イベントとしてセクターによる除外を行わず、effect_idを一意に集計しています。\n\n| 子会社名 | セクター | 国 | 全額の影響額（億円） | 持分管理の影響額（億円） | 影響契約数 | 年間actual全額連結EBITDA（億円） | 年間EBITDA比 |\n|---|---|---:|---:|---:|---:|---:|---:|\n| Caldriva Foods Japan KK | foods | JP | -0.59 | -0.30 | 3 | 41.20 | -1.44% |\n| Caldriva Foods USA Inc. | foods | US | -0.71 | -0.71 | 3 | 45.32 | -1.56% |\n| Nuvellora Finance Japan KK | finance | JP | -0.65 | -0.65 | 3 | 41.25 | -1.58% |\n| Nuvellora Finance USA Inc. | finance | US | -0.69 | -0.35 | 4 | 44.61 | -1.54% |\n| Orivexa Energy Japan KK | energy | JP | -1.04 | -1.04 | 3 | 66.09 | -1.57% |\n| Orivexa Energy USA Inc. | energy | US | -1.01 | -0.52 | 4 | 71.80 | -1.41% |\n| Veltrona Metals Japan KK | metals | JP | -1.05 | -1.05 | 3 | 66.15 | -1.59% |\n| Veltrona Metals USA Inc. | metals | US | -1.06 | -0.54 | 3 | 71.15 | -1.49% |\n\n優先度の目安：影響額と年間EBITDA比の両面から、金属日本・金属米国・エネルギー日本を高優先、残る5社を中優先と評価できます。なお、これは架空の管理シミュレーション・配賦データであり、持分管理額は所有比率を反映した簡易管理寄与です。詳細データは `result_0.json` を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "subsidiary_name",
+            "sector_code",
+            "country_code",
+            "cross_neg_ebitda_full_oku_jpy",
+            "cross_neg_ebitda_management_oku_jpy",
+            "affected_contract_count",
+            "annual_ebitda_full_oku_jpy",
+            "cross_neg_impact_pct_of_annual_ebitda"
+          ],
+          "rows_total": 8,
+          "rows": [
+            [
+              "Caldriva Foods Japan KK",
+              "foods",
+              "JP",
+              -0.5938048,
+              -0.3028404,
+              3,
+              41.2010736,
+              -1.4412
+            ],
+            [
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              -0.7082182,
+              -0.7082182,
+              3,
+              45.3178463,
+              -1.5627
+            ],
+            [
+              "Nuvellora Finance Japan KK",
+              "finance",
+              "JP",
+              -0.6497162,
+              -0.6497162,
+              3,
+              41.2513084,
+              -1.575
+            ],
+            [
+              "Nuvellora Finance USA Inc.",
+              "finance",
+              "US",
+              -0.6866793,
+              -0.3502064,
+              4,
+              44.6070914,
+              -1.5393
+            ],
+            [
+              "Orivexa Energy Japan KK",
+              "energy",
+              "JP",
+              -1.0350291,
+              -1.0350291,
+              3,
+              66.0897887,
+              -1.566
+            ],
+            [
+              "Orivexa Energy USA Inc.",
+              "energy",
+              "US",
+              -1.0111512,
+              -0.5156871,
+              4,
+              71.8044433,
+              -1.4082
+            ],
+            [
+              "Veltrona Metals Japan KK",
+              "metals",
+              "JP",
+              -1.0526183,
+              -1.0526183,
+              3,
+              66.1497309,
+              -1.5912
+            ],
+            [
+              "Veltrona Metals USA Inc.",
+              "metals",
+              "US",
+              -1.0631349,
+              -0.5421988,
+              3,
+              71.1527144,
+              -1.4941
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual_all_companies",
+      "purpose": "Casual wording of the group-wide question",
+      "question": "全社に同時に響いたマイナスの出来事は？会社ごとにどれくらい影響した？",
+      "response_seconds": 28,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Company"
+          ],
+          "max_hops": 3,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "全社8社に同時に響いたマイナス事象は、CROSS_NEG（横断的な港湾・流動性の混乱）です。全額連結EBITDAへの影響は合計 -6.80億円で、最も大きい影響はVeltrona Metals USA Inc.の-1.06億円でした。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はイベント効果の全額連結EBITDA（actualへの差分）を優先し、持分管理EBITDAと簡易CFも併記しています。\n\n| 会社 | 会社ID | 全額連結EBITDA影響 | 持分管理EBITDA影響 | 簡易CF影響 |\n|---|---|---:|---:|---:|\n| Caldriva Foods Japan KK | SUB_FOD_JP_01 | -0.59億円 | -0.30億円 | -0.48億円 |\n| Caldriva Foods USA Inc. | SUB_FOD_US_01 | -0.71億円 | -0.71億円 | -0.57億円 |\n| Nuvellora Finance Japan KK | SUB_FIN_JP_01 | -0.65億円 | -0.65億円 | -0.52億円 |\n| Nuvellora Finance USA Inc. | SUB_FIN_US_01 | -0.69億円 | -0.35億円 | -0.55億円 |\n| Orivexa Energy Japan KK | SUB_ENE_JP_01 | -1.04億円 | -1.04億円 | -0.83億円 |\n| Orivexa Energy USA Inc. | SUB_ENE_US_01 | -1.01億円 | -0.52億円 | -0.81億円 |\n| Veltrona Metals Japan KK | SUB_MTL_JP_01 | -1.05億円 | -1.05億円 | -0.84億円 |\n| Veltrona Metals USA Inc. | SUB_MTL_US_01 | -1.06億円 | -0.54億円 | -0.85億円 |\n\n優先対応：\n- 高：金属米国、金属日本、エネルギー日本、エネルギー米国。全額連結EBITDAへの影響が-1億円前後で大きいです。\n- 中：食品米国、金融米国、金融日本。影響は-0.65～-0.71億円です。\n- 低：食品日本。影響は-0.59億円ですが、全社同時発生事象のため対策対象からは外しません。\n\n原因チェーンは、CROSS_NEG（event_id）→ 各社のイベント財務効果（effect_id）→ 各子会社のEBITDA・簡易CF差分 → グループ全額連結KPI、です。これは架空の管理シミュレーション上の配賦であり、実世界の因果証明ではありません。金額はJPY換算、丸めにより合計との差が生じる場合があります。完全な行別結果は `result_0.json` を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "event_id",
+            "event_description",
+            "company_id",
+            "company_name",
+            "delta_ebitda_full_oku_jpy",
+            "delta_management_oku_jpy",
+            "delta_cf_full_oku_jpy",
+            "affected_company_count",
+            "event_total_ebitda_full_oku_jpy"
+          ],
+          "rows_total": 8,
+          "rows": [
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_FOD_JP_01",
+              "Caldriva Foods Japan KK",
+              -0.59,
+              -0.3,
+              -0.48,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              -0.71,
+              -0.71,
+              -0.57,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_FIN_JP_01",
+              "Nuvellora Finance Japan KK",
+              -0.65,
+              -0.65,
+              -0.52,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_FIN_US_01",
+              "Nuvellora Finance USA Inc.",
+              -0.69,
+              -0.35,
+              -0.55,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_ENE_JP_01",
+              "Orivexa Energy Japan KK",
+              -1.04,
+              -1.04,
+              -0.83,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_ENE_US_01",
+              "Orivexa Energy USA Inc.",
+              -1.01,
+              -0.52,
+              -0.81,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_MTL_JP_01",
+              "Veltrona Metals Japan KK",
+              -1.05,
+              -1.05,
+              -0.84,
+              8,
+              -6.8
+            ],
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "SUB_MTL_US_01",
+              "Veltrona Metals USA Inc.",
+              -1.06,
+              -0.54,
+              -0.85,
+              8,
+              -6.8
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casual_largest_event",
+      "purpose": "Casual wording: which event hit group EBITDA most, and what share of the year",
+      "question": "このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？",
+      "response_seconds": 34,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "GroupKPI"
+          ],
+          "max_hops": 6,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "Company",
+              "to": "FinancialMetric",
+              "join": "company_master.entity_id = semantic_financial_metrics_daily.entity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialMetric",
+              "to": "(link table)",
+              "join": "semantic_financial_metrics_daily.metric_id = semantic_metric_kpi_links.metric_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "(link table)",
+              "to": "GroupKPI",
+              "join": "semantic_metric_kpi_links.kpi_id = kpi_snapshot.kpi_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "グループのEBITDAに最も大きく響いたのは、横断的な港湾・流動性の混乱である CROSS_NEG です。全額連結EBITDAへの影響は -6.80億円で、年間actual EBITDAの約 -1.52%に相当します。\n\n前提：対象期間は2025-10-01～2026-09-30、指標は全額連結EBITDA（actual、EBITDA_FULL_CONSOLIDATED）です。\n\n- イベント：CROSS_NEG（横断的な港湾・流動性の混乱）\n- 全額連結EBITDA影響：-6.80億円\n- 持分管理ベースの影響：-5.16億円\n- 年間actual EBITDA：447.57億円\n- 年間EBITDAに対する影響：-1.52%\n\nこれは架空データ上のシミュレーション配賦による結果です。詳細は result_0.json を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "event_id",
+            "narrative",
+            "direction",
+            "full_consolidated_ebitda_impact_oku_jpy",
+            "management_impact_oku_jpy",
+            "annual_actual_ebitda_oku_jpy",
+            "impact_as_percent_of_annual_actual_ebitda"
+          ],
+          "rows_total": 1,
+          "rows": [
+            [
+              "CROSS_NEG",
+              "SYNTHETIC: cross-sector port and liquidity disruption",
+              "negative",
+              -6.8004,
+              -5.1565,
+              447.574,
+              -1.5194
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chain_1",
+      "purpose": "Chain question, first run",
+      "question": "食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。",
+      "response_seconds": 66,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Company"
+          ],
+          "max_hops": 3,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "結論：今回の抽出結果では、食品損失イベント FOD_NEG が食品以外の子会社へ直接配賦されたEBITDA影響は確認できませんでした。また、食品子会社と他社のグループ内取引についても、取引行・日付一致フラグが取得結果に含まれず、連鎖を実証できる記録は未検証です。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はFOD_NEGの全額連結EBITDA影響を最優先、次に全額連結の簡易CF影響（いずれもJPY換算、イベント効果の配賦額）です。\n\n確認できた直接影響は食品子会社内にとどまっています。\n\n- Caldriva Foods USA Inc.（SUB_FOD_US_01）\n  - 全額連結EBITDA影響：-0.597043億円\n  - 全額連結の簡易CF影響：-0.477634億円\n  - 持分管理EBITDA影響：-0.597043億円\n  - effect_id件数：42件\n\n- Caldriva Foods Japan KK（SUB_FOD_JP_01）\n  - 全額連結EBITDA影響：-0.547569億円\n  - 全額連結の簡易CF影響：-0.438055億円\n  - 持分管理EBITDA影響：-0.279260億円\n  - effect_id件数：42件\n\n原因チェーンは、FOD_NEG → 食品子会社の活動 → 食品契約 → EBITDA・簡易CF影響、という構造です。たとえば、米国食品では `event_id=FOD_NEG`、`activity_id=SUB_FOD_US_01_A134_0`、`contract_id=SUB_FOD_US_01_C04`、`evidence_id=SUB_FOD_US_01_FOD_NEG_0`、`effect_id=SUB_FOD_US_01_A134_0_FOD_NEG_F` が確認できます。日本食品でも同様に、`activity_id=SUB_FOD_JP_01_A133_0`、`contract_id=SUB_FOD_JP_01_C04`、`evidence_id=SUB_FOD_JP_01_FOD_NEG_0`、`effect_id=SUB_FOD_JP_01_A133_0_FOD_NEG_F` が確認できます。\n\nグループ内取引については、今回の結果では `pair_id`、`posting_date`、相手先子会社、取引額、日付一致フラグが値として返っていません。そのため、「食品損失の発生日に、食品子会社から他子会社への内部取引を通じて損失が波及した」とは断定できません。少なくともこの抽出範囲では、他子会社に対するFOD_NEGの直接的な財務効果配賦も確認できません。\n\n優先対応：\n- 高：食品米国・食品日本のコールドチェーン対策。両社で直接のEBITDA・簡易CF悪化が記録されており、まず廃棄事故の再発防止、温度逸脱時の代替配送、在庫振替を優先します。\n- 中：食品子会社と他子会社間の内部取引照合。`pair_id`単位で売手・買手の両側、`posting_date`、FOD_NEGの`effect_date`を照合し、在庫・調達・資金面の二次影響を検証します。\n- 低：他セクター子会社への直接対策。現時点の抽出では、食品以外へのFOD_NEG配賦が確認されていないため、追加証跡が得られるまで優先度は低位です。\n\n留意点：これは架空の商社デモデータに基づくイベント配賦であり、実世界での因果証明ではありません。金額は抽出済みの億円換算値です。内部取引行が未取得のため、取引経路による連鎖範囲と金額は未検証です。詳細は `result_0.json` を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "record_type",
+            "allocation_scope",
+            "entity_id",
+            "entity_name",
+            "sector_code",
+            "country_code",
+            "impacted_effect_id_count",
+            "event_id",
+            "activity_id",
+            "contract_id",
+            "evidence_id",
+            "effect_id",
+            "effect_date",
+            "full_consolidated_ebitda_oku_jpy",
+            "management_ebitda_oku_jpy",
+            "full_consolidated_simple_cf_oku_jpy",
+            "entity_full_consolidated_ebitda_oku_jpy",
+            "entity_management_ebitda_oku_jpy",
+            "entity_full_consolidated_simple_cf_oku_jpy",
+            "pair_id",
+            "posting_date",
+            "food_entity_id",
+            "counterparty_entity_id",
+            "side",
+            "amount_group_oku_jpy",
+            "ebitda_effect_group_oku_jpy",
+            "fod_neg_effect_date_match_flag"
+          ],
+          "rows_total": 84,
+          "rows": [
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A134_0",
+              "SUB_FOD_US_01_C04",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A134_0_FOD_NEG_F",
+              "2026-02-12T00:00:00",
+              -0.024139,
+              -0.024139,
+              -0.019311,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A134_1",
+              "SUB_FOD_US_01_C05",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A134_1_FOD_NEG_F",
+              "2026-02-12T00:00:00",
+              -0.017041,
+              -0.017041,
+              -0.013633,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A134_2",
+              "SUB_FOD_US_01_C06",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A134_2_FOD_NEG_F",
+              "2026-02-12T00:00:00",
+              -0.030024,
+              -0.030024,
+              -0.02402,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A135_0",
+              "SUB_FOD_US_01_C04",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A135_0_FOD_NEG_F",
+              "2026-02-13T00:00:00",
+              -0.021106,
+              -0.021106,
+              -0.016885,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A135_1",
+              "SUB_FOD_US_01_C05",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A135_1_FOD_NEG_F",
+              "2026-02-13T00:00:00",
+              -0.032935,
+              -0.032935,
+              -0.026348,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A135_2",
+              "SUB_FOD_US_01_C06",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A135_2_FOD_NEG_F",
+              "2026-02-13T00:00:00",
+              -0.022857,
+              -0.022857,
+              -0.018286,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A136_0",
+              "SUB_FOD_US_01_C04",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A136_0_FOD_NEG_F",
+              "2026-02-14T00:00:00",
+              -0.027422,
+              -0.027422,
+              -0.021938,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A136_1",
+              "SUB_FOD_US_01_C05",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A136_1_FOD_NEG_F",
+              "2026-02-14T00:00:00",
+              -0.017378,
+              -0.017378,
+              -0.013903,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A136_2",
+              "SUB_FOD_US_01_C06",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A136_2_FOD_NEG_F",
+              "2026-02-14T00:00:00",
+              -0.011449,
+              -0.011449,
+              -0.009159,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US",
+              42,
+              "FOD_NEG",
+              "SUB_FOD_US_01_A137_0",
+              "SUB_FOD_US_01_C04",
+              "SUB_FOD_US_01_FOD_NEG_0",
+              "SUB_FOD_US_01_A137_0_FOD_NEG_F",
+              "2026-02-15T00:00:00",
+              -0.012585,
+              -0.012585,
+              -0.010068,
+              -0.597043,
+              -0.597043,
+              -0.477634,
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}",
+              "{}"
+            ],
+            [
+              "FOD_NEG_EFFECT",
+              "食品子会社自身",
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "US"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chain_2",
+      "purpose": "Chain question, second run (fresh chat)",
+      "question": "食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。",
+      "response_seconds": 60,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Company",
+            "Contract",
+            "Activity",
+            "Evidence"
+          ],
+          "max_hops": 5,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Contract",
+              "join": "semantic_event_financial_effects.contract_id = semantic_contracts.contract_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "RiskEvent",
+              "to": "(link table)",
+              "join": "semantic_risk_events.event_id = semantic_event_impact_bridge.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "(link table)",
+              "to": "Activity",
+              "join": "semantic_event_impact_bridge.activity_id = semantic_business_activities.activity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "RiskEvent",
+              "to": "Evidence",
+              "join": "semantic_risk_events.event_id = semantic_event_evidence.event_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        },
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Company",
+            "Contract"
+          ],
+          "max_hops": 3,
+          "found": true,
+          "spansDataSources": false,
+          "hops": [
+            {
+              "from": "RiskEvent",
+              "to": "FinancialEffect",
+              "join": "semantic_risk_events.event_id = semantic_event_financial_effects.event_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Company",
+              "join": "semantic_event_financial_effects.entity_id = company_master.entity_id",
+              "kind": "relationship"
+            },
+            {
+              "from": "FinancialEffect",
+              "to": "Contract",
+              "join": "semantic_event_financial_effects.contract_id = semantic_contracts.contract_id",
+              "kind": "relationship"
+            }
+          ],
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "answer": "食品損失（FOD_NEG）の連鎖は、今回の因果配賦では食品子会社の範囲にとどまり、食品以外の子会社への直接的なEBITDA影響は確認できませんでした。内部取引を通じた連鎖も、食品子会社が関与する該当期間のグループ内取引データが0件のため、検証できる影響は確認できません。\n\n前提：対象期間は2025-10-01～2026-09-30、指標は全額連結EBITDAのイベント影響（FOD_NEG）。補足として持分管理EBITDAと簡易CFを使用しています。\n\n- 影響先は Caldriva Foods Japan KK と Caldriva Foods USA Inc. のみで、6契約すべてが食品セクター・milling_wheatでした。\n- 最大の全額連結EBITDA影響は、日本食品子会社の SUB_FOD_JP_01_C04 で -0.2056313億円（持分管理 -0.1048720億円、簡易CF -0.1645051億円）。\n- 米国食品子会社では SUB_FOD_US_01_C06 が -0.2055239億円、SUB_FOD_US_01_C04 が -0.2017364億円で続きます。米国側は持分管理EBITDA影響も全額連結EBITDA影響と同額です。\n- 影響日は日本側が2026-02-11～02-24、米国側が2026-02-12～02-25です。\n- 食品子会社が売手または相手方となるグループ内取引は、対象期間の集計で0件でした。このため、内部取引の pair_id を介して他子会社へ損益が波及したという照合可能な証跡はありません。\n\n優先対応：\n- 高：食品子会社の6契約。EBITDAへのマイナス影響が直接配賦されているため、コールドチェーンの廃棄抑制、代替調達、契約別の在庫・輸送条件の見直しを優先。\n- 中：食品以外の子会社との取引接続の監視。今回は内部取引0件ですが、将来の波及を検知できるよう、食品子会社を起点とする pair_id の日次照合を継続。\n- 低：食品以外の子会社への個別是正。今回のFOD_NEGには直接の影響配賦・内部取引証跡がないため、現時点での優先度は低いです。\n\n原因チェーンは、FOD_NEG → effect_id単位の食品子会社・milling_wheat契約への配賦 → 全額連結EBITDA／簡易CF影響、という範囲で確認されています。内部取引0件のため、イベント→内部取引→他子会社という連鎖チェーンは構成できません。\n\nこれは架空の管理分析データに基づくシミュレーション配賦であり、実世界の因果推論ではありません。金額はJPY億円、丸め前の集計値です。詳細は `result_0.json` と `result_1.json` を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "entity_id",
+            "entity_name",
+            "sector_code",
+            "food_sector_classification",
+            "contract_id",
+            "commodity",
+            "affected_effect_id_count",
+            "full_consolidated_ebitda_impact_jpy_oku",
+            "management_ebitda_impact_jpy_oku",
+            "simplified_cf_impact_jpy_oku",
+            "first_effect_date",
+            "last_effect_date"
+          ],
+          "rows_total": 6,
+          "rows": [
+            [
+              "SUB_FOD_JP_01",
+              "Caldriva Foods Japan KK",
+              "foods",
+              "食品",
+              "SUB_FOD_JP_01_C04",
+              "milling_wheat",
+              14,
+              -0.2056313,
+              -0.104872,
+              -0.1645051,
+              "2026-02-11T00:00:00",
+              "2026-02-24T00:00:00"
+            ],
+            [
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "食品",
+              "SUB_FOD_US_01_C06",
+              "milling_wheat",
+              14,
+              -0.2055239,
+              -0.2055239,
+              -0.1644191,
+              "2026-02-12T00:00:00",
+              "2026-02-25T00:00:00"
+            ],
+            [
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "食品",
+              "SUB_FOD_US_01_C04",
+              "milling_wheat",
+              14,
+              -0.2017364,
+              -0.2017364,
+              -0.1613891,
+              "2026-02-12T00:00:00",
+              "2026-02-25T00:00:00"
+            ],
+            [
+              "SUB_FOD_US_01",
+              "Caldriva Foods USA Inc.",
+              "foods",
+              "食品",
+              "SUB_FOD_US_01_C05",
+              "milling_wheat",
+              14,
+              -0.1897822,
+              -0.1897822,
+              -0.1518258,
+              "2026-02-12T00:00:00",
+              "2026-02-25T00:00:00"
+            ],
+            [
+              "SUB_FOD_JP_01",
+              "Caldriva Foods Japan KK",
+              "foods",
+              "食品",
+              "SUB_FOD_JP_01_C05",
+              "milling_wheat",
+              14,
+              -0.1769867,
+              -0.0902632,
+              -0.1415894,
+              "2026-02-11T00:00:00",
+              "2026-02-24T00:00:00"
+            ],
+            [
+              "SUB_FOD_JP_01",
+              "Caldriva Foods Japan KK",
+              "foods",
+              "食品",
+              "SUB_FOD_JP_01_C06",
+              "milling_wheat",
+              14,
+              -0.164951,
+              -0.084125,
+              -0.1319608,
+              "2026-02-11T00:00:00",
+              "2026-02-24T00:00:00"
+            ]
+          ]
+        },
+        {
+          "execution_index": 1,
+          "columns": [
+            "seller_entity_id",
+            "counterparty_entity_id",
+            "pair_id",
+            "transaction_record_count",
+            "seller_amount_jpy_oku",
+            "buyer_amount_jpy_oku",
+            "reconciliation_difference_jpy_oku",
+            "min_posting_date",
+            "max_posting_date"
+          ],
+          "rows_total": 0,
+          "rows": []
+        }
+      ]
+    },
+    {
+      "id": "fx_what_if_1",
+      "purpose": "What-if question, first run",
+      "question": "もし円が10円高くなったら、グループのEBITDAはいくら変わる？",
+      "response_seconds": 29,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": "not attempted",
+      "answer": "10円の円高を仮定すると、今期のグループ全額連結EBITDA（actual）は14.80億円減少し、447.57億円から432.78億円になります。\n\n前提：対象期間は2025-10-01～2026-09-30、指標は全額連結EBITDA actual。USD/JPYが日次で一律10円低下し、USD建てのローカルEBITDAは不変と仮定しています。\n\n- 現行EBITDA：447.57億円\n- 10円円高後のEBITDA：432.78億円\n- 変動：-14.80億円\n- 対象：USD建て日次EBITDA 1,460行。JPY建て分の影響は0円です。\n\n計算は「円高後EBITDA＝現行EBITDA－10円×USD建てEBITDA（現地通貨）合計」です。これは架空データに基づく単純な換算感応度であり、価格・数量・ヘッジ・事業行動の変化は織り込んでいません。為替は実観測のEUR建てクロスを用いる設定です。\n\n詳細データ：`result_0.json`",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "current_period_ebitda_jpy_oku",
+            "ebitda_after_10_jpy_appreciation_jpy_oku",
+            "change_jpy_oku",
+            "usd_ebitda_daily_row_count",
+            "calculation_formula"
+          ],
+          "rows_total": 1,
+          "rows": [
+            [
+              447.57,
+              432.78,
+              -14.8,
+              1460,
+              "現行EBITDA=SUM(amount_group)、円高後=SUM(amount_group)-10×SUM(USDのamount_local)、増減額=-10×SUM(USDのamount_local)、JPY行の影響=0"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fx_what_if_2",
+      "purpose": "What-if question, second run (fresh chat)",
+      "question": "もし円が10円高くなったら、グループのEBITDAはいくら変わる？",
+      "response_seconds": 24,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_context": {
+        "selected_entities": 17,
+        "context_chars": 17608
+      },
+      "ontology_traversal": "not attempted",
+      "answer": "円が10円高くなると、今期の全額連結EBITDAは14.80億円減少します（-1,479,847,501.5円）。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はactualの全額連結EBITDA。USD/JPYが日次で一律10円低下する感応度として試算しました。\n\n- USD建てEBITDA合計：147,984,750.15 USD（1,460日次行）\n- USD換算部分のEBITDA影響：-14.80億円\n- JPY建て部分の影響：0円\n- グループ合計の影響：-14.80億円\n\nこれは架空データでの為替感応度試算です。USD建て利益を日次為替でJPY換算しているため、円高では換算後EBITDAが減少します。完全な明細は `result_0.json` を参照してください。",
+      "result_tables": [
+        {
+          "execution_index": 0,
+          "columns": [
+            "currency_code",
+            "ebitda_local_total",
+            "usd_ebitda_row_count",
+            "usd_ebitda_total_usd",
+            "fx_difference_jpy",
+            "fx_difference_oku_jpy"
+          ],
+          "rows_total": 3,
+          "rows": [
+            [
+              "JPY",
+              21469190174.49,
+              0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              "USD",
+              147984750.15,
+              1460,
+              147984750.15,
+              -1479847501.5,
+              -14.798475
+            ],
+            [
+              "ALL_CURRENCIES",
+              21617174924.64,
+              1460,
+              147984750.15,
+              -1479847501.5,
+              -14.798475
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "demo_questions": [
+    {
+      "id": "Q1",
+      "response_seconds": 29,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_traversal": "not attempted",
+      "result_tables": [
+        {
+          "columns": [
+            "full_consolidated_ebitda_oku_jpy",
+            "management_contribution_ebitda_oku_jpy"
+          ],
+          "rows_total": 1,
+          "rows": [
+            [
+              447.574,
+              335.479
+            ]
+          ]
+        },
+        {
+          "columns": [
+            "year_month",
+            "scenario_tag",
+            "ebitda_full_consolidated_oku_jpy"
+          ],
+          "rows_total": 24,
+          "rows": [
+            [
+              "2025-10",
+              "actual",
+              38.480502
+            ],
+            [
+              "2025-10",
+              "baseline",
+              38.480502
+            ],
+            [
+              "2025-11",
+              "actual",
+              38.1142085
+            ],
+            [
+              "2025-11",
+              "baseline",
+              40.2014339
+            ],
+            [
+              "2025-12",
+              "actual",
+              39.338313
+            ],
+            [
+              "2025-12",
+              "baseline",
+              39.338313
+            ],
+            [
+              "2026-01",
+              "actual",
+              34.7454534
+            ],
+            [
+              "2026-01",
+              "baseline",
+              36.5961091
+            ],
+            [
+              "2026-02",
+              "actual",
+              30.3362938
+            ],
+            [
+              "2026-02",
+              "baseline",
+              31.5150001
+            ],
+            [
+              "2026-03",
+              "actual",
+              38.5673759
+            ],
+            [
+              "2026-03",
+              "baseline",
+              36.740913
+            ],
+            [
+              "2026-04",
+              "actual",
+              36.574641
+            ],
+            [
+              "2026-04",
+              "baseline",
+              37.7976962
+            ],
+            [
+              "2026-05",
+              "actual",
+              34.2159986
+            ],
+            [
+              "2026-05",
+              "baseline",
+              41.0418192
+            ],
+            [
+              "2026-06",
+              "actual",
+              41.5873149
+            ],
+            [
+              "2026-06",
+              "baseline",
+              39.4857604
+            ],
+            [
+              "2026-07",
+              "actual",
+              39.122763
+            ],
+            [
+              "2026-07",
+              "baseline",
+              37.9257757
+            ],
+            [
+              "2026-08",
+              "actual",
+              36.2982188
+            ],
+            [
+              "2026-08",
+              "baseline",
+              35.1312926
+            ],
+            [
+              "2026-09",
+              "actual",
+              40.1929139
+            ],
+            [
+              "2026-09",
+              "baseline",
+              34.3485627
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "response_seconds": 37,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_traversal": "not attempted",
+      "result_tables": [
+        {
+          "columns": [
+            "event_id",
+            "impact_oku_jpy"
+          ],
+          "rows_total": 10,
+          "rows": [
+            [
+              "CROSS_NEG",
+              -6.8003523
+            ],
+            [
+              "CROSS_POS",
+              5.8443511
+            ],
+            [
+              "ENE_NEG",
+              -1.8847501
+            ],
+            [
+              "ENE_POS",
+              2.1015544
+            ],
+            [
+              "FIN_NEG",
+              -1.2485235
+            ],
+            [
+              "FIN_POS",
+              1.1669261
+            ],
+            [
+              "FOD_NEG",
+              -1.1446118
+            ],
+            [
+              "FOD_POS",
+              1.1969873
+            ],
+            [
+              "MTL_NEG",
+              -2.0872253
+            ],
+            [
+              "MTL_POS",
+              1.8264628
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "response_seconds": 52,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Evidence",
+            "Activity",
+            "Contract",
+            "FinancialMetric",
+            "GroupKPI"
+          ],
+          "found": true,
+          "hops": 8,
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "extracted": {
+        "full_oku": -1.14,
+        "management_oku": -0.88,
+        "unique_effect_count": 84,
+        "evidence_id": "SUB_FOD_JP_01_FOD_NEG_0",
+        "activity_id": "SUB_FOD_JP_01_A133_0",
+        "contract_id": "SUB_FOD_JP_01_C04",
+        "effect_id": "SUB_FOD_JP_01_A133_0_FOD_NEG_F",
+        "daily_metric_id": "SUB_FOD_JP_01_2026-02-11_ebitda_actual",
+        "kpi_id": "2026-02-11_EBITDA_FULL_CONSOLIDATED_actual"
+      }
+    },
+    {
+      "id": "Q4",
+      "response_seconds": 91,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "Evidence",
+            "Activity",
+            "Contract",
+            "FinancialEffect",
+            "FinancialMetric",
+            "GroupKPI"
+          ],
+          "found": true,
+          "hops": 8,
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "extracted": {
+        "full_oku": 2.1,
+        "management_oku": 1.57,
+        "evidence_ids": [
+          "SUB_ENE_JP_01_ENE_POS_0",
+          "SUB_ENE_US_01_ENE_POS_0"
+        ],
+        "contract_ids": [
+          "SUB_ENE_JP_01_C08",
+          "SUB_ENE_JP_01_C09",
+          "SUB_ENE_JP_01_C10",
+          "SUB_ENE_US_01_C08",
+          "SUB_ENE_US_01_C09",
+          "SUB_ENE_US_01_C10"
+        ]
+      }
+    },
+    {
+      "id": "Q_ACT",
+      "response_seconds": 50,
+      "model": "gpt-5.6-terra",
+      "status": "completed",
+      "ontology_traversal": [
+        {
+          "start_entity": "RiskEvent",
+          "target_entities": [
+            "FinancialEffect",
+            "Contract",
+            "Company"
+          ],
+          "found": true,
+          "hops": 3,
+          "chosenPath": "single_engine_join"
+        }
+      ],
+      "extracted": {
+        "table": [
+          {
+            "contract_id": "SUB_FIN_US_01_C08",
+            "subsidiary": "Nuvellora Finance USA Inc.",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.45,
+            "priority": "高"
+          },
+          {
+            "contract_id": "SUB_FIN_US_01_C07",
+            "subsidiary": "Nuvellora Finance USA Inc.",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.44,
+            "priority": "高"
+          },
+          {
+            "contract_id": "SUB_FIN_JP_01_C08",
+            "subsidiary": "Nuvellora Finance Japan KK",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.43,
+            "priority": "高"
+          },
+          {
+            "contract_id": "SUB_FIN_JP_01_C07",
+            "subsidiary": "Nuvellora Finance Japan KK",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.43,
+            "priority": "高"
+          },
+          {
+            "contract_id": "SUB_MTL_JP_01_C07",
+            "subsidiary": "Veltrona Metals Japan KK",
+            "commodity": "copper_alloy",
+            "events": [
+              "CROSS_NEG"
+            ],
+            "event_count": 1,
+            "full_oku": -0.37,
+            "priority": "中"
+          },
+          {
+            "contract_id": "SUB_FIN_JP_01_C09",
+            "subsidiary": "Nuvellora Finance Japan KK",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.24,
+            "priority": "中"
+          },
+          {
+            "contract_id": "SUB_FIN_US_01_C09",
+            "subsidiary": "Nuvellora Finance USA Inc.",
+            "commodity": "trade_finance",
+            "events": [
+              "CROSS_NEG",
+              "FIN_NEG"
+            ],
+            "event_count": 2,
+            "full_oku": -0.24,
+            "priority": "中"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -196,7 +196,8 @@ def current_tmdl_definition():
     id_to_name={e["id"]:n for n,e in idmap["entityTypes"].items()}
     definitions={p["path"]:json.loads(base64.b64decode(p["payload"])) for p in ontology_parts if p["path"]!=".platform"}
     def rel(name,many,col,one,key):
-        relationships.append(f"relationship {name}\n\tisActive: false\n\tfromColumn: {many}.{col}\n\ttoColumn: {one}.{key}\n")
+        # Relationships must stay active: the Data Agent resolves join paths only from active ones.
+        relationships.append(f"relationship {name}\n\tfromColumn: {many}.{col}\n\ttoColumn: {one}.{key}\n")
     for name,r in idmap["relationshipTypes"].items():
         definition=definitions[f"RelationshipTypes/{r['id']}/definition.json"]
         context=definitions[f"RelationshipTypes/{r['id']}/Contextualizations/{r['contextualization']}.json"]

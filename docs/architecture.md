@@ -109,6 +109,22 @@ evidence/activity/contract/effect/metric/KPI paths for **all 1,344 effects acros
 10 events**. Graph numeric properties are floating-point; SQL DECIMAL remains
 the accounting authority.
 
+All 42 relationships (tabular relationships behind the 39 entity relationships)
+are active, which the Data Agent needs: it builds join specifications only from
+active relationships, and inactive ones leave its traversal planner without a
+path. The first deployment wrote `isActive: false` on all of them; the generator
+no longer does. Changing a relationship through the public API has a side effect:
+`updateDefinition` (like create) removes the reserved `ONT_*` connection
+annotations, 160 becoming 20. Afterwards the 20 scripts of
+`config/ontology_connection_bindings.json` are sent one by one to the ontology
+authoring endpoint that the Fabric UI itself calls (`POST …/DigitalOperationsService/direct/v4/workspaces/{workspaceId}/ontologies/{ontologyId}/definition/scripts`,
+authenticated with a workload token that the web app requests for the signed-in
+user). This restores 8 annotations on each of the 20 tables, the entities show
+as eligible again, and the graph data is refreshed from the ontology page. The
+endpoint is not documented and may change. On 2026-10-27 the sequence was
+update, re-apply (20 of 20), refresh; node and edge counts per type were equal
+to before (`reports/da_traversal_fix_2026-10-27.json`).
+
 DA has two configured sources, within the documented five-source limit:
 the ontology and the complete parent logical query surface. Its **25 selected
 tables** comprise 17 parent/projection tables and eight zero-copy sector shortcuts.
@@ -161,13 +177,24 @@ checked the group-wide pages of the presenter guide: sector, per-company and lar
 equal the saved data exactly at two decimals; the prose around the tables can be wrong; the chain
 and FX what-if questions were answered with caveats or inconsistently between two runs; and in the six
 runs that tried an ontology traversal the tool returned `no_path_found`, so every answer came from SQL on
-the lakehouse tables with the ontology injected as context. Nothing was changed.
+the lakehouse tables with the ontology injected as context. Nothing was changed in that run.
+
+The cause was found the same day: the generator had written `isActive: false` on all 42 relationships, and
+the agent lists a join specification only for active relationships (scratch copies of the ontology showed
+the same agent and question resolving 39 of 39 joins when the relationships are active, and failing
+when they are not, on both the Standard and the Preview runtime). The relationships were set active in the
+production ontology, the connection annotations were re-applied and the graph data was refreshed (see the
+ontology section). The agent itself was not changed or republished. Eight repeat runs on the published
+agent (`reports/da_traversal_fix_2026-10-27.json`) found a path in all 6 runs that tried a traversal,
+including multi-hop paths with link-table joins, and the amounts did not change. The demo questions Q1 to Q4 and the
+action question were run once each afterwards and equal the saved data. The agent still answers
+with SQL on the lakehouse tables; it has no tool that queries the graph.
 
 Annual actual JPY: full EBITDA **44,757,399,732.84**, ownership-weighted
 management EBITDA **33,547,898,914.09**. Accounting and live-query evidence:
 `reports/cloud_validation.json`, `reports/end_to_end_validation.json`,
 `reports/da_qa_final_draft.json`, `reports/da_qa_published.json`,
-`reports/da_group_wide_2026-10-27.json`, and the graph count/path reports. Model-internal traces are removed from QA reports.
+`reports/da_group_wide_2026-10-27.json`, `reports/da_traversal_fix_2026-10-27.json`, and the graph count/path reports. Model-internal traces are removed from QA reports.
 
 ## Live entry points
 

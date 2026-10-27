@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 from decimal import Decimal, ROUND_HALF_UP
 import json
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -120,6 +121,13 @@ for text in table_parts:
                        "WorkspaceName", "SqlEndpoint", "SqlDatabase", "PinnedAtUtc"):
         assert "annotation ONT_" + annotation + " =" in text
 
+relationships_live = next(base64.b64decode(x["payload"]).decode() for x in ontology_parts
+                          if x["path"] == "relationships.tmdl")
+assert len(re.findall(r"^relationship ", relationships_live, re.M)) == 42
+assert "isActive" not in relationships_live
+relationships_local = (ROOT / "ontology_tmdl/relationships.tmdl").read_text()
+assert relationships_local.replace("\r\n", "\n").strip() == relationships_live.replace("\r\n", "\n").strip()
+
 wide = load("reports/da_group_wide_2026-10-27.json")
 wide_runs = {x["id"]: x for x in wide["runs"]}
 assert len(wide_runs) == 8 and all(x["status"] == "completed" for x in wide_runs.values())
@@ -221,6 +229,119 @@ assert len(traversals) == 6 and all(t and t[0]["chosenPath"] == "no_path_found" 
 for run_id in ("chain_1", "chain_2"):
     assert "intercompany" in wide_runs[run_id]["answer"] or "内部取引" in wide_runs[run_id]["answer"]
 
+# Repeat of the eight runs after the relationships were set active (2026-10-27, about 15 minutes after the change).
+fixed = load("reports/da_traversal_fix_2026-10-27.json")
+fixed_runs = {x["id"]: x for x in fixed["runs"]}
+assert set(fixed_runs) == set(wide_runs) and all(x["status"] == "completed" for x in fixed_runs.values())
+fixed_attempts = {k: x["ontology_traversal"] for k, x in fixed_runs.items() if isinstance(x["ontology_traversal"], list)}
+assert set(fixed_attempts) == {k for k, x in wide_runs.items() if isinstance(x["ontology_traversal"], list)}
+assert all(t["found"] and t["chosenPath"] == "single_engine_join" for v in fixed_attempts.values() for t in v)
+assert all(x["ontology_context"]["selected_entities"] == 17
+           and x["ontology_context"]["context_chars"] > fixed["cause"]["before_fix"]["context_chars"]
+           for x in fixed_runs.values())
+assert fixed["verification"]["graph"]["node_counts"] == actual_nodes
+assert fixed["verification"]["graph"]["edge_counts"] == actual_edges
+
+
+def fixed_rows(run_id, column):
+    table = next(t for t in reversed(fixed_runs[run_id]["result_tables"]) if column in t["columns"])
+    return [dict(zip(table["columns"], row)) for row in table["rows"]]
+
+
+def close(value, expected, tolerance):
+    return abs(Decimal(str(value)) - expected) <= Decimal(tolerance)
+
+
+for row in fixed_rows("B_sector", "sector_code"):
+    if row["event_id"] in ("CROSS_NEG", "CROSS_POS") and row["sector_code"] != "ALL_4_SECTORS":
+        event, sector = row["event_id"], row["sector_code"]
+        assert exactly(row["full_consolidated_ebitda_impact_jpy_oku"],
+                       oku(effect_sums(event, by_sector, "delta_ebitda_full_jpy")[sector]))
+        assert exactly(row["management_ebitda_impact_jpy_oku"],
+                       oku(effect_sums(event, by_sector, "delta_management_jpy")[sector]))
+        assert row["unique_effect_id_count"] == 84
+for row in fixed_rows("company", "subsidiary_name"):
+    entity = entity_of_name[row["subsidiary_name"]]
+    assert close(row["cross_neg_ebitda_full_oku_jpy"], oku(cross_full[entity], "0.0000001"), "0.0000001")
+    assert close(row["cross_neg_ebitda_management_oku_jpy"], oku(cross_mgmt[entity], "0.0000001"), "0.0000001")
+    assert row["affected_contract_count"] == len(cross_contracts[entity])
+    assert close(row["cross_neg_impact_pct_of_annual_ebitda"],
+                 cross_full[entity] / annual_by_entity[entity] * 100, "0.0001")
+fixed_company_rows = fixed_rows("casual_all_companies", "company_id")
+assert len(fixed_company_rows) == 8
+for row in fixed_company_rows:
+    entity = row["company_id"]
+    assert exactly(row["delta_ebitda_full_oku_jpy"], oku(cross_full[entity]))
+    assert exactly(row["delta_management_oku_jpy"], oku(cross_mgmt[entity]))
+    assert exactly(row["delta_cf_full_oku_jpy"], oku(cross_cf[entity]))
+fixed_largest = fixed_rows("casual_largest_event", "event_id")[0]
+assert fixed_largest["event_id"] == "CROSS_NEG"
+assert exactly(fixed_largest["full_consolidated_ebitda_impact_oku_jpy"], oku(sum(cross_full.values()), "0.0001"))
+assert exactly(fixed_largest["annual_actual_ebitda_oku_jpy"], oku(annual_total, "0.001"))
+assert exactly(fixed_largest["impact_as_percent_of_annual_actual_ebitda"],
+               (sum(cross_full.values()) / annual_total * 100).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP))
+assert exactly(fixed_rows("fx_what_if_1", "change_jpy_oku")[0]["change_jpy_oku"], oku(-usd_local * 10))
+assert not any(sector_of[x["entity_id"]] == "foods" or sector_of[x["counterparty_entity_id"]] == "foods"
+               for x in group["intercompany_transactions"])
+assert fixed_runs["chain_2"]["result_tables"][1]["rows_total"] == 0
+
+demo = {x["id"]: x for x in fixed["demo_questions"]}
+assert set(demo) == {"Q1", "Q2", "Q3", "Q4", "Q_ACT"} and all(x["status"] == "completed" for x in demo.values())
+assert demo["Q1"]["ontology_traversal"] == demo["Q2"]["ontology_traversal"] == "not attempted"
+assert all(t["found"] and t["chosenPath"] == "single_engine_join"
+           for q in ("Q3", "Q4", "Q_ACT") for t in demo[q]["ontology_traversal"])
+monthly, weighted_actual = defaultdict(Decimal), Decimal(0)
+for row in group["kpi_snapshot"]:
+    if row["kpi_code"] == "EBITDA_FULL_CONSOLIDATED":
+        monthly[row["scenario_tag"], str(row["kpi_date"])[:7]] += Decimal(row["amount_group"])
+    if row["kpi_code"] == "EBITDA_MANAGEMENT_WEIGHTED" and row["scenario_tag"] == "actual":
+        weighted_actual += Decimal(row["amount_group"])
+q1_tables = {tuple(t["columns"]): t for t in demo["Q1"]["result_tables"]}
+series = q1_tables[("year_month", "scenario_tag", "ebitda_full_consolidated_oku_jpy")]["rows"]
+assert len(series) == 24
+for month, scenario, value in series:
+    assert close(value, monthly[scenario, month] / Decimal(10) ** 8, "0.0001")
+annual_row = q1_tables[("full_consolidated_ebitda_oku_jpy", "management_contribution_ebitda_oku_jpy")]["rows"][0]
+assert close(annual_row[0], oku(annual_total), "0.005") and close(annual_row[1], oku(weighted_actual), "0.005")
+q2_rows = demo["Q2"]["result_tables"][0]["rows"]
+assert len(q2_rows) == 10
+for event, value in q2_rows:
+    assert close(value, totals[event][0] / Decimal(10) ** 8, "0.000001")
+
+representative = min((x for x in effects if x["event_id"] == "FOD_NEG"), key=lambda x: x["effect_id"])
+q3 = demo["Q3"]["extracted"]
+assert exactly(q3["full_oku"], oku(totals["FOD_NEG"][0])) and exactly(q3["management_oku"], oku(totals["FOD_NEG"][1]))
+assert q3["unique_effect_count"] == effect_counts["FOD_NEG"] == 84
+for key, field in (("effect_id", "effect_id"), ("activity_id", "activity_id"),
+                   ("contract_id", "contract_id"), ("evidence_id", "evidence_id")):
+    assert q3[key] == representative[field]
+day = representative["effect_date"][:10]
+assert q3["daily_metric_id"] in {x["metric_id"] for x in group["semantic_financial_metrics_daily"]
+                                 if x["entity_id"] == representative["entity_id"] and x["scenario_tag"] == "actual"
+                                 and x["metric_code"] == "EBITDA" and str(x["metric_date"])[:10] == day}
+assert q3["kpi_id"] in {x["kpi_id"] for x in group["kpi_snapshot"] if x["kpi_code"] == "EBITDA_FULL_CONSOLIDATED"
+                        and x["scenario_tag"] == "actual" and str(x["kpi_date"])[:10] == day}
+
+q4 = demo["Q4"]["extracted"]
+energy_positive = [x for x in effects if x["event_id"] == "ENE_POS"]
+assert exactly(q4["full_oku"], oku(totals["ENE_POS"][0])) and exactly(q4["management_oku"], oku(totals["ENE_POS"][1]))
+assert set(q4["evidence_ids"]) == {x["evidence_id"] for x in energy_positive}
+assert set(q4["contract_ids"]) == {x["contract_id"] for x in energy_positive}
+
+negative_events = ("MTL_NEG", "ENE_NEG", "FOD_NEG", "FIN_NEG", "CROSS_NEG")
+contract_sum, contract_events = defaultdict(Decimal), defaultdict(set)
+for x in effects:
+    if x["event_id"] in negative_events:
+        contract_sum[x["contract_id"]] += Decimal(x["delta_ebitda_full_jpy"])
+        contract_events[x["contract_id"]].add(x["event_id"])
+expected_contracts = {c for c, _ in sorted(contract_sum.items(), key=lambda kv: kv[1])[:5]} | {
+    c for c, events in contract_events.items() if len(events) >= 2}
+action_rows = demo["Q_ACT"]["extracted"]["table"]
+assert {x["contract_id"] for x in action_rows} == expected_contracts
+for x in action_rows:
+    assert exactly(x["full_oku"], oku(contract_sum[x["contract_id"]]))
+    assert set(x["events"]) == contract_events[x["contract_id"]] and x["event_count"] == len(x["events"])
+
 readback = load("reports/data_agent_readback.json")["definition"]["parts"]
 for stage in ("draft", "published"):
     source = next(decoded(x) for x in readback if f"/{stage}/" in x["path"]
@@ -246,6 +367,9 @@ result = {
     "published_sql_event_totals_verified": 10,
     "group_wide_da_runs_verified": {"runs": 8, "amount_tables_matching_saved_data": 4,
                                     "ontology_traversal_no_path_runs": len(traversals)},
+    "traversal_fix_verified": {"relationships_active": 42, "runs": 8,
+                               "ontology_traversal_found_runs": len(fixed_attempts),
+                               "demo_questions_rechecked": len(demo)},
     "annual_ebitda_cf_actual_baseline_totals_verified": 8,
     "ownership_mix_verified": {"100_percent": 4, "51_percent": 4},
     "intercompany_pairs_reconciled": 24,

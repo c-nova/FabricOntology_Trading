@@ -52,7 +52,16 @@
     "runtime_verified_nodes": 33960,
     "runtime_verified_edges": 65684,
     "events_with_complete_evidence_to_kpi_paths": 10,
-    "effects_with_complete_paths": 1344
+    "effects_with_complete_paths": 1344,
+    "relationships_active": 42,
+    "relationships_activated_utc": "2026-10-27T06:06:49Z",
+    "refresh_after_relationship_activation": {
+      "job_id": "120c882c-c079-4151-8db7-0b190f43d6c3",
+      "status": "Completed",
+      "start_utc": "2026-10-27T06:09:41.7213355Z",
+      "end_utc": "2026-10-27T06:13:18.6987655Z",
+      "record": "reports/graph_refresh_job_after_relationship_fix.json"
+    }
   },
   "data_agent": {
     "id": "f8bd4ae0-96fa-4752-b911-6ebcc8c531e7",
@@ -81,6 +90,7 @@
     "graph_nodes": "reports/graph_node_counts.json",
     "graph_edges": "reports/graph_edge_counts.json",
     "all_event_paths": "reports/graph_all_event_paths.json",
+    "traversal_fix": "reports/da_traversal_fix_2026-10-27.json",
     "command": "python3 scripts/verify_live_reports.py"
   },
   "safety": {
