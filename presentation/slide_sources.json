@@ -291,6 +291,7 @@
       "reports/qa_expected_event_totals.json",
       "reports/graph_all_event_paths.json",
       "reports/da_qa_published.json",
+      "reports/da_group_wide_2026-10-27.json",
       "data/demo_dataset.json:semantic_event_financial_effects、semantic_financial_metrics_daily（actual）",
       "config/event_generation_rules.yaml:event_mix"
     ]
@@ -304,6 +305,7 @@
       "data/demo_dataset.json:intercompany_transactions、semantic_financial_metrics_daily（actual）",
       "config/data_agent_create.json（DAが参照する表）",
       "reports/graph_all_event_paths.json",
+      "reports/da_group_wide_2026-10-27.json",
       "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）",
       "Microsoft Learn：fabric/iq/ontology/how-to-create-relationship-types（2026-09-04更新）"
     ]

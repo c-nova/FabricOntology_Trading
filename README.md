@@ -59,11 +59,12 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 
 `verify_presenter_deck.py` は、macOSのLibreOffice（`/Applications/LibreOffice.app`）とHomebrewのフォント設定を前提にしています。パスは環境変数 `SOFFICE` と `presentation/fonts.conf` で変更できます。日本語フォントが無い環境では、描画結果の改行位置が実際のPowerPointと異なります。最終確認はPowerPointで行ってください。
 
-## 検証の状況（2026-10-26時点）
+## 検証の状況（2026-10-27時点）
 
 - Data Agentは、Fabricで公開済みです。説明者ガイドの質問は、同日に公開済み版で実行しました。Q1、Q3、Q4の結果は元データと照合し、Q2の金額は公開済み版のQA（`reports/da_qa_published.json`）で照合済みです。後述の指示文の更新（5回目の公開）のあとにも、Q1〜Q4を公開済み版で1回ずつ実行し、数値が変わらないことを確認しています
 - Notebookの保存済みDAG（8ノード、7矢印）は、実Graph（GQL）の結果と、Deltaの金額照合に基づきます
 - カジュアルな質問への対応：公開済みDAに短い質問を10個入れたところ、OK 6、一部 2、NG 2でした（`reports/da_casual_baseline_2026-10-26.json`）。用語と既定値を足した指示文（[`prompts/da_instructions_ja.txt`](prompts/da_instructions_ja.txt)）を公開した結果、10問すべてと追加の質問がOKになり、Q1〜Q4の数値は変わりませんでした。公開後の確認で、期間の値が1日分になる、金額の桁の誤り、前の質問の引き継ぎなどの失敗が見つかったため、同日に計5回公開し直しています。経過と限界は `reports/da_casual_after_2026-10-26.json` にあります。LLMのため文面は実行ごとに変わり、確認した回数も少ないので、毎回同じ答えとは限りません。変えたのはエージェントの指示だけで、データ、Ontology、Lakehouse、データソースの設定は変えていません。DAの指示文の先頭行は、ここでは匿名化しています
+- 全社に及ぶ出来事（横断の2件）の確認：公開済みDAに、業種別、会社別、年間EBITDA比、連鎖、円高の試算などを、のべ8回聞きました（`reports/da_group_wide_2026-10-27.json`、読み取りのみ）。表の金額は、元データの集計と小数第2位まで一致しました。表のまわりの文章には誤りが出ることがあり、連鎖と円高の質問は、断り付きで答えたり、答えが分かれたりしました。DAがOntologyの経路探索を試した6回は、すべて「経路なし」で、答えはLakehouseのSQLで求めています。確認の詳細と限界は、報告書にあります。`scripts/verify_live_reports.py` に、金額の照合を追加しました
 - 新機能の解説は、Microsoft Learn（2026-10-26時点）と、このデモのOntologyの実機確認（名前空間は既定値のみ、ルール0件、共有プロパティ0件、継承なし、バージョン0件）に基づきます。導入案（名前空間の分け方、ルール、共有プロパティ、継承）は、説明者の提案で、Fabricには反映していません
 - Data Agentのruntimeは Preview、Graphの公開APIは beta です。日本語での利用は動作確認した範囲（best effort）で、公式なサポート保証ではありません
 

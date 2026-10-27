@@ -1,0 +1,1443 @@
+{
+ "date": "2026-10-27",
+ "summary": "Eight read-only runs on the published Data Agent about group-wide events, to check the group-wide pages of the presenter guide. Every amount in the returned tables equals the aggregation of the saved dataset exactly at two decimals. The prose around the tables is not always right, the chain and what-if questions are answered with caveats or inconsistently, and the agent answered every question with SQL on the lakehouse tables.",
+ "target": "TradingDA_Multisector, published version (stage=production), runtime Preview. The chat was cleared before every question and after the last one. Read-only: the agent, the ontology, the lakehouses and the data were not changed.",
+ "method": "Each question was typed into the chat of the published view. The final response object of the service (answer text, executed SQL and result rows) was read back; the agent instructions and tool schemas in that object are not stored here because the first line of the live instructions names the original customer.",
+ "findings": [
+  "Amounts match: sector table (CROSS_NEG and CROSS_POS, full and ownership-weighted, 16 values and 8 effect counts), per-company table for CROSS_NEG (8 companies x full, ownership-weighted, contract count, share of the company's annual actual EBITDA; 26 contracts in total), the casual per-company answer including simple CF with 42 effects per company, and the largest event (CROSS_NEG -6.8004 of 447.574 oku yen = -1.5194%). Checks are recomputed in scripts/verify_live_reports.py.",
+  "The prose around the tables can be wrong. The sector answer says finance is slightly larger than foods on the ownership-weighted view, but CROSS_NEG is -1.01 for foods and -1.00 for finance. The company answer names three companies as high priority with its own threshold (over 1 oku yen, or below -1.55% of annual EBITDA) and omits three that meet it: Orivexa Energy USA Inc. (-1.01 oku yen), Nuvellora Finance Japan KK (-1.58%) and Caldriva Foods USA Inc. (-1.56%). The threshold is the agent's own, not a definition of the demo.",
+  "Chain question (two runs): both runs reported no effect allocated to non-food subsidiaries and said the route through intercompany transactions could not be quantified. Run 1 called it unverified. Run 2 explained that intercompany_transactions has no activity_id or contract_id, so it cannot be tied to the FOD_NEG effects, and refused to call the result 'no impact', but it still printed 0 effects and 0.00 oku yen for the non-food companies. That zero means 'no allocation in the data', not 'no impact'.",
+  "FX what-if (two runs, same question): run 1 computed a simple sensitivity (USD-denominated actual EBITDA x -10 yen = -14.7985 oku yen, 3.3% of 447.574). Run 2 declined, saying neither a shocked rate nor a sensitivity coefficient is recorded, and reported the USD exposure (147,984,750.15 USD = 232.88 oku yen). The behaviour is not stable.",
+  "Ontology path: in the 6 runs in which the agent tried an ontology traversal (trace.plan_ontology_traversal), the tool returned no_path_found ('The ontology has no verified relationships to traverse'), and every answer then came from SQL against the lakehouse tables. The ontology definition (17 entity types, 16,161 characters) was injected as context. These runs do not show why no path was found, and the earlier QA reports did not keep this field, so it is not known whether this was always so."
+ ],
+ "limits": [
+  "An LLM agent: wording, the data path and sometimes the content differ between runs. One run per question except the chain and what-if questions (two each), so this is a small sample.",
+  "The runs check the published agent as configured on 2026-10-27; they say nothing about the Standard runtime or about Microsoft 365 Copilot."
+ ],
+ "runs": [
+  {
+   "id": "B_sector",
+   "purpose": "Deck question 追加B (Q5), verbatim: CROSS_NEG and CROSS_POS by sector",
+   "question": "CROSS_NEGとCROSS_POSを、配賦先会社のsectorで4セクターに分類して比較してください。primary_sector='all'を除外せず、effect_idごとに一度だけ合計し、全額と持分管理のEBITDA影響を億円で示してください。時期の異なるイベントなので回復率とは呼ばないでください。",
+   "response_seconds": 46,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "CROSS_NEGは4セクターすべてでEBITDAを押し下げ、CROSS_POSはすべてで押し上げています。全額連結・持分管理ともに、金属とエネルギーで影響が大きく、金融と食品がこれに続きます。時期の異なるイベントの比較であり、回復率は算出していません。\n\n前提：対象期間は2025-10-01～2026-09-30。primary_sector='all'の横断イベントを除外せず、effect_idを重複なしで集計。全額連結EBITDA影響と持分管理EBITDA影響をJPY・億円で表示しています。\n\n| 配賦先会社セクター | CROSS_NEG 全額 | CROSS_NEG 持分管理 | CROSS_POS 全額 | CROSS_POS 持分管理 | 各イベントのeffect_id数 |\n|---|---:|---:|---:|---:|---:|\n| 金属 | -2.12億円 | -1.59億円 | 1.84億円 | 1.36億円 | 84件 |\n| エネルギー | -2.05億円 | -1.55億円 | 1.69億円 | 1.28億円 | 84件 |\n| 金融 | -1.34億円 | -1.00億円 | 1.18億円 | 0.89億円 | 84件 |\n| 食品 | -1.30億円 | -1.01億円 | 1.13億円 | 0.86億円 | 84件 |\n\n比較の要点：\n- 金属は、CROSS_NEGの全額連結影響が-2.12億円、CROSS_POSが1.84億円で、両イベントとも4セクター中で最大です。\n- エネルギーも大きく、全額連結ではCROSS_NEGが-2.05億円、CROSS_POSが1.69億円です。\n- 金融と食品は影響規模が比較的小さいものの、全額連結では金融、持分管理では食品より金融の影響がやや大きく出ています。\n- 持分管理影響は全額連結影響より小さく、各社の出資比率を反映した簡易管理寄与です。法定連結や持分法損益ではありません。\n\n可視化：`report_specs_1.json`  \n集計データ：`result_0.json`\n\n架空の管理デモデータです。為替は日次FXを用いたJPY換算であり、CFや正式な会計上のキャッシュフローを表すものではありません。",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "WITH DeduplicatedEffects AS (\n    SELECT\n        f.effect_id,\n        f.event_id,\n        f.entity_id,\n        f.effect_date,\n        f.delta_ebitda_full_jpy,\n        f.delta_management_jpy,\n        ROW_NUMBER() OVER (\n            PARTITION BY f.effect_id\n            ORDER BY f.effect_date, f.event_id, f.entity_id\n        ) AS rn\n    FROM dbo.semantic_event_financial_effects AS f\n    WHERE f.effect_date >= '2025-10-01'\n      AND f.effect_date < '2026-10-01'\n      AND f.event_id IN ('CROSS_NEG', 'CROSS_POS')\n),\nClassifiedEffects AS (\n    SELECT\n        d.effect_id,\n        d.event_id,\n        cm.sector_code,\n        d.delta_ebitda_full_jpy,\n        d.delta_management_jpy\n    FROM DeduplicatedEffects AS d\n    INNER JOIN dbo.company_master AS cm\n        ON cm.entity_id = d.entity_id\n       AND d.effect_date >= cm.valid_from\n       AND (cm.valid_to IS NULL OR d.effect_date <= cm.valid_to)\n    WHERE d.rn = 1\n      AND cm.sector_code IN ('metals', 'energy', 'foods', 'finance')\n)\nSELECT\n    event_id,\n    sector_code,\n    CAST(ROUND(SUM(delta_ebitda_full_jpy) / 100000000.0, 2) AS decimal(18,2)) AS delta_ebitda_full_oku_jpy,\n    CAST(ROUND(SUM(delta_management_jpy) / 100000000.0, 2) AS decimal(18,2)) AS delta_management_oku_jpy,\n    COUNT(DISTINCT effect_id) AS distinct_effect_count\nFROM ClassifiedEffects\nGROUP BY event_id, sector_code\nORDER BY event_id ASC, sector_code ASC",
+     "columns": [
+      "event_id",
+      "sector_code",
+      "delta_ebitda_full_oku_jpy",
+      "delta_management_oku_jpy",
+      "distinct_effect_count"
+     ],
+     "rows_total": 8,
+     "rows": [
+      [
+       "CROSS_NEG",
+       "energy",
+       -2.05,
+       -1.55,
+       84
+      ],
+      [
+       "CROSS_NEG",
+       "finance",
+       -1.34,
+       -1.0,
+       84
+      ],
+      [
+       "CROSS_NEG",
+       "foods",
+       -1.3,
+       -1.01,
+       84
+      ],
+      [
+       "CROSS_NEG",
+       "metals",
+       -2.12,
+       -1.59,
+       84
+      ],
+      [
+       "CROSS_POS",
+       "energy",
+       1.69,
+       1.28,
+       84
+      ],
+      [
+       "CROSS_POS",
+       "finance",
+       1.18,
+       0.89,
+       84
+      ],
+      [
+       "CROSS_POS",
+       "foods",
+       1.13,
+       0.86,
+       84
+      ],
+      [
+       "CROSS_POS",
+       "metals",
+       1.84,
+       1.36,
+       84
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "company",
+   "purpose": "CROSS_NEG per subsidiary, with the share of each company's annual actual EBITDA",
+   "question": "CROSS_NEGの全額連結EBITDA影響を、影響を受けた子会社ごとに億円で示してください。primary_sector='all'の横断イベントなので、セクターで絞り込まず、各effect_idは一度だけ合計してください。子会社名、セクター、国、全額の影響額、持分管理の影響額、影響を受けた契約数を1つの表にし、あわせて各社の2025-10-01〜2026-09-30のactualの全額連結EBITDA年間合計に対する影響額の割合（%）も示してください。",
+   "response_seconds": 46,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "CROSS_NEGは、対象の8子会社すべてにマイナスの全額連結EBITDA影響を与えています。影響額が最も大きいのはVeltrona Metals USA Inc.の▲1.06億円、年間actual全額連結EBITDAに対する割合が最も大きいのはVeltrona Metals Japan KKの▲1.59%です。\n\n前提：対象期間は2025-10-01〜2026-09-30、指標はactualの全額連結EBITDA。CROSS_NEG（primary_sector='all'）をセクターで除外せず、effect_idを重複なく集計しています。\n\n| 子会社名 | セクター | 国 | 全額の影響額（億円） | 持分管理の影響額（億円） | 影響契約数 | 年間actual全額連結EBITDAに対する影響割合 |\n|---|---|---:|---:|---:|---:|---:|\n| Veltrona Metals USA Inc. | metals | US | ▲1.06億円 | ▲0.54億円 | 3 | ▲1.49% |\n| Veltrona Metals Japan KK | metals | JP | ▲1.05億円 | ▲1.05億円 | 3 | ▲1.59% |\n| Orivexa Energy Japan KK | energy | JP | ▲1.04億円 | ▲1.04億円 | 3 | ▲1.57% |\n| Orivexa Energy USA Inc. | energy | US | ▲1.01億円 | ▲0.52億円 | 4 | ▲1.41% |\n| Caldriva Foods USA Inc. | foods | US | ▲0.71億円 | ▲0.71億円 | 3 | ▲1.56% |\n| Nuvellora Finance USA Inc. | finance | US | ▲0.69億円 | ▲0.35億円 | 4 | ▲1.54% |\n| Nuvellora Finance Japan KK | finance | JP | ▲0.65億円 | ▲0.65億円 | 3 | ▲1.58% |\n| Caldriva Foods Japan KK | foods | JP | ▲0.59億円 | ▲0.30億円 | 3 | ▲1.44% |\n\n優先対応：高は影響額が1億円超、または年間EBITDA比で▲1.55%超の会社です。該当するのはVeltrona Metals USA Inc.、Veltrona Metals Japan KK、Orivexa Energy Japan KKです。加えて、影響契約数が4件のOrivexa Energy USA Inc.とNuvellora Finance USA Inc.は、複数契約への波及という観点で重点確認が必要です。\n\n架空の管理シミュレーションデータです。全額連結は支配子会社を100%連結した管理ベース、持分管理は所有比率を反映した簡易管理寄与です。為替は日次FXを用いたJPY換算で、丸め差が生じる場合があります。\n\nデータ表：result_0.json  \nグラフ：report_specs_1.json",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "WITH effect_detail AS (\n    SELECT\n        f.effect_id,\n        MAX(f.entity_id) AS entity_id,\n        MAX(f.contract_id) AS contract_id,\n        MAX(f.delta_ebitda_full_jpy) AS delta_ebitda_full_jpy,\n        MAX(f.delta_management_jpy) AS delta_management_jpy\n    FROM dbo.semantic_event_financial_effects AS f\n    INNER JOIN dbo.semantic_risk_events AS r\n        ON r.event_id = f.event_id\n    WHERE f.event_id = 'CROSS_NEG'\n      AND r.primary_sector = 'all'\n      AND f.effect_date >= '2025-10-01'\n      AND f.effect_date < '2026-10-01'\n    GROUP BY f.effect_id\n), impact_by_entity AS (\n    SELECT\n        entity_id,\n        SUM(delta_ebitda_full_jpy) AS full_impact_jpy,\n        SUM(delta_management_jpy) AS management_impact_jpy,\n        COUNT(DISTINCT contract_id) AS impacted_contract_count\n    FROM effect_detail\n    GROUP BY entity_id\n), annual_ebitda_by_entity AS (\n    SELECT\n        entity_id,\n        SUM(amount_group) AS annual_actual_full_ebitda_jpy\n    FROM dbo.semantic_financial_metrics_daily\n    WHERE metric_code = 'EBITDA'\n      AND scenario_tag = 'actual'\n      AND metric_date >= '2025-10-01'\n      AND metric_date < '2026-10-01'\n    GROUP BY entity_id\n)\nSELECT\n    cm.entity_name AS subsidiary_name,\n    cm.sector_code,\n    cm.country_code,\n    ROUND(i.full_impact_jpy / 100000000.0, 2) AS full_consolidated_impact_oku_jpy,\n    ROUND(i.management_impact_jpy / 100000000.0, 2) AS management_weighted_impact_oku_jpy,\n    i.impacted_contract_count,\n    ROUND(100.0 * i.full_impact_jpy / NULLIF(a.annual_actual_full_ebitda_jpy, 0), 2) AS impact_pct_of_annual_actual_full_ebitda\nFROM impact_by_entity AS i\nINNER JOIN dbo.company_master AS cm\n    ON cm.entity_id = i.entity_id\nLEFT JOIN annual_ebitda_by_entity AS a\n    ON a.entity_id = i.entity_id\nORDER BY ABS(i.full_impact_jpy) DESC;",
+     "columns": [
+      "subsidiary_name",
+      "sector_code",
+      "country_code",
+      "full_consolidated_impact_oku_jpy",
+      "management_weighted_impact_oku_jpy",
+      "impacted_contract_count",
+      "impact_pct_of_annual_actual_full_ebitda"
+     ],
+     "rows_total": 8,
+     "rows": [
+      [
+       "Veltrona Metals USA Inc.",
+       "metals",
+       "US",
+       -1.06,
+       -0.54,
+       3,
+       -1.49
+      ],
+      [
+       "Veltrona Metals Japan KK",
+       "metals",
+       "JP",
+       -1.05,
+       -1.05,
+       3,
+       -1.59
+      ],
+      [
+       "Orivexa Energy Japan KK",
+       "energy",
+       "JP",
+       -1.04,
+       -1.04,
+       3,
+       -1.57
+      ],
+      [
+       "Orivexa Energy USA Inc.",
+       "energy",
+       "US",
+       -1.01,
+       -0.52,
+       4,
+       -1.41
+      ],
+      [
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       -0.71,
+       -0.71,
+       3,
+       -1.56
+      ],
+      [
+       "Nuvellora Finance USA Inc.",
+       "finance",
+       "US",
+       -0.69,
+       -0.35,
+       4,
+       -1.54
+      ],
+      [
+       "Nuvellora Finance Japan KK",
+       "finance",
+       "JP",
+       -0.65,
+       -0.65,
+       3,
+       -1.58
+      ],
+      [
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       -0.59,
+       -0.3,
+       3,
+       -1.44
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "casual_all_companies",
+   "purpose": "Casual wording of the group-wide question",
+   "question": "全社に同時に響いたマイナスの出来事は？会社ごとにどれくらい影響した？",
+   "response_seconds": 49,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "全社に同時に響いたマイナス事象は、CROSS_NEG（横断的な港湾・流動性の混乱）です。8社すべてでEBITDAと簡易CFを押し下げています。全額連結EBITDAへの影響が最も大きいのは Veltrona Metals USA Inc. のマイナス1.06億円、次いで Veltrona Metals Japan KK のマイナス1.05億円です。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はイベント効果の全額連結EBITDA（actualへの再加算なし）および簡易CF、金額はJPY・億円です。\n\n会社別の影響は以下のとおりです（全額連結EBITDA／持分管理EBITDA／簡易CF）。\n\n| 会社 | 全額連結EBITDA影響 | 持分管理EBITDA影響 | 簡易CF影響 |\n|---|---:|---:|---:|\n| Veltrona Metals USA Inc. | マイナス1.06億円 | マイナス0.54億円 | マイナス0.85億円 |\n| Veltrona Metals Japan KK | マイナス1.05億円 | マイナス1.05億円 | マイナス0.84億円 |\n| Orivexa Energy Japan KK | マイナス1.04億円 | マイナス1.04億円 | マイナス0.83億円 |\n| Orivexa Energy USA Inc. | マイナス1.01億円 | マイナス0.52億円 | マイナス0.81億円 |\n| Caldriva Foods USA Inc. | マイナス0.71億円 | マイナス0.71億円 | マイナス0.57億円 |\n| Nuvellora Finance USA Inc. | マイナス0.69億円 | マイナス0.35億円 | マイナス0.55億円 |\n| Nuvellora Finance Japan KK | マイナス0.65億円 | マイナス0.65億円 | マイナス0.52億円 |\n| Caldriva Foods Japan KK | マイナス0.59億円 | マイナス0.30億円 | マイナス0.48億円 |\n\n原因チェーンは、CROSS_NEG → 各社の活動・契約 → 会社別のFinancialEffect 42件 → 全額連結EBITDA／簡易CFへのマイナス効果 → グループKPI、という経路です。根拠IDは各社別に `SUB_<業種>_<国>_01_CROSS_NEG_0` が紐づいています。\n\n優先対応：\n- 高：Veltrona Metals USA、Veltrona Metals Japan、Orivexa Energy Japan、Orivexa Energy USA。EBITDA影響がマイナス1億円超のため、港湾代替手配と資金流動性の確保を優先。\n- 中：Caldriva Foods USA、Nuvellora Finance USA、Nuvellora Finance Japan。マイナス0.65～0.71億円で、CFへの悪影響も継続。\n- 低：Caldriva Foods Japan。対象イベントの影響は8社中で相対的に小さいものの、簡易CFはマイナス0.48億円であり監視対象です。\n\n優先度の基準は、全額連結EBITDAの影響額を主、簡易CFへの影響を次として評価しています。今回の抽出では全社共通のマイナスイベントはCROSS_NEGのみで、複数の共通マイナスイベントの重複影響は確認されていません。\n\n架空のTrading総合商社デモのシミュレーションデータです。為替はECB公表値を用いたJPY換算という設定であり、CFはEBITDAを起点とする簡易モデルです。丸めにより表示額には差異がありえます。\n\n可視化：`report_specs_1.json`  \nデータ：`result_0.json`",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "SELECT\n    (SELECT COUNT(*) FROM dbo.semantic_event_financial_effects WHERE effect_date >= '2025-10-01' AND effect_date < '2026-10-01') AS effects_in_period,\n    (SELECT COUNT(*) - COUNT(DISTINCT effect_id) FROM dbo.semantic_event_financial_effects WHERE effect_date >= '2025-10-01' AND effect_date < '2026-10-01') AS duplicate_effect_id_rows_in_period,\n    (SELECT COUNT(*) FROM dbo.company_master) - (SELECT COUNT(DISTINCT entity_id) FROM dbo.company_master) AS duplicate_entity_id_rows_in_company_master,\n    (SELECT COUNT(DISTINCT entity_id) FROM dbo.company_master) AS company_master_entity_count",
+     "columns": [
+      "effects_in_period",
+      "duplicate_effect_id_rows_in_period",
+      "duplicate_entity_id_rows_in_company_master",
+      "company_master_entity_count"
+     ],
+     "rows_total": 1,
+     "rows": [
+      [
+       1344,
+       0,
+       0,
+       8
+      ]
+     ]
+    },
+    {
+     "execution_index": 2,
+     "is_success": true,
+     "sql": "WITH UniqueEffects AS (\n    SELECT DISTINCT\n        f.effect_id,\n        f.event_id,\n        f.entity_id,\n        f.evidence_id,\n        f.delta_ebitda_full_jpy,\n        f.delta_management_jpy,\n        f.delta_cf_full_jpy\n    FROM dbo.semantic_event_financial_effects AS f\n    WHERE f.effect_date >= '2025-10-01'\n      AND f.effect_date < '2026-10-01'\n),\nEligibleEvents AS (\n    SELECT ue.event_id\n    FROM UniqueEffects AS ue\n    GROUP BY ue.event_id\n    HAVING COUNT(DISTINCT ue.entity_id) = 8\n),\nEffectSummary AS (\n    SELECT\n        ue.event_id,\n        ue.entity_id,\n        COUNT(DISTINCT ue.effect_id) AS effect_id_count,\n        SUM(ue.delta_ebitda_full_jpy) AS delta_ebitda_full_jpy,\n        SUM(ue.delta_management_jpy) AS delta_management_jpy,\n        SUM(ue.delta_cf_full_jpy) AS delta_cf_full_jpy\n    FROM UniqueEffects AS ue\n    JOIN EligibleEvents AS ee ON ee.event_id = ue.event_id\n    GROUP BY ue.event_id, ue.entity_id\n),\nEvidenceByCompany AS (\n    SELECT\n        d.event_id,\n        d.entity_id,\n        STRING_AGG(CAST(d.evidence_id AS varchar(max)), ', ') WITHIN GROUP (ORDER BY d.evidence_id) AS evidence_ids\n    FROM (\n        SELECT DISTINCT\n            ue.event_id,\n            ue.entity_id,\n            v.evidence_id\n        FROM UniqueEffects AS ue\n        JOIN EligibleEvents AS ee ON ee.event_id = ue.event_id\n        JOIN dbo.semantic_event_evidence AS v\n          ON v.evidence_id = ue.evidence_id\n         AND v.event_id = ue.event_id\n    ) AS d\n    GROUP BY d.event_id, d.entity_id\n)\nSELECT\n    es.event_id,\n    re.narrative,\n    re.primary_sector,\n    es.entity_id,\n    cm.entity_name,\n    es.effect_id_count,\n    ROUND(es.delta_ebitda_full_jpy / 100000000.0, 2) AS delta_ebitda_full_jpy_oku,\n    ROUND(es.delta_management_jpy / 100000000.0, 2) AS delta_management_jpy_oku,\n    ROUND(es.delta_cf_full_jpy / 100000000.0, 2) AS delta_cf_full_jpy_oku,\n    ebc.evidence_ids\nFROM EffectSummary AS es\nJOIN dbo.semantic_risk_events AS re\n  ON re.event_id = es.event_id\nJOIN dbo.company_master AS cm\n  ON cm.entity_id = es.entity_id\nLEFT JOIN EvidenceByCompany AS ebc\n  ON ebc.event_id = es.event_id\n AND ebc.entity_id = es.entity_id\nWHERE re.direction = 'negative'\nORDER BY es.event_id, es.entity_id",
+     "columns": [
+      "event_id",
+      "narrative",
+      "primary_sector",
+      "entity_id",
+      "entity_name",
+      "effect_id_count",
+      "delta_ebitda_full_jpy_oku",
+      "delta_management_jpy_oku",
+      "delta_cf_full_jpy_oku",
+      "evidence_ids"
+     ],
+     "rows_total": 8,
+     "rows": [
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_ENE_JP_01",
+       "Orivexa Energy Japan KK",
+       42,
+       -1.04,
+       -1.04,
+       -0.83,
+       "SUB_ENE_JP_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_ENE_US_01",
+       "Orivexa Energy USA Inc.",
+       42,
+       -1.01,
+       -0.52,
+       -0.81,
+       "SUB_ENE_US_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_FIN_JP_01",
+       "Nuvellora Finance Japan KK",
+       42,
+       -0.65,
+       -0.65,
+       -0.52,
+       "SUB_FIN_JP_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_FIN_US_01",
+       "Nuvellora Finance USA Inc.",
+       42,
+       -0.69,
+       -0.35,
+       -0.55,
+       "SUB_FIN_US_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       42,
+       -0.59,
+       -0.3,
+       -0.48,
+       "SUB_FOD_JP_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       42,
+       -0.71,
+       -0.71,
+       -0.57,
+       "SUB_FOD_US_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_MTL_JP_01",
+       "Veltrona Metals Japan KK",
+       42,
+       -1.05,
+       -1.05,
+       -0.84,
+       "SUB_MTL_JP_01_CROSS_NEG_0"
+      ],
+      [
+       "CROSS_NEG",
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       "all",
+       "SUB_MTL_US_01",
+       "Veltrona Metals USA Inc.",
+       42,
+       -1.06,
+       -0.54,
+       -0.85,
+       "SUB_MTL_US_01_CROSS_NEG_0"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "casual_largest_event",
+   "purpose": "Casual wording: which event hit group EBITDA most, and what share of the year",
+   "question": "このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？",
+   "response_seconds": 26,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "年間のグループEBITDAに最も大きく響いたのは、横断的な港湾・流動性の混乱（CROSS_NEG）です。全額連結EBITDAへの影響はマイナス6.80億円で、年間EBITDA 447.57億円の約マイナス1.52%でした。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はactualの全額連結EBITDA（JPY）です。\n\nこれは架空デモのシミュレーション配賦に基づく結果であり、実世界の因果推論ではありません。詳細は result_0.json を参照してください。",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "WITH event_totals AS (\n    SELECT\n        f.event_id,\n        SUM(f.delta_ebitda_full_jpy) AS delta_ebitda_full_jpy\n    FROM dbo.semantic_event_financial_effects AS f\n    WHERE f.effect_date >= '2025-10-01'\n      AND f.effect_date <= '2026-09-30'\n    GROUP BY f.event_id\n), largest_event AS (\n    SELECT TOP 1\n        et.event_id,\n        et.delta_ebitda_full_jpy\n    FROM event_totals AS et\n    ORDER BY ABS(et.delta_ebitda_full_jpy) DESC, et.event_id\n), annual_ebitda AS (\n    SELECT\n        SUM(k.amount_group) AS annual_ebitda_jpy\n    FROM dbo.kpi_snapshot AS k\n    WHERE k.kpi_code = 'EBITDA_FULL_CONSOLIDATED'\n      AND k.scenario_tag = 'actual'\n      AND k.kpi_date >= '2025-10-01'\n      AND k.kpi_date <= '2026-09-30'\n)\nSELECT\n    le.event_id,\n    e.direction,\n    CAST(le.delta_ebitda_full_jpy / 100000000.0 AS decimal(19,4)) AS delta_ebitda_full_jpy_oku,\n    e.narrative,\n    CAST(ae.annual_ebitda_jpy / 100000000.0 AS decimal(19,4)) AS annual_ebitda_full_consolidated_oku,\n    CAST(100.0 * le.delta_ebitda_full_jpy / NULLIF(ae.annual_ebitda_jpy, 0) AS decimal(19,4)) AS event_impact_to_annual_ebitda_percent\nFROM largest_event AS le\nINNER JOIN dbo.semantic_risk_events AS e\n    ON e.event_id = le.event_id\nCROSS JOIN annual_ebitda AS ae",
+     "columns": [
+      "event_id",
+      "direction",
+      "delta_ebitda_full_jpy_oku",
+      "narrative",
+      "annual_ebitda_full_consolidated_oku",
+      "event_impact_to_annual_ebitda_percent"
+     ],
+     "rows_total": 1,
+     "rows": [
+      [
+       "CROSS_NEG",
+       "negative",
+       -6.8004,
+       "SYNTHETIC: cross-sector port and liquidity disruption",
+       447.574,
+       -1.5194
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "chain_1",
+   "purpose": "Chain question, first run",
+   "question": "食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。",
+   "response_seconds": 100,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "結論：食品損失（FOD_NEG）の影響は食品子会社2社にとどまり、食品以外の子会社へ配賦された連鎖EBITDA影響は確認されませんでした。グループ内取引を介する該当明細も今回の照合結果には含まれず、内部取引経由の金額影響は未検証です。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はイベントに直接ひも付く全額連結EBITDA（actualへの再加算なし）、併せて持分管理EBITDA・簡易CFを使用しました。\n\n子会社別の影響\n- Caldriva Foods USA Inc.（SUB_FOD_US_01）：全額連結EBITDA △0.60億円、持分管理EBITDA △0.60億円、簡易CF △0.48億円\n- Caldriva Foods Japan KK（SUB_FOD_JP_01）：全額連結EBITDA △0.55億円、持分管理EBITDA △0.28億円、簡易CF △0.44億円\n\n原因チェーン\n- イベント：FOD_NEG（コールドチェーンの廃棄事故）\n- 活動・契約：両社の milling_wheat に関する external_sale 活動で損失が発生。例として、SUB_FOD_JP_01_A137_0 → SUB_FOD_JP_01_C04、SUB_FOD_US_01_A140_0 → SUB_FOD_US_01_C04 が確認されています。\n- 根拠：evidence_id は SUB_FOD_JP_01_FOD_NEG_0 および SUB_FOD_US_01_FOD_NEG_0。いずれも「cold chain spoilage incident」をコスト増要因とする架空の運用ログです。\n- 効果：各 effect_id の EBITDA・CF差分を一意に集計しています。食品以外の entity_id への効果配賦は結果に現れていません。\n\n優先対応\n- 高：米国食品子会社。全額連結EBITDA影響が最大のため、コールドチェーンの温度管理、廃棄判定、代替配送の即時点検を優先。\n- 高：日本食品子会社。影響規模が近く、持分管理ベースでもマイナスのため、同様に保管・配送・在庫ローテーションを重点監視。\n- 中：グループ内取引の再照合。今回の抽出では pair_id 単位の該当明細が確認できず、売手・買手間に損失が移転したかは確定できません。食品子会社を売手または買手とする内部取引について、pair_idごとの売上・即時費用・EBITDA効果を別途確認すべきです。\n- 低：他セクターへの横展開対応。現時点で金属・エネルギー・金融の子会社に対するFOD_NEGの直接配賦は確認されていません。\n\nこれは架空データ上の設計済み因果配賦であり、実世界の因果を証明するものではありません。為替換算はデモ設計に従い、日次FX（ECB公表値を用いたJPY換算）を前提としています。丸めにより表示値には差異がありえます。\n\n詳細データ：result_0.json  \n子会社別グラフ用データ：result_1.json  \n可視化仕様：report_specs_2.json",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "WITH FodEffects AS (\n    SELECT\n        f.effect_id,\n        MAX(f.event_id) AS event_id,\n        MAX(f.evidence_id) AS evidence_id,\n        MAX(f.entity_id) AS entity_id,\n        MAX(f.effect_date) AS effect_date,\n        MAX(f.activity_id) AS activity_id,\n        MAX(f.contract_id) AS contract_id,\n        MAX(f.delta_ebitda_full_jpy) AS delta_ebitda_full_jpy,\n        MAX(f.delta_management_jpy) AS delta_management_jpy,\n        MAX(f.delta_cf_full_jpy) AS delta_cf_full_jpy\n    FROM dbo.semantic_event_financial_effects f\n    WHERE f.event_id = 'FOD_NEG'\n      AND f.effect_date >= CAST('2025-10-01' AS date)\n      AND f.effect_date < CAST('2026-10-01' AS date)\n    GROUP BY f.effect_id\n),\nFodEntities AS (\n    SELECT DISTINCT entity_id\n    FROM FodEffects\n),\nCompanyRows AS (\n    SELECT\n        '子会社別イベント効果' AS result_type,\n        CASE WHEN cm.sector_code = 'foods' THEN '食品子会社' ELSE '食品以外（連鎖影響）' END AS impact_scope,\n        cm.entity_id,\n        cm.entity_name,\n        cm.sector_code,\n        cm.country_code,\n        CAST(NULL AS varchar(100)) AS activity_id,\n        CAST(NULL AS varchar(100)) AS activity_type,\n        CAST(NULL AS varchar(100)) AS contract_id,\n        CAST(NULL AS varchar(100)) AS commodity,\n        CAST(NULL AS varchar(100)) AS effect_id,\n        CAST(NULL AS varchar(100)) AS evidence_id,\n        CAST(NULL AS varchar(500)) AS excerpt,\n        CAST(NULL AS varchar(100)) AS pair_id,\n        CAST(NULL AS varchar(100)) AS seller_entity_id,\n        CAST(NULL AS varchar(100)) AS buyer_entity_id,\n        CAST(NULL AS date) AS posting_date,\n        CAST(NULL AS varchar(50)) AS side,\n        CAST(ROUND(SUM(fe.delta_ebitda_full_jpy) / 100000000.0, 2) AS decimal(20,2)) AS full_consolidated_ebitda_oku_jpy,\n        CAST(ROUND(SUM(fe.delta_management_jpy) / 100000000.0, 2) AS decimal(20,2)) AS management_ebitda_oku_jpy,\n        CAST(ROUND(SUM(fe.delta_cf_full_jpy) / 100000000.0, 2) AS decimal(20,2)) AS simple_cf_oku_jpy,\n        CAST(NULL AS decimal(20,2)) AS intercompany_amount_group_oku_jpy\n    FROM FodEffects fe\n    INNER JOIN dbo.company_master cm ON cm.entity_id = fe.entity_id\n    GROUP BY cm.entity_id, cm.entity_name, cm.sector_code, cm.country_code\n),\nActivityContractRows AS (\n    SELECT\n        '活動・契約別イベント効果' AS result_type,\n        CASE WHEN cm.sector_code = 'foods' THEN '食品子会社' ELSE '食品以外（連鎖影響）' END AS impact_scope,\n        cm.entity_id,\n        cm.entity_name,\n        cm.sector_code,\n        cm.country_code,\n        fe.activity_id,\n        a.activity_type,\n        fe.contract_id,\n        c.commodity,\n        CAST(NULL AS varchar(100)) AS effect_id,\n        CAST(NULL AS varchar(100)) AS evidence_id,\n        CAST(NULL AS varchar(500)) AS excerpt,\n        CAST(NULL AS varchar(100)) AS pair_id,\n        CAST(NULL AS varchar(100)) AS seller_entity_id,\n        CAST(NULL AS varchar(100)) AS buyer_entity_id,\n        CAST(NULL AS date) AS posting_date,\n        CAST(NULL AS varchar(50)) AS side,\n        CAST(ROUND(SUM(fe.delta_ebitda_full_jpy) / 100000000.0, 2) AS decimal(20,2)) AS full_consolidated_ebitda_oku_jpy,\n        CAST(ROUND(SUM(fe.delta_management_jpy) / 100000000.0, 2) AS decimal(20,2)) AS management_ebitda_oku_jpy,\n        CAST(ROUND(SUM(fe.delta_cf_full_jpy) / 100000000.0, 2) AS decimal(20,2)) AS simple_cf_oku_jpy,\n        CAST(NULL AS decimal(20,2)) AS intercompany_amount_group_oku_jpy\n    FROM FodEffects fe\n    INNER JOIN dbo.company_master cm ON cm.entity_id = fe.entity_id\n    LEFT JOIN dbo.semantic_business_activities a ON a.activity_id = fe.activity_id\n    LEFT JOIN dbo.semantic_contracts c ON c.contract_id = fe.contract_id\n    GROUP BY cm.entity_id, cm.entity_name, cm.sector_code, cm.country_code, fe.activity_id, a.activity_type, fe.contract_id, c.commodity\n),\nEvidenceRows AS (\n    SELECT\n        '根拠' AS result_type,\n        CASE WHEN cm.sector_code = 'foods' THEN '食品子会社' ELSE '食品以外（連鎖影響）' END AS impact_scope,\n        cm.entity_id,\n        cm.entity_name,\n        cm.sector_code,\n        cm.country_code,\n        CAST(NULL AS varchar(100)) AS activity_id,\n        CAST(NULL AS varchar(100)) AS activity_type,\n        CAST(NULL AS varchar(100)) AS contract_id,\n        CAST(NULL AS varchar(100)) AS commodity,\n        fe.effect_id,\n        ev.evidence_id,\n        ev.excerpt,\n        CAST(NULL AS varchar(100)) AS pair_id,\n        CAST(NULL AS varchar(100)) AS seller_entity_id,\n        CAST(NULL AS varchar(100)) AS buyer_entity_id,\n        CAST(NULL AS date) AS posting_date,\n        CAST(NULL AS varchar(50)) AS side,\n        CAST(ROUND(fe.delta_ebitda_full_jpy / 100000000.0, 2) AS decimal(20,2)) AS full_consolidated_ebitda_oku_jpy,\n        CAST(ROUND(fe.delta_management_jpy / 100000000.0, 2) AS decimal(20,2)) AS management_ebitda_oku_jpy,\n        CAST(ROUND(fe.delta_cf_full_jpy / 100000000.0, 2) AS decimal(20,2)) AS simple_cf_oku_jpy,\n        CAST(NULL AS decimal(20,2)) AS intercompany_amount_group_oku_jpy\n    FROM FodEffects fe\n    INNER JOIN dbo.company_master cm ON cm.entity_id = fe.entity_id\n    LEFT JOIN dbo.semantic_event_evidence ev ON ev.evidence_id = fe.evidence_id\n),\nIntercompanyBase AS (\n    SELECT DISTINCT\n        i.interco_id,\n        i.pair_id,\n        i.entity_id,\n        i.counterparty_entity_id,\n        i.posting_date,\n        i.side,\n        i.amount_group,\n        i.management_effect_jpy,\n        i.ebitda_effect_group,\n        CASE WHEN i.side = 'sale' THEN i.entity_id ELSE i.counterparty_entity_id END AS seller_entity_id,\n        CASE WHEN i.side = 'sale' THEN i.counterparty_entity_id ELSE i.entity_id END AS buyer_entity_id\n    FROM dbo.intercompany_transactions i\n    WHERE i.posting_date >= CAST('2025-10-01' AS date)\n      AND i.posting_date < CAST('2026-10-01' AS date)\n      AND (EXISTS (SELECT 1 FROM FodEntities x WHERE x.entity_id = i.entity_id)\n           OR EXISTS (SELECT 1 FROM FodEntities x WHERE x.entity_id = i.counterparty_entity_id))\n),\nReconciledPairs AS (\n    SELECT pair_id\n    FROM IntercompanyBase\n    GROUP BY pair_id\n    HAVING COUNT(DISTINCT side) = 2\n),\nIntercompanyRows AS (\n    SELECT\n        'グループ内取引（売買照合済）' AS result_type,\n        'FOD_NEG関連当事者を含む内部取引' AS impact_scope,\n        ib.entity_id,\n        CAST(NULL AS varchar(200)) AS entity_name,\n        CAST(NULL AS varchar(100)) AS sector_code,\n        CAST(NULL AS varchar(100)) AS country_code,\n        CAST(NULL AS varchar(100)) AS activity_id,\n        CAST(NULL AS varchar(100)) AS activity_type,\n        CAST(NULL AS varchar(100)) AS contract_id,\n        CAST(NULL AS varchar(100)) AS commodity,\n        CAST(NULL AS varchar(100)) AS effect_id,\n        CAST(NULL AS varchar(100)) AS evidence_id,\n        CAST(NULL AS varchar(500)) AS excerpt,\n        ib.pair_id,\n        ib.seller_entity_id,\n        ib.buyer_entity_id,\n        ib.posting_date,\n        ib.side,\n        CAST(ROUND(ib.ebitda_effect_group / 100000000.0, 2) AS decimal(20,2)) AS full_consolidated_ebitda_oku_jpy,\n        CAST(ROUND(ib.management_effect_jpy / 100000000.0, 2) AS decimal(20,2)) AS management_ebitda_oku_jpy,\n        CAST(NULL AS decimal(20,2)) AS simple_cf_oku_jpy,\n        CAST(ROUND(ib.amount_group / 100000000.0, 2) AS decimal(20,2)) AS intercompany_amount_group_oku_jpy\n    FROM IntercompanyBase ib\n    INNER JOIN ReconciledPairs rp ON rp.pair_id = ib.pair_id\n)\nSELECT * FROM CompanyRows\nUNION ALL\nSELECT * FROM ActivityContractRows\nUNION ALL\nSELECT * FROM EvidenceRows\nUNION ALL\nSELECT * FROM IntercompanyRows",
+     "columns": [
+      "result_type",
+      "impact_scope",
+      "entity_id",
+      "entity_name",
+      "sector_code",
+      "country_code",
+      "activity_id",
+      "activity_type",
+      "contract_id",
+      "commodity"
+     ],
+     "rows_total": 100,
+     "rows": [
+      [
+       "子会社別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       "子会社別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       null,
+       null,
+       null,
+       null
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A137_0",
+       "external_sale",
+       "SUB_FOD_JP_01_C04",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "SUB_FOD_US_01_A140_0",
+       "external_sale",
+       "SUB_FOD_US_01_C04",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "SUB_FOD_US_01_A144_0",
+       "external_sale",
+       "SUB_FOD_US_01_C04",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "SUB_FOD_US_01_A144_2",
+       "external_sale",
+       "SUB_FOD_US_01_C06",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A134_0",
+       "external_sale",
+       "SUB_FOD_JP_01_C04",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A135_1",
+       "external_sale",
+       "SUB_FOD_JP_01_C05",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A138_0",
+       "external_sale",
+       "SUB_FOD_JP_01_C04",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A145_2",
+       "external_sale",
+       "SUB_FOD_JP_01_C06",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "SUB_FOD_US_01_A138_2",
+       "external_sale",
+       "SUB_FOD_US_01_C06",
+       "milling_wheat"
+      ],
+      [
+       "活動・契約別イベント効果",
+       "食品子会社",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "SUB_FOD_US_01_A139_0",
+       "external_sale",
+       "SUB_FOD_US_01_C04",
+       "milling_wheat"
+      ]
+     ]
+    },
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "SELECT TOP 20 effect_id, event_id, entity_id, effect_date, delta_ebitda_full_jpy, delta_management_jpy, delta_cf_full_jpy FROM dbo.semantic_event_financial_effects WHERE event_id = 'FOD_NEG' AND effect_date >= '2025-10-01' AND effect_date <= '2026-09-30' ORDER BY effect_date, effect_id",
+     "columns": [
+      "effect_id",
+      "event_id",
+      "entity_id",
+      "effect_date",
+      "delta_ebitda_full_jpy",
+      "delta_management_jpy",
+      "delta_cf_full_jpy"
+     ],
+     "rows_total": 20,
+     "rows": [
+      [
+       "SUB_FOD_JP_01_A133_0_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-11T00:00:00",
+       -3003488.94,
+       -1531779.36,
+       -2402791.15
+      ],
+      [
+       "SUB_FOD_JP_01_A133_1_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-11T00:00:00",
+       -2466144.46,
+       -1257733.67,
+       -1972915.57
+      ],
+      [
+       "SUB_FOD_JP_01_A133_2_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-11T00:00:00",
+       -1422653.08,
+       -725553.07,
+       -1138122.46
+      ],
+      [
+       "SUB_FOD_JP_01_A134_0_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-12T00:00:00",
+       -2821670.4,
+       -1439051.9,
+       -2257336.32
+      ],
+      [
+       "SUB_FOD_JP_01_A134_1_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-12T00:00:00",
+       -1529895.11,
+       -780246.51,
+       -1223916.09
+      ],
+      [
+       "SUB_FOD_JP_01_A134_2_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-12T00:00:00",
+       -2070856.31,
+       -1056136.72,
+       -1656685.05
+      ],
+      [
+       "SUB_FOD_US_01_A134_0_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_US_01",
+       "2026-02-12T00:00:00",
+       -2413895.4,
+       -2413895.4,
+       -1931116.63
+      ],
+      [
+       "SUB_FOD_US_01_A134_1_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_US_01",
+       "2026-02-12T00:00:00",
+       -1704093.35,
+       -1704093.35,
+       -1363274.07
+      ],
+      [
+       "SUB_FOD_US_01_A134_2_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_US_01",
+       "2026-02-12T00:00:00",
+       -3002446.31,
+       -3002446.31,
+       -2401956.44
+      ],
+      [
+       "SUB_FOD_JP_01_A135_0_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-13T00:00:00",
+       -2122412.19,
+       -1082430.22,
+       -1697929.75
+      ],
+      [
+       "SUB_FOD_JP_01_A135_1_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-13T00:00:00",
+       -2095776.27,
+       -1068845.9,
+       -1676621.02
+      ],
+      [
+       "SUB_FOD_JP_01_A135_2_FOD_NEG_F",
+       "FOD_NEG",
+       "SUB_FOD_JP_01",
+       "2026-02-13T00:00:00",
+       -1846984.52,
+       -941962.11,
+       -1477587.62
+      ]
+     ]
+    },
+    {
+     "execution_index": 1,
+     "is_success": true,
+     "sql": "WITH unique_effects AS (\n    SELECT\n        effect_id,\n        entity_id,\n        MAX(delta_ebitda_full_jpy) AS delta_ebitda_full_jpy,\n        MAX(delta_management_jpy) AS delta_management_jpy,\n        MAX(delta_cf_full_jpy) AS delta_cf_full_jpy\n    FROM dbo.semantic_event_financial_effects\n    WHERE event_id = 'FOD_NEG'\n      AND effect_date >= '2025-10-01'\n      AND effect_date <= '2026-09-30'\n    GROUP BY effect_id, entity_id\n)\nSELECT\n    c.entity_id,\n    c.entity_name,\n    c.sector_code,\n    c.country_code,\n    CASE WHEN c.sector_code = 'foods' THEN N'食品子会社' ELSE N'他子会社への連鎖' END AS impact_scope,\n    ROUND(SUM(u.delta_ebitda_full_jpy) / 100000000.0, 2) AS delta_ebitda_full_oku_jpy,\n    ROUND(SUM(u.delta_management_jpy) / 100000000.0, 2) AS delta_management_oku_jpy,\n    ROUND(SUM(u.delta_cf_full_jpy) / 100000000.0, 2) AS delta_cf_full_oku_jpy\nFROM unique_effects u\nINNER JOIN dbo.company_master c\n    ON c.entity_id = u.entity_id\nGROUP BY\n    c.entity_id,\n    c.entity_name,\n    c.sector_code,\n    c.country_code\nORDER BY\n    SUM(u.delta_ebitda_full_jpy) ASC",
+     "columns": [
+      "entity_id",
+      "entity_name",
+      "sector_code",
+      "country_code",
+      "impact_scope",
+      "delta_ebitda_full_oku_jpy",
+      "delta_management_oku_jpy",
+      "delta_cf_full_oku_jpy"
+     ],
+     "rows_total": 2,
+     "rows": [
+      [
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       "食品子会社",
+       -0.6,
+       -0.6,
+       -0.48
+      ],
+      [
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "食品子会社",
+       -0.55,
+       -0.28,
+       -0.44
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "chain_2",
+   "purpose": "Chain question, second run (fresh chat)",
+   "question": "食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。",
+   "response_seconds": 62,
+   "status": "completed",
+   "ontology_traversal": [
+    {
+     "chosenPath": "no_path_found",
+     "found": false,
+     "spansDataSources": false,
+     "notes": "The ontology has no verified relationships to traverse, so 'RiskEvent' cannot be connected to the requested target entities."
+    }
+   ],
+   "answer": "結論：食品損失（FOD_NEG）の他子会社への連鎖影響は、対象期間内では確認されませんでした。影響は食品子会社2社に限定され、全額連結EBITDAへの影響は合計マイナス1.14億円、簡易CFはマイナス0.92億円です。\n\n前提：対象期間は2025-10-01～2026-09-30、指標はFOD_NEGのeffect_id一意集計による全額連結EBITDA（actual相当のイベント差分）と簡易CF、金額はJPY・億円です。\n\n・食品以外の子会社への連鎖\n  - 対象effect_id：0件\n  - 全額連結EBITDA影響：0.00億円\n  - 持分管理EBITDA影響：0.00億円\n  - 簡易CF影響：0.00億円\n\n・食品起点会社自身への影響\n  - Caldriva Foods Japan KK（SUB_FOD_JP_01）：全額連結EBITDA マイナス0.55億円、持分管理EBITDA マイナス0.28億円、簡易CF マイナス0.44億円\n  - Caldriva Foods USA Inc.（SUB_FOD_US_01）：全額連結EBITDA マイナス0.60億円、持分管理EBITDA マイナス0.60億円、簡易CF マイナス0.48億円\n  - 合計：84件の一意effect_idで、全額連結EBITDA マイナス1.14億円、持分管理EBITDA マイナス0.88億円、簡易CF マイナス0.92億円\n\n原因チェーンは、FOD_NEG → 食品子会社の活動 → 食品契約 → EBITDA/CF効果です。例えば、JP側では `SUB_FOD_JP_01_C04`～`C06`、US側でも `SUB_FOD_US_01_C04`～`C06` に紐づく活動で影響が記録されています。根拠は `SUB_FOD_JP_01_FOD_NEG_0` と `SUB_FOD_US_01_FOD_NEG_0` で、いずれも2026-02-09記録のコールドチェーン廃棄事故に関する架空の業務ログです。\n\nグループ内取引については、`intercompany_transactions` にactivity_id・contract_idがないため、FOD_NEGのeffect_idや契約へ対応付けられません。そのため、食品損失が内部取引を通じて他社へ波及したとの定量的な確認はできず、「影響なし（0件）」とも判定していません。\n\n優先対応：\n- 高：食品JP・USのコールドチェーン関連契約（`C04`～`C06`）。実際にEBITDA悪化が発生しているため、温度管理・廃棄抑制・代替配送を優先します。\n- 中：内部取引の追跡可能性の整備。pair_idに活動・契約との対応キーを持たせ、次回は波及を定量検証できるようにします。\n- 低：食品以外の子会社への横展開対応。今回のFOD_NEG単独では連鎖効果が確認されていません。\n\n本結果は架空の因果シミュレーション・配賦データに基づくものです。為替は日次のJPY換算値を使用しており、丸めにより合計差が生じる場合があります。詳細は `result_0.json` を参照してください。",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "WITH Effects AS (SELECT f.effect_id,f.event_id,f.effect_date,f.entity_id,f.activity_id,f.contract_id,f.evidence_id,f.delta_ebitda_full_jpy,f.delta_management_jpy,f.delta_cf_full_jpy,ROW_NUMBER() OVER (PARTITION BY f.effect_id ORDER BY f.effect_date DESC) AS rn FROM dbo.semantic_event_financial_effects f WHERE f.event_id='FOD_NEG' AND f.effect_date>='2025-10-01' AND f.effect_date<='2026-09-30'), DedupEffects AS (SELECT effect_id,event_id,effect_date,entity_id,activity_id,contract_id,evidence_id,delta_ebitda_full_jpy,delta_management_jpy,delta_cf_full_jpy FROM Effects WHERE rn=1), RelatedInterco AS (SELECT i.interco_id,i.pair_id,i.entity_id,i.counterparty_entity_id,i.posting_date,i.side,i.amount_group,i.ebitda_effect_group,i.management_effect_jpy FROM dbo.intercompany_transactions i WHERE i.posting_date>='2025-10-01' AND i.posting_date<='2026-09-30' AND (EXISTS (SELECT 1 FROM DedupEffects d WHERE d.activity_id=i.interco_id) OR EXISTS (SELECT 1 FROM DedupEffects d WHERE d.contract_id=i.interco_id))) SELECT d.effect_id,d.effect_date,d.entity_id,cm.entity_name,cm.sector_code,d.activity_id,d.contract_id,d.evidence_id,d.delta_ebitda_full_jpy,d.delta_management_jpy,d.delta_cf_full_jpy,ev.evidence_type,ev.recorded_date,ri.pair_id,ri.interco_id FROM DedupEffects d LEFT JOIN dbo.company_master cm ON cm.entity_id=d.entity_id AND d.effect_date>=cm.valid_from AND (cm.valid_to IS NULL OR d.effect_date<=cm.valid_to) LEFT JOIN dbo.semantic_event_evidence ev ON ev.evidence_id=d.evidence_id LEFT JOIN RelatedInterco ri ON 1=0 ORDER BY d.effect_date,d.effect_id",
+     "columns": [
+      "effect_id",
+      "effect_date",
+      "entity_id",
+      "entity_name",
+      "sector_code",
+      "activity_id",
+      "contract_id",
+      "evidence_id",
+      "delta_ebitda_full_jpy",
+      "delta_management_jpy"
+     ],
+     "rows_total": 84,
+     "rows": [
+      [
+       "SUB_FOD_JP_01_A133_0_FOD_NEG_F",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A133_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -3003488.94,
+       -1531779.36
+      ],
+      [
+       "SUB_FOD_JP_01_A133_1_FOD_NEG_F",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A133_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -2466144.46,
+       -1257733.67
+      ],
+      [
+       "SUB_FOD_JP_01_A133_2_FOD_NEG_F",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A133_2",
+       "SUB_FOD_JP_01_C06",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -1422653.08,
+       -725553.07
+      ],
+      [
+       "SUB_FOD_JP_01_A134_0_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A134_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -2821670.4,
+       -1439051.9
+      ],
+      [
+       "SUB_FOD_JP_01_A134_1_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A134_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -1529895.11,
+       -780246.51
+      ],
+      [
+       "SUB_FOD_JP_01_A134_2_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A134_2",
+       "SUB_FOD_JP_01_C06",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -2070856.31,
+       -1056136.72
+      ],
+      [
+       "SUB_FOD_US_01_A134_0_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "SUB_FOD_US_01_A134_0",
+       "SUB_FOD_US_01_C04",
+       "SUB_FOD_US_01_FOD_NEG_0",
+       -2413895.4,
+       -2413895.4
+      ],
+      [
+       "SUB_FOD_US_01_A134_1_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "SUB_FOD_US_01_A134_1",
+       "SUB_FOD_US_01_C05",
+       "SUB_FOD_US_01_FOD_NEG_0",
+       -1704093.35,
+       -1704093.35
+      ],
+      [
+       "SUB_FOD_US_01_A134_2_FOD_NEG_F",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "SUB_FOD_US_01_A134_2",
+       "SUB_FOD_US_01_C06",
+       "SUB_FOD_US_01_FOD_NEG_0",
+       -3002446.31,
+       -3002446.31
+      ],
+      [
+       "SUB_FOD_JP_01_A135_0_FOD_NEG_F",
+       "2026-02-13T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A135_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -2122412.19,
+       -1082430.22
+      ],
+      [
+       "SUB_FOD_JP_01_A135_1_FOD_NEG_F",
+       "2026-02-13T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A135_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -2095776.27,
+       -1068845.9
+      ],
+      [
+       "SUB_FOD_JP_01_A135_2_FOD_NEG_F",
+       "2026-02-13T00:00:00",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "SUB_FOD_JP_01_A135_2",
+       "SUB_FOD_JP_01_C06",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       -1846984.52,
+       -941962.11
+      ]
+     ]
+    },
+    {
+     "execution_index": 1,
+     "is_success": true,
+     "sql": "WITH Effects AS (SELECT f.effect_id,f.event_id,f.effect_date,f.entity_id,f.activity_id,f.contract_id,f.evidence_id,f.delta_ebitda_full_jpy,f.delta_management_jpy,f.delta_cf_full_jpy,ROW_NUMBER() OVER (PARTITION BY f.effect_id ORDER BY f.effect_date DESC) AS rn FROM dbo.semantic_event_financial_effects f WHERE f.event_id='FOD_NEG' AND f.effect_date>='2025-10-01' AND f.effect_date<='2026-09-30'), DedupEffects AS (SELECT effect_id,event_id,effect_date,entity_id,activity_id,contract_id,evidence_id,delta_ebitda_full_jpy,delta_management_jpy,delta_cf_full_jpy FROM Effects WHERE rn=1) SELECT cm.entity_name,cm.sector_code,cm.country_code,COUNT(*) AS unique_effect_count,CAST(SUM(d.delta_ebitda_full_jpy)/100000000.0 AS decimal(18,2)) AS ebitda_full_oku_jpy,CAST(SUM(d.delta_management_jpy)/100000000.0 AS decimal(18,2)) AS ebitda_management_oku_jpy,CAST(SUM(d.delta_cf_full_jpy)/100000000.0 AS decimal(18,2)) AS cf_full_oku_jpy,COUNT(DISTINCT d.evidence_id) AS evidence_count FROM DedupEffects d INNER JOIN dbo.company_master cm ON cm.entity_id=d.entity_id AND d.effect_date>=cm.valid_from AND (cm.valid_to IS NULL OR d.effect_date<=cm.valid_to) GROUP BY cm.entity_name,cm.sector_code,cm.country_code ORDER BY cm.sector_code,cm.entity_name",
+     "columns": [
+      "entity_name",
+      "sector_code",
+      "country_code",
+      "unique_effect_count",
+      "ebitda_full_oku_jpy",
+      "ebitda_management_oku_jpy",
+      "cf_full_oku_jpy",
+      "evidence_count"
+     ],
+     "rows_total": 2,
+     "rows": [
+      [
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       42,
+       -0.55,
+       -0.28,
+       -0.44,
+       1
+      ],
+      [
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       42,
+       -0.6,
+       -0.6,
+       -0.48,
+       1
+      ]
+     ]
+    },
+    {
+     "execution_index": 2,
+     "is_success": true,
+     "sql": "WITH EffectsRanked AS (SELECT f.effect_id,f.event_id,f.effect_date,f.entity_id,f.activity_id,f.contract_id,f.evidence_id,f.delta_ebitda_full_jpy,f.delta_management_jpy,f.delta_cf_full_jpy,ROW_NUMBER() OVER (PARTITION BY f.effect_id ORDER BY f.effect_date DESC) AS rn FROM dbo.semantic_event_financial_effects f WHERE f.event_id='FOD_NEG' AND f.effect_date>='2025-10-01' AND f.effect_date<='2026-09-30'), Effects AS (SELECT effect_id,event_id,effect_date,entity_id,activity_id,contract_id,evidence_id,delta_ebitda_full_jpy,delta_management_jpy,delta_cf_full_jpy FROM EffectsRanked WHERE rn=1), EnrichedEffects AS (SELECT e.effect_id,e.event_id,e.effect_date,e.entity_id,cm.entity_name,cm.sector_code,cm.country_code,e.activity_id,e.contract_id,e.evidence_id,e.delta_ebitda_full_jpy,e.delta_management_jpy,e.delta_cf_full_jpy,CASE WHEN cm.sector_code='foods' THEN N'食品起点会社自身' ELSE N'食品以外の子会社への連鎖影響' END AS impact_scope FROM Effects e INNER JOIN dbo.company_master cm ON cm.entity_id=e.entity_id AND e.effect_date>=cm.valid_from AND (cm.valid_to IS NULL OR e.effect_date<=cm.valid_to)), ScopeLabels AS (SELECT N'食品起点会社自身' AS impact_scope UNION ALL SELECT N'食品以外の子会社への連鎖影響'), ScopeSummary AS (SELECT s.impact_scope,COUNT(x.effect_id) AS unique_effect_count,COALESCE(SUM(x.delta_ebitda_full_jpy),0) AS ebitda_full_jpy,COALESCE(SUM(x.delta_management_jpy),0) AS ebitda_management_jpy,COALESCE(SUM(x.delta_cf_full_jpy),0) AS cf_full_jpy FROM ScopeLabels s LEFT JOIN EnrichedEffects x ON x.impact_scope=s.impact_scope GROUP BY s.impact_scope), CompanySummary AS (SELECT impact_scope,entity_id,entity_name,sector_code,country_code,COUNT(*) AS unique_effect_count,SUM(delta_ebitda_full_jpy) AS ebitda_full_jpy,SUM(delta_management_jpy) AS ebitda_management_jpy,SUM(delta_cf_full_jpy) AS cf_full_jpy FROM EnrichedEffects GROUP BY impact_scope,entity_id,entity_name,sector_code,country_code), Evidence AS (SELECT DISTINCT x.event_id,x.evidence_id,v.evidence_type,v.recorded_date,v.excerpt FROM EnrichedEffects x INNER JOIN dbo.semantic_event_evidence v ON v.evidence_id=x.evidence_id) SELECT result_section,impact_scope,entity_id,entity_name,sector_code,country_code,effect_id,event_id,effect_date,activity_id,contract_id,evidence_id,evidence_type,recorded_date,excerpt,unique_effect_count,ebitda_full_oku_jpy,ebitda_management_oku_jpy,cf_full_oku_jpy,note FROM (SELECT N'子会社別連鎖影響_区分集計' AS result_section,impact_scope,CAST(NULL AS varchar(200)) AS entity_id,CAST(NULL AS varchar(500)) AS entity_name,CAST(NULL AS varchar(100)) AS sector_code,CAST(NULL AS varchar(100)) AS country_code,CAST(NULL AS varchar(300)) AS effect_id,CAST('FOD_NEG' AS varchar(100)) AS event_id,CAST(NULL AS date) AS effect_date,CAST(NULL AS varchar(300)) AS activity_id,CAST(NULL AS varchar(300)) AS contract_id,CAST(NULL AS varchar(300)) AS evidence_id,CAST(NULL AS varchar(200)) AS evidence_type,CAST(NULL AS date) AS recorded_date,CAST(NULL AS varchar(1000)) AS excerpt,unique_effect_count,CAST(ROUND(ebitda_full_jpy/100000000.0,2) AS decimal(18,2)) AS ebitda_full_oku_jpy,CAST(ROUND(ebitda_management_jpy/100000000.0,2) AS decimal(18,2)) AS ebitda_management_oku_jpy,CAST(ROUND(cf_full_jpy/100000000.0,2) AS decimal(18,2)) AS cf_full_oku_jpy,N'対象期間内・effect_id一意' AS note FROM ScopeSummary UNION ALL SELECT N'子会社別連鎖影響_会社集計',impact_scope,entity_id,entity_name,sector_code,country_code,CAST(NULL AS varchar(300)),'FOD_NEG',CAST(NULL AS date),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(200)),CAST(NULL AS date),CAST(NULL AS varchar(1000)),unique_effect_count,CAST(ROUND(ebitda_full_jpy/100000000.0,2) AS decimal(18,2)),CAST(ROUND(ebitda_management_jpy/100000000.0,2) AS decimal(18,2)),CAST(ROUND(cf_full_jpy/100000000.0,2) AS decimal(18,2)),N'全額連結EBITDA・持分管理EBITDA・簡易CFはいずれも億円JPY' FROM CompanySummary UNION ALL SELECT N'イベント_活動_契約_EBITDA連鎖経路',impact_scope,entity_id,entity_name,sector_code,country_code,effect_id,event_id,effect_date,activity_id,contract_id,evidence_id,CAST(NULL AS varchar(200)),CAST(NULL AS date),CAST(NULL AS varchar(1000)),1,CAST(ROUND(delta_ebitda_full_jpy/100000000.0,2) AS decimal(18,2)),CAST(ROUND(delta_management_jpy/100000000.0,2) AS decimal(18,2)),CAST(ROUND(delta_cf_full_jpy/100000000.0,2) AS decimal(18,2)),N'effect_id単位。効果額はイベント効果テーブルのみから集計' FROM EnrichedEffects UNION ALL SELECT N'根拠',N'FOD_NEG根拠',CAST(NULL AS varchar(200)),CAST(NULL AS varchar(500)),CAST(NULL AS varchar(100)),CAST(NULL AS varchar(100)),CAST(NULL AS varchar(300)),event_id,CAST(NULL AS date),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(300)),evidence_id,evidence_type,recorded_date,excerpt,CAST(NULL AS bigint),CAST(NULL AS decimal(18,2)),CAST(NULL AS decimal(18,2)),CAST(NULL AS decimal(18,2)),N'evidence_idでイベント効果と接続' FROM Evidence UNION ALL SELECT N'内部取引_検証不能',N'該当性未検証',CAST(NULL AS varchar(200)),CAST(NULL AS varchar(500)),CAST(NULL AS varchar(100)),CAST(NULL AS varchar(100)),CAST(NULL AS varchar(300)),'FOD_NEG',CAST(NULL AS date),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(300)),CAST(NULL AS varchar(200)),CAST(NULL AS date),CAST(NULL AS varchar(1000)),CAST(NULL AS bigint),CAST(NULL AS decimal(18,2)),CAST(NULL AS decimal(18,2)),CAST(NULL AS decimal(18,2)),N'intercompany_transactionsにはactivity_idおよびcontract_idがなく、FOD_NEG効果との対応関係を判定できないため、明細・会社別・pair_id別集計は返さない（0件とは扱わない）' ) r ORDER BY CASE result_section WHEN N'子会社別連鎖影響_区分集計' THEN 1 WHEN N'子会社別連鎖影響_会社集計' THEN 2 WHEN N'イベント_活動_契約_EBITDA連鎖経路' THEN 3 WHEN N'根拠' THEN 4 ELSE 5 END,impact_scope,entity_name,effect_date,effect_id",
+     "columns": [
+      "result_section",
+      "impact_scope",
+      "entity_id",
+      "entity_name",
+      "sector_code",
+      "country_code",
+      "effect_id",
+      "event_id",
+      "effect_date",
+      "activity_id",
+      "contract_id",
+      "evidence_id",
+      "evidence_type",
+      "recorded_date",
+      "excerpt",
+      "unique_effect_count",
+      "ebitda_full_oku_jpy",
+      "ebitda_management_oku_jpy",
+      "cf_full_oku_jpy",
+      "note"
+     ],
+     "rows_total": 91,
+     "rows": [
+      [
+       "子会社別連鎖影響_区分集計",
+       "食品以外の子会社への連鎖影響",
+       null,
+       null,
+       null,
+       null,
+       null,
+       "FOD_NEG",
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       0,
+       0.0,
+       0.0,
+       0.0,
+       "対象期間内・effect_id一意"
+      ],
+      [
+       "子会社別連鎖影響_区分集計",
+       "食品起点会社自身",
+       null,
+       null,
+       null,
+       null,
+       null,
+       "FOD_NEG",
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       84,
+       -1.14,
+       -0.88,
+       -0.92,
+       "対象期間内・effect_id一意"
+      ],
+      [
+       "子会社別連鎖影響_会社集計",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       null,
+       "FOD_NEG",
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       42,
+       -0.55,
+       -0.28,
+       -0.44,
+       "全額連結EBITDA・持分管理EBITDA・簡易CFはいずれも億円JPY"
+      ],
+      [
+       "子会社別連鎖影響_会社集計",
+       "食品起点会社自身",
+       "SUB_FOD_US_01",
+       "Caldriva Foods USA Inc.",
+       "foods",
+       "US",
+       null,
+       "FOD_NEG",
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       42,
+       -0.6,
+       -0.6,
+       -0.48,
+       "全額連結EBITDA・持分管理EBITDA・簡易CFはいずれも億円JPY"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A133_0_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01_A133_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.03,
+       -0.02,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A133_1_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01_A133_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.02,
+       -0.01,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A133_2_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-11T00:00:00",
+       "SUB_FOD_JP_01_A133_2",
+       "SUB_FOD_JP_01_C06",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.01,
+       -0.01,
+       -0.01,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A134_0_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01_A134_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.03,
+       -0.01,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A134_1_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01_A134_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.02,
+       -0.01,
+       -0.01,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A134_2_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-12T00:00:00",
+       "SUB_FOD_JP_01_A134_2",
+       "SUB_FOD_JP_01_C06",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.02,
+       -0.01,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A135_0_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-13T00:00:00",
+       "SUB_FOD_JP_01_A135_0",
+       "SUB_FOD_JP_01_C04",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.02,
+       -0.01,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ],
+      [
+       "イベント_活動_契約_EBITDA連鎖経路",
+       "食品起点会社自身",
+       "SUB_FOD_JP_01",
+       "Caldriva Foods Japan KK",
+       "foods",
+       "JP",
+       "SUB_FOD_JP_01_A135_1_FOD_NEG_F",
+       "FOD_NEG",
+       "2026-02-13T00:00:00",
+       "SUB_FOD_JP_01_A135_1",
+       "SUB_FOD_JP_01_C05",
+       "SUB_FOD_JP_01_FOD_NEG_0",
+       null,
+       null,
+       null,
+       1,
+       -0.02,
+       -0.01,
+       -0.02,
+       "effect_id単位。効果額はイベント効果テーブルのみから集計"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fx_what_if_1",
+   "purpose": "What-if question, first run",
+   "question": "もし円が10円高くなったら、グループのEBITDAはいくら変わる？",
+   "response_seconds": 21,
+   "status": "completed",
+   "ontology_traversal": "not attempted in this run",
+   "answer": "円が対米ドルで一律10円高くなると、グループの全額連結EBITDAは14.80億円減少します。\n\n前提：対象期間は2025-10-01～2026-09-30、actualの全額連結EBITDA。USD建てEBITDAに対しUSD/JPYが一律10円低下する単純感応度であり、JPY建て分は影響ゼロです。\n\n現行の全額連結EBITDA期間合計は447.57億円です。これは架空データによる簡易試算で、実際のヘッジ・通貨構成の変動などは織り込んでいません。詳細は result_0.json を参照してください。",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "SELECT CAST(SUM(amount_group) / 100000000.0 AS decimal(38,4)) AS full_consolidated_ebitda_oku_jpy, CAST(SUM(CASE WHEN currency_code = 'USD' THEN amount_local * -10.0 ELSE 0 END) / 100000000.0 AS decimal(38,4)) AS yen_appreciation_10_jpy_sensitivity_oku_jpy FROM dbo.semantic_financial_metrics_daily WHERE scenario_tag = 'actual' AND metric_code = 'EBITDA' AND metric_date >= '2025-10-01' AND metric_date <= '2026-09-30'",
+     "columns": [
+      "full_consolidated_ebitda_oku_jpy",
+      "yen_appreciation_10_jpy_sensitivity_oku_jpy"
+     ],
+     "rows_total": 1,
+     "rows": [
+      [
+       447.574,
+       -14.7985
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fx_what_if_2",
+   "purpose": "What-if question, second run (fresh chat)",
+   "question": "もし円が10円高くなったら、グループのEBITDAはいくら変わる？",
+   "response_seconds": 33,
+   "status": "completed",
+   "ontology_traversal": "not attempted in this run",
+   "answer": "円が10円高くなった場合のグループEBITDAの変動額は、現行データだけでは算定できません。為替感応度や「USD/JPY＋10円」シナリオの記録がありません。\n\n前提：対象期間は2025-10-01～2026-09-30、指標は全額連結EBITDA（actual）、JPY表示です。\n\n- 同期間の全額連結EBITDA実績：447.57億円\n- USD建てEBITDAの実績エクスポージャー：1億4,798万4,750.15 USD（JPY換算で232.88億円）\n- ただし、ショック後の為替レートまたは感応度係数が未登録のため、「円高10円によるEBITDAの増減額」は未検証です。\n\n算定には、10円円高後に適用するUSD/JPYレート、または通貨別EBITDAに対する為替感応度の定義が必要です。データ詳細：result_0.json",
+   "sql_executions": [
+    {
+     "execution_index": 0,
+     "is_success": true,
+     "sql": "SELECT TOP 100 kpi_code, scenario_tag, currency_code, COUNT(*) AS row_count, MIN(kpi_date) AS min_kpi_date, MAX(kpi_date) AS max_kpi_date, SUM(amount_group) AS amount_jpy\nFROM dbo.kpi_snapshot\nWHERE kpi_date >= '2025-10-01'\n  AND kpi_date <= '2026-09-30'\n  AND (kpi_code LIKE '%EBITDA%' OR scenario_tag <> 'actual')\nGROUP BY kpi_code, scenario_tag, currency_code\nORDER BY kpi_code, scenario_tag, currency_code",
+     "columns": [
+      "kpi_code",
+      "scenario_tag",
+      "currency_code",
+      "row_count",
+      "min_kpi_date",
+      "max_kpi_date",
+      "amount_jpy"
+     ],
+     "rows_total": 6,
+     "rows": [
+      [
+       "CF_FULL_CONSOLIDATED",
+       "baseline",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       35888254306.84
+      ],
+      [
+       "CF_MANAGEMENT_WEIGHTED",
+       "baseline",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       26909359783.28
+      ],
+      [
+       "EBITDA_FULL_CONSOLIDATED",
+       "actual",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       44757399732.84
+      ],
+      [
+       "EBITDA_FULL_CONSOLIDATED",
+       "baseline",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       44860317852.64
+      ],
+      [
+       "EBITDA_MANAGEMENT_WEIGHTED",
+       "actual",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       33547898914.09
+      ],
+      [
+       "EBITDA_MANAGEMENT_WEIGHTED",
+       "baseline",
+       "JPY",
+       365,
+       "2025-10-01T00:00:00",
+       "2026-09-30T00:00:00",
+       33636699717.29
+      ]
+     ]
+    },
+    {
+     "execution_index": 1,
+     "is_success": true,
+     "sql": "SELECT metric_code, scenario_tag, currency_code, COUNT(*) AS row_count, SUM(amount_local) AS amount_local, SUM(amount_group) AS amount_jpy\nFROM dbo.semantic_financial_metrics_daily\nWHERE metric_date >= '2025-10-01'\n  AND metric_date <= '2026-09-30'\n  AND metric_code = 'EBITDA'\n  AND scenario_tag = 'actual'\nGROUP BY metric_code, scenario_tag, currency_code\nORDER BY currency_code",
+     "columns": [
+      "metric_code",
+      "scenario_tag",
+      "currency_code",
+      "row_count",
+      "amount_local",
+      "amount_jpy"
+     ],
+     "rows_total": 2,
+     "rows": [
+      [
+       "EBITDA",
+       "actual",
+       "JPY",
+       1460,
+       21469190174.49,
+       21469190174.49
+      ],
+      [
+       "EBITDA",
+       "actual",
+       "USD",
+       1460,
+       147984750.15,
+       23288209558.35
+      ]
+     ]
+    },
+    {
+     "execution_index": 3,
+     "is_success": true,
+     "sql": "WITH kpi AS (\n    SELECT\n        SUM(CASE WHEN kpi_code = 'EBITDA_FULL_CONSOLIDATED' AND scenario_tag = 'actual' THEN amount_group ELSE 0 END) / 100000000.0 AS actual_full_consolidated_ebitda_oku_jpy,\n        SUM(CASE WHEN kpi_code = 'EBITDA_FULL_CONSOLIDATED' AND scenario_tag NOT IN ('actual', 'baseline') THEN 1 ELSE 0 END) AS nonstandard_ebitda_scenario_rows\n    FROM dbo.kpi_snapshot\n    WHERE kpi_date >= '2025-10-01'\n      AND kpi_date <= '2026-09-30'\n), exposure AS (\n    SELECT\n        SUM(CASE WHEN metric_code = 'EBITDA' AND scenario_tag = 'actual' AND currency_code = 'USD' THEN amount_local ELSE 0 END) AS usd_actual_ebitda_exposure_usd,\n        SUM(CASE WHEN metric_code = 'EBITDA' AND scenario_tag = 'actual' AND currency_code = 'USD' THEN amount_group ELSE 0 END) / 100000000.0 AS usd_actual_ebitda_converted_oku_jpy,\n        COUNT(CASE WHEN metric_code = 'EBITDA' AND scenario_tag = 'actual' AND currency_code = 'USD' THEN 1 END) AS usd_exposure_rows,\n        SUM(CASE WHEN metric_code = 'EBITDA' AND scenario_tag NOT IN ('actual', 'baseline') THEN 1 ELSE 0 END) AS nonstandard_daily_ebitda_scenario_rows\n    FROM dbo.semantic_financial_metrics_daily\n    WHERE metric_date >= '2025-10-01'\n      AND metric_date <= '2026-09-30'\n)\nSELECT\n    CAST('2025-10-01 to 2026-09-30' AS varchar(30)) AS target_period,\n    kpi.actual_full_consolidated_ebitda_oku_jpy,\n    CAST('No' AS varchar(3)) AS recorded_usdjpy_plus_10_sensitivity,\n    CAST('No' AS varchar(3)) AS recorded_usdjpy_plus_10_scenario,\n    CAST('No explicit FX sensitivity field is available in the scoped EBITDA tables' AS varchar(100)) AS sensitivity_field_status,\n    exposure.usd_actual_ebitda_exposure_usd,\n    exposure.usd_actual_ebitda_converted_oku_jpy,\n    exposure.usd_exposure_rows,\n    kpi.nonstandard_ebitda_scenario_rows + exposure.nonstandard_daily_ebitda_scenario_rows AS nonstandard_scenario_rows_found,\n    CAST('USD local actual EBITDA is available as exposure input; a shock-specific rate or sensitivity coefficient is not recorded' AS varchar(150)) AS availability_note\nFROM kpi\nCROSS JOIN exposure",
+     "columns": [
+      "target_period",
+      "actual_full_consolidated_ebitda_oku_jpy",
+      "recorded_usdjpy_plus_10_sensitivity",
+      "recorded_usdjpy_plus_10_scenario",
+      "sensitivity_field_status",
+      "usd_actual_ebitda_exposure_usd",
+      "usd_actual_ebitda_converted_oku_jpy",
+      "usd_exposure_rows",
+      "nonstandard_scenario_rows_found",
+      "availability_note"
+     ],
+     "rows_total": 1,
+     "rows": [
+      [
+       "2025-10-01 to 2026-09-30",
+       447.5739973,
+       "No",
+       "No",
+       "No explicit FX sensitivity field is available in the scoped EBITDA tables",
+       147984750.15,
+       232.8820955,
+       1460,
+       0,
+       "USD local actual EBITDA is available as exposure input; a shock-specific rate or sensitivity coefficient is not recorded"
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

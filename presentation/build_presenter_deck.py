@@ -7,7 +7,7 @@ the pptxgenjs probe failed in the original environment. The DAG image is a brows
 of the saved local SVG (reports/step3_food_loss_dag.svg), not a Fabric UI screenshot.
 """
 from collections import defaultdict
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 import json
 import re
 from pathlib import Path
@@ -1661,6 +1661,64 @@ usd_local = sum((Decimal(r["amount_local"]) for r in _usd), Decimal(0))
 usd_group = sum((Decimal(r["amount_group"]) for r in _usd), Decimal(0))
 fx10 = usd_local * 10
 
+# The Data Agent was asked these questions on the published version on 2026-10-27. The slides say the
+# returned amounts equal the saved data, so every value is compared here at the same rounding.
+wide = json.loads((PROJECT / "reports/da_group_wide_2026-10-27.json").read_text())
+wide_runs = {r["id"]: r for r in wide["runs"]}
+live_seconds = {k: v["response_seconds"] for k, v in wide_runs.items()}
+
+
+def wide_rows(run_id, column):
+    ex = next(x for x in reversed(wide_runs[run_id]["sql_executions"]) if x["is_success"] and column in x["columns"])
+    assert ex["rows_total"] == len(ex["rows"])
+    return [dict(zip(ex["columns"], row)) for row in ex["rows"]]
+
+
+def oku2(v, places="0.01"):
+    return (v / OKU).quantize(Decimal(places), rounding=ROUND_HALF_UP)
+
+
+_sector_full, _sector_mgmt = defaultdict(Decimal), defaultdict(Decimal)
+_cross_mgmt, _cross_contracts = defaultdict(Decimal), defaultdict(set)
+for r in dataset["semantic_event_financial_effects"]:
+    _sector_full[r["event_id"], sector_of[r["entity_id"]]] += Decimal(r["delta_ebitda_full_jpy"])
+    _sector_mgmt[r["event_id"], sector_of[r["entity_id"]]] += Decimal(r["delta_management_jpy"])
+    if r["event_id"] == "CROSS_NEG":
+        _cross_mgmt[r["entity_id"]] += Decimal(r["delta_management_jpy"])
+        _cross_contracts[r["entity_id"]].add(r["contract_id"])
+_sector_rows = wide_rows("B_sector", "sector_code")
+assert len(_sector_rows) == 8
+for r in _sector_rows:
+    k = (r["event_id"], r["sector_code"])
+    assert Decimal(str(r["delta_ebitda_full_oku_jpy"])) == oku2(_sector_full[k])
+    assert Decimal(str(r["delta_management_oku_jpy"])) == oku2(_sector_mgmt[k])
+    assert r["distinct_effect_count"] == 84
+_entity_of_name = {s["entity_name"]: s["entity_id"] for s in subsidiaries}
+_company_rows = wide_rows("company", "subsidiary_name")
+assert len(_company_rows) == len(reach["CROSS_NEG"]["companies"]) == 8
+assert sum(r["impacted_contract_count"] for r in _company_rows) == len(reach["CROSS_NEG"]["contracts"])
+for r in _company_rows:
+    e = _entity_of_name[r["subsidiary_name"]]
+    assert Decimal(str(r["full_consolidated_impact_oku_jpy"])) == oku2(cross_by_entity[e])
+    assert Decimal(str(r["management_weighted_impact_oku_jpy"])) == oku2(_cross_mgmt[e])
+    assert r["impacted_contract_count"] == len(_cross_contracts[e])
+    assert Decimal(str(r["impact_pct_of_annual_actual_full_ebitda"])) == (
+        cross_by_entity[e] / ebitda_by_entity[e] * 100).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+_largest = wide_rows("casual_largest_event", "event_id")[0]
+assert _largest["event_id"] == "CROSS_NEG"
+assert Decimal(str(_largest["delta_ebitda_full_jpy_oku"])) == oku2(reach["CROSS_NEG"]["full"], "0.0001")
+assert Decimal(str(_largest["annual_ebitda_full_consolidated_oku"])) == oku2(actual_total["EBITDA"], "0.001")
+assert Decimal(str(_largest["event_impact_to_annual_ebitda_percent"])) == (
+    reach["CROSS_NEG"]["full"] / actual_total["EBITDA"] * 100).quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
+_fx_row = wide_rows("fx_what_if_1", "yen_appreciation_10_jpy_sensitivity_oku_jpy")[0]
+assert Decimal(str(_fx_row["yen_appreciation_10_jpy_sensitivity_oku_jpy"])) == oku2(-fx10, "0.0001")
+assert "算定できません" in wide_runs["fx_what_if_2"]["answer"]
+_traversals = [v["ontology_traversal"] for v in wide_runs.values() if isinstance(v["ontology_traversal"], list)]
+assert len(_traversals) == 6 and all(x[0]["chosenPath"] == "no_path_found" for x in _traversals)
+for _rid in ("chain_1", "chain_2"):
+    assert "内部取引" in wide_runs[_rid]["answer"] or "intercompany" in wide_runs[_rid]["answer"]
+fx_live = -Decimal(str(_fx_row["yen_appreciation_10_jpy_sensitivity_oku_jpy"]))
+
 s = new_slide(
     T_RIPPLE,
     "実演で追う食品損失は、影響が一部の会社に限られた出来事です。\n"
@@ -1672,19 +1730,21 @@ s = new_slide(
 【全額と持分管理】全額は、8社を100%で足した額（{oku(reach['CROSS_NEG']['full'])}億円）です。持分管理は、所有比率を掛けた額（{oku(reach['CROSS_NEG']['mgmt'])}億円）で、51%所有の4社の分が小さくなるため、全額の約{mgmt_ratio:.0f}%です。
 【年間EBITDA比】年間のEBITDA（実績、{oku(actual_total['EBITDA'], False)}億円）に対する比率です。横断混乱は{pct_of_annual(reach['CROSS_NEG']['full'])}、食品損失は{pct_of_annual(reach['FOD_NEG']['full'])}で、前者は後者の約{cross_vs_food:.1f}倍です。ただし、横断混乱でも年間の約{cross_pct_1}%で、これより大きな規模の出来事は、このデモに収録していません。この割合を「小さい」「軽微」とは評価しません。重大性を判定する基準は、このデモにありません。次のページで、収録していない範囲も伝えます。
 【数字の出どころ】
-DAが返したもの：横断2件を含む全10イベントについての、イベントごとの金額（横断混乱 {reach['CROSS_NEG']['full']:+,.2f}円、横断回復 {reach['CROSS_POS']['full']:+,.2f}円）。公開済みDAで確認済みです。
+DAが返したもの：横断2件を含む全10イベントの、イベントごとの金額（横断混乱 {reach['CROSS_NEG']['full']:+,.2f}円、横断回復 {reach['CROSS_POS']['full']:+,.2f}円）。さらに、2026-10-27の実測で、業種別、会社別、年間EBITDA比、最大のイベントも、公開済みDAが返しました。
 Graphで確認したもの：全{env_counts['effects']:,}効果が、根拠から全社KPIまでの経路でたどれること。横断混乱は{reach['CROSS_NEG']['effects']}件すべてです。2026-10-23のGraph更新後に確認しました。
-保存データから集計したもの：会社の数、契約の数、会社別の金額、年間EBITDA比。DAに聞いて確認した値ではありません。会社別の金額を足すと、DAが返した合計と一致します。
-【追加の質問】時間があれば、追加B（横断2件の業種別比較）をDAに聞きます。入力文は、第3章の「4つの入力の使い分け」のページと、このノートにあります。この質問の結果は、資料の作成時点では記録していません。前日までに公開済みDAで試し、次の値と合うかを確認してください。
+保存データから集計したもの：食品損失の年間EBITDA比（{pct_of_annual(reach['FOD_NEG']['full'])}）。DAには、年間EBITDA比を、最大のイベント（横断混乱）についてだけ聞きました。
+【2026-10-27の実測】公開済みDAで、チャットを空にして、1問ずつ聞きました（記録：reports/da_group_wide_2026-10-27.json）。①追加B（横断2件の業種別比較、{live_seconds['B_sector']}秒）、②横断混乱の会社別（年間EBITDA比つき、{live_seconds['company']}秒）、③「全社に同時に響いたマイナスの出来事は？会社ごとにどれくらい影響した？」（{live_seconds['casual_all_companies']}秒）、④「このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？」（{live_seconds['casual_largest_event']}秒）です。表の金額は、すべて保存データの集計と、小数第2位まで一致しました。③は、聞き方が短くても、横断混乱を選び、8社を返しました。④は、横断混乱の{oku(reach['CROSS_NEG']['full'])}億円、年間{oku(actual_total['EBITDA'], False)}億円の{pct_of_annual(reach['CROSS_NEG']['full'])}と答えました。
+【DAの文章の注意】表の数字は一致しましたが、表のまわりの文章には誤りが出ることがあります。追加Bの答えは、持分管理の金融と食品の大小を説明しましたが、横断混乱の値（食品{oku(_sector_mgmt['CROSS_NEG', 'foods'])}億円、金融{oku(_sector_mgmt['CROSS_NEG', 'finance'])}億円）と合いませんでした。会社別の答えは、DAが自分で置いた基準（1億円超、または年間EBITDA比−1.55%超）で、優先度が「高」の会社を挙げましたが、基準に当てはまる3社が漏れていました。この基準は、デモの定義ではありません。実演では、表の数字を指して説明し、補足の文章は読み上げません。
+【DAの経路】この日の8回の実行のうち、DAがOntologyの経路探索を試した6回は、すべて「経路なし」が返り、答えは、Lakehouseの表へのSQLで求めたものでした。Ontologyの定義（17種類の実体）は、文脈としてDAに渡されています。「DAがGraphをたどって答えた」とは言いません。関係をたどる場面は、Step03のNotebook（Graph）で見せます。経路が見つからなかった理由は、この実行からは分かっていません。
 【照合用の業種別の値（億円）】横断混乱の全額：{sector_line('CROSS_NEG', 'delta_ebitda_full_jpy')}。持分管理：{sector_line('CROSS_NEG', 'delta_management_jpy')}。横断回復の全額：{sector_line('CROSS_POS', 'delta_ebitda_full_jpy')}。持分管理：{sector_line('CROSS_POS', 'delta_management_jpy')}。丸めのため、足すと合計と0.01ずれることがあります。
 【避ける】横断回復÷横断混乱を、回復率と呼ぶこと。別の時期に設計した、独立のイベントです。各社の年間EBITDA比がそろっているのは、データの設計によるもので、現実の波及の姿を示すものではありません。実世界の因果の証明でもありません。
 【つなぎ】「同時に全社へ及ぶ形は、ここまでです。次のページで、連鎖する形や、大きな規模の想定まで扱えるかを整理します。」
 【コピー用Q5】\n""" + Q5,
     ["reports/qa_expected_event_totals.json", "reports/graph_all_event_paths.json",
-     "reports/da_qa_published.json",
+     "reports/da_qa_published.json", "reports/da_group_wide_2026-10-27.json",
      "data/demo_dataset.json:semantic_event_financial_effects、semantic_financial_metrics_daily（actual）",
      "config/event_generation_rules.yaml:event_mix"],
-    "追加B（横断2件の業種別比較）は、前日までに公開済みDAで試す。会社別の値は元データの集計")
+    "公開済みDAで聞いた業種別と会社別の金額は、元データの集計と一致した（2026-10-27）。説明では表の数字を示す")
 reach_rows = [
     ["イベントID", "FOD_NEG", "CROSS_NEG"],
     ["影響を受けた会社", f"{len(reach['FOD_NEG']['companies'])}社（食品の日米）",
@@ -1703,7 +1763,7 @@ grid_table(s, .62, 2.58, [1.7, 2.05, 2.3], ["比べる点", "食品損失", "横
            cell_colors={(i, j): CORAL for i in (4, 5, 6) for j in (1, 2)})
 chart_x0, chart_w, zero_y, scale = 7.0, 5.7, 3.5, 2.0
 text(s, "横断混乱：会社別の全額EBITDA影響（億円）", chart_x0, 2.62, chart_w, .28, 13, TEAL, True)
-text(s, f"各社の年間EBITDA比は約{share_lo:.1f}〜{share_hi:.1f}%です。元データから集計しています。",
+text(s, f"各社の年間EBITDA比は約{share_lo:.1f}〜{share_hi:.1f}%です。DAの実測と一致しました。",
      chart_x0, 2.94, chart_w, .24, 11, MUTED)
 box(s, chart_x0, zero_y, chart_w, .012, MUTED)
 col_w = chart_w / 8
@@ -1729,31 +1789,34 @@ s = new_slide(
 【話す】「『全社に波及する』には、大きく2つの形があります。1つは、港の混乱のように、全社に同時に当たる形です。これはこのデモに入っていて、食品損失と同じ経路で追えます。もう1つは、ある会社の問題が、取引を通じて別の会社に伝わる連鎖です。こちらは今のデモでは扱えていません。会社と会社を結ぶ関係を、Ontologyにまだ持っていないからです。」
 【指す】表を上から指します。「このデモ」の列で、扱えるのは1行目だけです。2行目以降は、足りない点を、そのまま伝えます。
 【連鎖が扱えない理由】Ontologyの関係は、{len(ontology_entities)}種類の実体の間の{len(ontology_relationships)}種類で、会社同士を結ぶものはありません。内部取引の表（{len(interco)}行、{interco_pairs}組）は親Lakehouseにあり、DAはSQLで読めますが、Ontologyの関係にはしていません。内部取引は、金融の会社とエネルギーの会社の間の2経路（日本同士、米国同士）だけで、売り手側の年間の額は約{interco_oku:.1f}億円です。横断の2件は、8社の各活動に直接配賦した記録で、1社の問題が別の社へ伝わる過程を計算したものではありません。
+【DAの実測：連鎖】2026-10-27に、「食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。」と、チャットを空にして2回聞きました（{live_seconds['chain_1']}秒、{live_seconds['chain_2']}秒）。どちらも、食品以外の子会社への配賦はなく、内部取引経由の影響は定量できないと答えました。1回目は、内部取引経由の影響を「未検証」としました。2回目は、内部取引の表に活動と契約の対応がなく、食品損失の効果に結べないためと説明し、「影響なし」とは判定しませんでした。ただし、2回目は、食品以外の子会社について、対象0件、0.00億円と表に出しました。聞き手には、「データに配賦がない」という意味だと添えます。「連鎖は起きない」とは言いません。
 【Microsoft Learnの記述】Graphは、複数のつながりを順にたどる問い、依存関係の分析、到達可能性、最短経路の問いに使う実行層です。集計や指標は、元のデータでの実行を続けられます（Ontology概要、2026-10-16更新）。関係型は、始点と終点の実体の種類を指定して作り、対応表で結べます（関係型の作成、2026-09-04更新）。同じ種類の実体の間（会社と会社）の関係を作れるかは、この資料では確認していません。実行する前に、Previewの画面で確認します。
 【連鎖を扱う場合の一案】内部取引の表を、会社と会社の関係として足し、金融の会社の問題が、取引でつながるエネルギーの会社へ及ぶ様子を、2社の小さな範囲で試します。ただし、伝わる大きさを決める規則とデータは、いまありません。関係を足すだけでは、金額は出ません。
-【規模】最大の横断混乱で、全額{oku(reach['CROSS_NEG']['full'])}億円、年間EBITDA（実績）の約{cross_pct_1}%です。これより大きな規模の出来事は、収録していません。8社それぞれの年間EBITDAに対する比率は、約{share_lo:.1f}〜{share_hi:.1f}%でそろっています。会社ごとの差が大きい例や、より大きな規模の例を見せる場合は、影響データの追加とGraphの更新が要ります。実体や関係の種類を変える場合は、Ontologyの定義も更新します。
-【もしもの試算】聞かれたら、「このデモのDAは、記録済みのデータを集計して答えます。もしもの計算は検証していません。目安だけなら、保存データから概算できます」と答えます。参考として、米国の4社のEBITDAは、年間で約{usd_local / 10**6:.0f}百万ドル（全額で約{usd_group / OKU:.0f}億円、全社の{usd_group / actual_total['EBITDA'] * 100:.0f}%）です。円高が10円進むと、換算だけで約{fx10 / OKU:.0f}億円（全社の{fx10 / actual_total['EBITDA'] * 100:.1f}%）の押し下げになります。保存データからの単純な概算で、ヘッジや価格への転嫁は考慮していません。DAでは確認していないので、数字を出すときは「概算」と断ります。
-【避ける】「全社波及もすべて扱える」「連鎖も追える」と言いません。年間の約{cross_pct_1}%を「小さい」「軽微」と評価することも、しません（重大性を判定する基準は、このデモにありません）。「Ontologyでは連鎖を扱えない」とも言いません。会社間の関係を足せば扱える見込みはありますが、このデモでは未検証です。いずれも設計した配賦で、実世界の因果の証明ではありません。
+【規模】最大の横断混乱で、全額{oku(reach['CROSS_NEG']['full'])}億円、年間EBITDA（実績）の約{cross_pct_1}%です。これより大きな規模の出来事は、収録していません。8社それぞれの年間EBITDAに対する比率は、約{share_lo:.1f}〜{share_hi:.1f}%でそろっています。会社ごとの差が大きい例や、より大きな規模の例を見せる場合は、影響データの追加とGraphの更新が要ります。実体や関係の種類を変える場合は、Ontologyの定義も更新します。DAに「このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？」と聞くと、横断混乱の{oku(reach['CROSS_NEG']['full'])}億円、年間{oku(actual_total['EBITDA'], False)}億円の{pct_of_annual(reach['CROSS_NEG']['full'])}と答えました（2026-10-27の実測）。
+【もしもの試算】2026-10-27に、「もし円が10円高くなったら、グループのEBITDAはいくら変わる？」と、チャットを空にして2回聞きました（{live_seconds['fx_what_if_1']}秒、{live_seconds['fx_what_if_2']}秒）。1回目は、ドル建てEBITDAに−10円を掛けた単純な感応度で、{oku(-fx_live * OKU)}億円と答えました（保存データからの概算と同じ値です）。2回目は、「ショック後のレートや感応度の定義がデータにないため、算定できない」と答え、ドル建てEBITDAの実績（約{usd_local / 10**6:.0f}百万ドル、{usd_group / OKU:.2f}億円）だけを示しました。同じ質問で答えが分かれるので、実演では使いません。聞かれたら、「このデモのDAは、記録済みのデータを集計して答えます。もしもの計算は、前提を決めて別に行います」と答えます。目安は、米国の4社のEBITDAが年間で約{usd_local / 10**6:.0f}百万ドル（全額で約{usd_group / OKU:.0f}億円、全社の{usd_group / actual_total['EBITDA'] * 100:.0f}%）なので、円高が10円進むと、換算だけで約{fx10 / OKU:.0f}億円（全社の{fx10 / actual_total['EBITDA'] * 100:.1f}%）の押し下げです。ヘッジや価格への転嫁は考慮していません。数字を出すときは「概算」と断ります。
+【避ける】「全社波及もすべて扱える」「連鎖も追える」と言いません。DAが答えた円高の概算を、シミュレーションの結果として紹介することも、しません。年間の約{cross_pct_1}%を「小さい」「軽微」と評価することも、しません（重大性を判定する基準は、このデモにありません）。「Ontologyでは連鎖を扱えない」とも言いません。会社間の関係を足せば扱える見込みはありますが、このデモでは未検証です。いずれも設計した配賦で、実世界の因果の証明ではありません。
 【つなぎ】「お客様のデータで連鎖を見たい場合は、会社間の取引表から、小さく始めます。進め方は、第5章にあります。」""",
     ["config/subsidiaries.json", "ontology_tmdl/entityRelationships.tmdl（会社同士の関係なし）",
      "data/demo_dataset.json:intercompany_transactions、semantic_financial_metrics_daily（actual）",
      "config/data_agent_create.json（DAが参照する表）", "reports/graph_all_event_paths.json",
+     "reports/da_group_wide_2026-10-27.json",
      "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）",
      "Microsoft Learn：fabric/iq/ontology/how-to-create-relationship-types（2026-09-04更新）"],
     "聞き返す例：「全社に同時に及ぶ話ですか。会社から会社へ連鎖する話ですか」")
 scope_rows = [
     ("同時に全社へ及ぶ", "例：港の混乱、資金繰りの悪化", "扱える", TEAL,
-     "横断の2件が、8社に同時に当たります。全社KPIまでの経路も、すべてたどれます。\n"
-     "DAは、横断2件を含む全10イベントについて、イベントごとの金額を返しました。"),
+     "横断の2件が8社に同時に当たり、全社KPIまでの経路もすべてたどれます。\n"
+     "DAは、イベント別、業種別、会社別の金額を、保存データと同じ値で返しました（実測）。"),
     ("会社から会社へ連鎖する", "例：金融の問題がエネルギーに及ぶ", "未対応", CORAL,
-     "会社同士を結ぶ関係が、Ontologyにありません。\n"
-     "内部取引は表にありますが、金融とエネルギーの間の2経路だけです。\n"
-     "関係として足し、小さな範囲で試す余地があります。"),
+     "会社同士の関係がOntologyになく、内部取引の表も金融とエネルギーの2経路だけです。\n"
+     "DAは2回とも「他の子会社への配賦なし、内部取引経由は確認できない」と答えました。\n"
+     "表の0.00億円は、データに配賦がないことを示し、影響なしの確認にはなりません。"),
     ("もっと大きな規模の出来事", "例：全社の稼ぎが大きく動く出来事", "未収録", PURPLE,
      f"最大の横断混乱で、年間EBITDAの約{cross_pct_1}%です。これより大きな出来事は、収録していません。\n"
      "大きな出来事の追加には、影響データの追加とGraphの更新が要ります。"),
-    ("もしもの試算", "例：円高が10円進んだら", "対象外", MUTED,
-     "DAは、記録済みのデータを集計して答えます。もしもの計算は、このデモで検証していません。"),
+    ("もしもの試算", "例：円高が10円進んだら", "要注意", MUTED,
+     f"2回聞くと、1回は「円高10円で全額EBITDAは約{fx_live:.1f}億円減る」と単純計算で答え、\n"
+     "もう1回は「感応度の定義がない」と答え、算定しませんでした。実演では使いません。"),
 ]
 text(s, "聞かれ方", .8, 2.58, 2.6, .26, 12, TEAL, True)
 text(s, "このデモ", 3.55, 2.58, 1.2, .26, 12, TEAL, True)

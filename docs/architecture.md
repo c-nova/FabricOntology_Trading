@@ -156,11 +156,18 @@ non-deterministic; see `reports/da_casual_baseline_2026-10-26.json` and
 `reports/da_casual_after_2026-10-26.json` for the record and the known limits. Data, ontology,
 Lakehouses, data-source instructions and example queries were not changed.
 
+On 2026-10-27 eight read-only runs on the published agent (`reports/da_group_wide_2026-10-27.json`)
+checked the group-wide pages of the presenter guide: sector, per-company and largest-event amounts
+equal the saved data exactly at two decimals; the prose around the tables can be wrong; the chain
+and FX what-if questions were answered with caveats or inconsistently between two runs; and in the six
+runs that tried an ontology traversal the tool returned `no_path_found`, so every answer came from SQL on
+the lakehouse tables with the ontology injected as context. Nothing was changed.
+
 Annual actual JPY: full EBITDA **44,757,399,732.84**, ownership-weighted
 management EBITDA **33,547,898,914.09**. Accounting and live-query evidence:
 `reports/cloud_validation.json`, `reports/end_to_end_validation.json`,
-`reports/da_qa_final_draft.json`, `reports/da_qa_published.json`, and the graph
-count/path reports. Model-internal traces are removed from QA reports.
+`reports/da_qa_final_draft.json`, `reports/da_qa_published.json`,
+`reports/da_group_wide_2026-10-27.json`, and the graph count/path reports. Model-internal traces are removed from QA reports.
 
 ## Live entry points
 
