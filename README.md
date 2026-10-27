@@ -15,11 +15,11 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（55枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（57枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
 
 | 章 | 内容 | 使う場面 |
 |---|---|---|
-| 1 全体像と準備 | 10分の進行、8社の設定、実演前の確認事項（環境、製品の状態、日本語の扱い） | 実演の前 |
+| 1 全体像と準備 | 10分の進行、想定企業と場面、デモ環境の構成、8社を同じ尺度で比べる前提、実演前の確認事項（環境、製品の状態、日本語の扱い） | 実演の前 |
 | 2 営業向け基礎 | EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明 | 経営指標になじみのない相手に説明する前 |
 | 3 実演 | 4つの入力（Q1〜Q4）の全文と結果、Notebookの図、4つの金額の区別、締め | ライブの10分（Step04は時間があるとき） |
 | 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、カジュアルな質問への対応 | 質疑のとき |

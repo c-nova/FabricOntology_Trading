@@ -122,14 +122,16 @@ DA_ACTION_TEXT = """対応案
 # page numbers always agree with the final slide order. Page titles must match the slide titles.
 CHAPTERS = [
     {"n": 1, "name": "全体像と準備",
-     "agenda": "10分の進行、8社の設定、環境と制約の確認",
-     "summary": "デモの流れと前提を押さえ、\n実演で使う環境を確認します。",
+     "agenda": "10分の進行、企業、環境、前提、確認事項",
+     "summary": "デモの進行、想定企業、環境と、\n実演前に確認する事項を示します。",
      "when": "実演の前",
-     "note": "【進め方】最初に、10分の進行と、デモの前提（8社、JPY、対象年度）を確認します。続いて「実演前の確認事項」で、環境、製品の状態、日本語の扱い、リンクを点検します。\n"
-             "【所要】読むだけなら5分ほどです。確認事項は、実演の前日までに済ませます。\n"
+     "note": "【進め方】最初に、10分の進行を確認します。続いて、デモが想定する企業と場面、Fabricの環境の構成を押さえます。さらに、8社を同じ尺度で比べる前提（8社、JPY、対象年度）と、「実演前の確認事項」（環境、製品の状態、日本語の扱い、リンク）を点検します。\n"
+             "【所要】読むだけなら8分ほどです。確認事項は、実演の前日までに済ませます。\n"
              "【つなぎ】前提がそろったら、経営指標になじみのない相手に説明する場合は第2章、すぐ実演する場合は第3章へ進みます。",
      "pages": [
          ("10分デモの進行と画面切替", "10分の進行表"),
+         ("想定企業：架空の総合商社グループ", "想定企業と場面"),
+         ("デモ環境：データから画面までの構成", "デモ環境"),
          ("架空の8社を同じ尺度で比較", "デモの前提（8社、通貨、年度）"),
          ("実演前の確認事項", "環境と制約の確認"),
      ]},
@@ -503,14 +505,15 @@ s = new_slide(
     "自然言語の応答と、関係図の表示は別の画面です。\nDAで金額を確かめてから、食品の実体経路をNotebookで示します。",
     "進行表  |  説明者が手元で参照",
     """【目安】準備時に60秒。下記の時間はライブデモ全体の割当です。
-【0:00～1:00】架空データ、対象年度、全額と持分管理を一言で説明します。
+【0:00～1:00】架空データ、対象年度、全額と持分管理を一言で説明します。「想定企業：架空の総合商社グループ」と「架空の8社を同じ尺度で比較」のページを、それぞれ20秒ほどで使います。「デモ環境」のページは、聞かれたときに使います。
 【1:00～3:00】公開済みFabric DAにQ1。月次のbaselineとactualの線を指し、年間actual 447.57億円を確認します。年度を本日からの直近1年に置き換えません。
 【3:00～5:00】Q2。符号付き棒グラフを指し、横断2件を含めて10件あること、食品損失が約-1.14億円であることを確認します。色や横向きの指定で失敗した場合は、それらを外します。
 【5:00～9:00】Q3で食品の要約とIDを確認し、Step03へ一度だけ切り替えます。先頭の保存済みHTML、カード、8ノードのDAG、根拠の原文を順に示します。
 【9:00～10:00】関係の共有と金額照合の価値を説明します。余裕がなければ追加質問は実行しません。
 【Step04】余裕があれば、DAでQ4（影響点の特定と対応案）を実行します。Q4はNotebookの前後どちらでも実行できます。画面の切替を減らしたい場合は、Q3の直後にDAでQ4を実行してからNotebookへ移ります。
 【待ち時間】DAの処理中は「金額を先に確認し、関係は次の画面で確認します」と説明します。無応答時は既存の保存結果／この資料に切り替え、ライブ応答が成功したとは言いません。
-【操作】質問全文は「入力①～④」の各スライドの枠内からコピーします。ノートにも全文があります。基礎解説は事前学習用で、10分の実演枠には含めません。""",
+【操作】質問全文は「入力①～④」の各スライドの枠内からコピーします。ノートにも全文があります。基礎解説は事前学習用で、10分の実演枠には含めません。
+【つなぎ】「最初に、このデモが想定する企業と場面を説明します。」""",
     ["prompts/demo_questions_ja.txt", "reports/step3_ui_verification.json"],
     "必須はStep01～03。Step04（影響点と対応案）、ENE_POS、横断比較は時間が余った場合のみ")
 rows = [
@@ -527,14 +530,155 @@ for i, (tm, screen, purpose) in enumerate(rows):
     text(s, screen, 2.25, y + .12, 3.35, .3, 17, INK, True)
     text(s, purpose, 5.72, y + .12, 6.64, .3, 17)
 
+# Company and scene, then the demo environment. Both pages sit between the 10-minute flow and the
+# same-scale page. Every figure is computed from the repo artifacts and asserted.
+T_COMPANY = "想定企業：架空の総合商社グループ"
+T_ENV = "デモ環境：データから画面までの構成"
+subsidiaries = json.loads((PROJECT / "config/subsidiaries.json").read_text())
+SECTOR_JP = {"metals": "金属", "energy": "エネルギー", "foods": "食品", "finance": "金融"}
+COMMODITY_JP = {"copper_alloy": "銅合金", "LNG": "LNG", "milling_wheat": "製粉用小麦",
+                "trade_finance": "貿易金融"}
+commodity_of = {c["entity_id"]: c["commodity"] for c in dataset["semantic_contracts"]}
+assert len(subsidiaries) == 8 and len(set(commodity_of.values())) == 4
+OKU = Decimal(10) ** 8
+actual_total = defaultdict(Decimal)
+for r in dataset["semantic_financial_metrics_daily"]:
+    if r["scenario_tag"] == "actual":
+        actual_total[r["metric_code"]] += Decimal(r["amount_group"])
+assert actual_total["EBITDA"] == Decimal(manifest["annual_actual_jpy"]["ebitda_full_consolidated"])
+revenue_oku = round(actual_total["REVENUE"] / OKU)
+ebitda_oku = round(actual_total["EBITDA"] / OKU)
+assert (revenue_oku, ebitda_oku) == (3111, 448)
+own_of = {s["entity_id"]: s["ownership_ratio"] for s in subsidiaries}
+food_loss_entities = {r["entity_id"] for r in dataset["semantic_event_financial_effects"]
+                      if r["event_id"] == "FOD_NEG"}
+assert food_loss_entities == {"SUB_FOD_JP_01", "SUB_FOD_US_01"}
+assert (own_of["SUB_FOD_JP_01"], own_of["SUB_FOD_US_01"]) == ("0.51", "1.00")
+assert sorted(own_of.values()) == ["0.51"] * 4 + ["1.00"] * 4
+
+s = new_slide(
+    T_COMPANY,
+    "月次の経営会議で、全社の稼ぎが基準から動いた理由を問われる場面を想定します。\n"
+    "事業も通貨も所有比率も違う8社の数字を、同じ定義で説明できることが前提です。",
+    "",
+    """【目安】準備時に60秒。ライブでは、表と右のカードを指して20秒ほどで話します（10分の進行の「0～1分」）。
+【話す】「今日のデモは、架空の総合商社グループです。金属、エネルギー、食品、金融の4つの事業があり、それぞれに日本の会社と米国の会社があります。全部で8社です。月次の経営会議で、全社の稼ぎが基準から動いた理由を問われた場面を想定しています。」
+【背景】経営会議では、全社の稼ぎ（EBITDA）が基準値から動くと、「なぜか」「どの契約が効いたか」「根拠の記録は何か」が問われます。事業、通貨、所有比率が違う会社の数字は、定義をそろえないと比べられません。根拠の確認にも、詳しい人が表をつなぎ直す手間がかかることが多い、という場面です。このデモは、その場面で、金額、つながり、根拠を同じデータから示します。
+【指す】表を上から順に読みます。事業ごとに、日本の会社、米国の会社の順です。次に、右上の「親会社」で、全社の管理データと、全額連結の扱いを伝えます。最後に、右下の「年間の規模」を指します。
+【所有比率】100%所有は4社（金属の日本、エネルギーの日本、食品の米国、金融の日本）、51%所有も4社です。国では決めていません。全8社は支配子会社なので、全額連結には100%を取り込み、所有比率を掛けた持分管理寄与は別の指標として持ちます。違いは「51%所有の金額を区別」のページで説明します。
+【規模】年間（2025-10-01～2026-09-30）の実績は、売上が約3,111億円、EBITDAが約448億円です。いずれも全額連結のJPYです。EBITDAはQ1の結果（447.57億円）と同じ値です。売上は保存データからの集計で、DAに聞いて確認した値ではありません。
+【取り扱い】銅合金、LNG、製粉用小麦、貿易金融は、このデモの設計上の取り扱いです。実際の総合商社の事業構成や規模を表すものではありません。
+【食品損失との関係】実演で追う食品損失（FOD_NEG）は、持分51%の日本の食品会社と、持分100%の米国の食品会社の2社に効きます（各42件、合計84件の影響明細）。そのため、全額（−1.1446億円）と持分管理（−0.8763億円）は、異なる値になります。
+【避ける】社名は架空で、実在の会社を指しません。「実際の総合商社の規模」「業界の標準的な利益率」とは言いません。
+【つなぎ】「次に、このデータが、Fabricのどこで動いているかを見ます。」""",
+    ["config/subsidiaries.json", "data/demo_dataset.json:semantic_financial_metrics_daily（actual）",
+     "data/demo_dataset.json:semantic_event_financial_effects（FOD_NEG）",
+     "config/deployment_manifest.json:annual_actual_jpy"],
+    "実演で追う食品損失は、持分51%の日本の会社と、持分100%の米国の会社に影響する")
+company_rows, company_fills = [], []
+for i, sub in enumerate(subsidiaries):
+    share = f"{int(Decimal(sub['ownership_ratio']) * 100)}%"
+    company_rows.append([
+        SECTOR_JP[sub["sector_code"]], sub["entity_name"], COMMODITY_JP[commodity_of[sub["entity_id"]]],
+        f"{'日本' if sub['country_code'] == 'JP' else '米国'}／{sub['currency_code']}", share])
+    company_fills.append(WHITE if (i // 2) % 2 == 0 else PALE)
+grid_table(s, .62, 2.58, [1.2, 2.9, 1.4, 1.25, .95],
+           ["事業", "会社名", "取り扱い", "国／通貨", "所有比率"], company_rows, .43, size=12,
+           colors=[TEAL, NAVY, INK, INK, INK], bolds=[True, True, False, False, True],
+           fills=company_fills)
+box(s, 8.52, 2.58, 4.18, 1.75, WHITE, rounded=True)
+text(s, "親会社：全社の管理", 8.77, 2.72, 3.7, .3, 16, TEAL, True)
+text(s, "SAP風の管理データを持つ。会社マスタ、為替、仕訳、内部取引、連結消去。\n"
+        "全8社を支配子会社として全額連結する。\n所有比率を掛けた持分管理寄与は、別の指標。",
+     8.77, 3.13, 3.7, 1.15, 12, INK)
+box(s, 8.52, 4.43, 4.18, 1.85, WHITE, rounded=True)
+text(s, "年間の規模（実績）", 8.77, 4.57, 3.7, .3, 16, TEAL, True)
+text(s, f"売上　約{revenue_oku:,}億円", 8.77, 5.0, 3.7, .32, 17, NAVY, True)
+text(s, f"EBITDA　約{ebitda_oku:,}億円", 8.77, 5.42, 3.7, .32, 17, NAVY, True)
+text(s, "全額連結のJPY。2025-10-01から2026-09-30", 8.77, 5.85, 3.7, .4, 11, MUTED)
+
+env_counts = {
+    "contracts": len(dataset["semantic_contracts"]),
+    "activities": len(dataset["semantic_business_activities"]),
+    "events": len(dataset["semantic_risk_events"]),
+    "evidence": len(dataset["semantic_event_evidence"]),
+    "effects": len(dataset["semantic_event_financial_effects"]),
+}
+assert env_counts == {"contracts": 96, "activities": 8760, "events": 10, "evidence": 64, "effects": 1344}
+assert (manifest["workspace"]["name"], manifest["workspace"]["capacity_sku"]) == ("Trading", "F16")
+assert (manifest["data_agent"]["selected_tables"], manifest["data_agent"]["runtime"]) == (25, "Preview")
+assert (manifest["storage"]["lakehouses"], manifest["storage"]["zero_copy_shortcuts"]) == (9, 8)
+_lh_tables = defaultdict(int)
+for _key in cloud["counts"]:
+    _lh_tables[_key.split(".")[0]] += 1
+lh_tables_total, lh_rows_total, lh_tables_parent = cloud["tables"], cloud["rows"], _lh_tables["LH_Group_SAP"]
+assert (lh_tables_total, lh_rows_total, lh_tables_parent) == (95, 90424, 17)
+
+s = new_slide(
+    T_ENV,
+    "実演中は、「このデータはどこにあるのか」「何が答えを出しているのか」と聞かれます。\n"
+    "答えの出どころを、データ、意味と関係、画面の3層で言い分けられるようにします。",
+    "",
+    """【目安】準備時に60秒。ライブでは使わず、「どこで動いているのか」「何が答えを出しているのか」と聞かれたときに使います。
+【話す】「このデモは、Fabricの1つのワークスペースで動いています。データは9つのLakehouseに置き、その上にOntologyとGraphを作ります。Data Agentが日本語の質問に答え、食品損失の経路はNotebookで図にします。」
+【指す】下の段から上へ、データ、意味と関係、画面の順に指します。実演で開くのは、一番上の2つの画面です。
+【データ】9つのLakehouse（親1、子会社8）に、物理表が95、行数が90,424あります。親は17表とショートカット8本で、SAP風の管理データ、全社の分析用の表、全社KPIを置いています。子会社は78表で、各社の原本です。詳細は第6章の「9つのLakehouseの役割分担」です。
+【意味と関係】Ontologyは、実体の種類が17、関係の種類が39です。データは持たず、表に対応付けます。Graphは、Ontologyの定義から作った、実体と関係のグラフです。実体の1行が1つのノード（点）、関係の1行が1本の矢印（線）になり、ノードが33,960、矢印が65,684本あります。
+【画面】Data Agentは公開済みで、ランタイムはPreviewです。Ontologyと親Lakehouseの表（25本）を参照し、日本語の質問に、金額と説明で答えます。Notebook（Step03）は、Graphで関係をたどり、金額をDeltaの表で照合して、食品損失の経路を図にします。実演の入口は、公開済みのFabric DAの画面です。Microsoft 365 Copilotには公開していません。
+【規模】期間は365日（2025-10-01～2026-09-30）です。契約は96件（各社12件）、活動は8,760件（各社1日3件。金融の2社は手数料の計上）、イベントは10件、根拠は64件、効果は1,344件です。容量はF16、ワークスペースの名前はTradingです。
+【避ける】「本番の基幹システムとつないでいる」とは言いません。データは架空で、為替だけが実データです。
+【つなぎ】「次に、8社を同じ尺度で比べるための前提を確認します。」""",
+    ["config/deployment_manifest.json", "reports/cloud_validation.json", "reports/graph_node_counts.json",
+     "reports/graph_edge_counts.json", "docs/architecture.md", "config/lakehouse_inventory.json"],
+    "容量（F2以上）、Previewの扱い、日本語の対応は、実演前の確認事項で点検する。構成の詳細は第6章")
+env_layers = [
+    ("画面", NAVY, [
+        ("Data Agent", "公開済み、Preview",
+         "Ontologyと親Lakehouseの表25本を参照し、\n日本語の質問に、金額と説明で答える"),
+        ("Notebook（Step03）", "保存済みの図から開始",
+         "Graphで関係をたどり、金額をDeltaの表で照合して、\n食品損失の経路を図にする")]),
+    ("意味と関係", PURPLE, [
+        ("Ontology", "17種類の実体、39種類の関係",
+         "業務の言葉と、つながりを定義する。\nデータは持たず、表に対応付ける"),
+        ("Graph", f"ノード{sum(node_counts.values()):,}、矢印{sum(edge_counts.values()):,}本",
+         "Ontologyの定義から作った、実体と関係のグラフ。\n経路をたどる質問に使う")]),
+    ("データ", TEAL, [
+        ("親のLakehouse", "17表、ショートカット8本",
+         "SAP風の管理データ、全社の分析用の表、全社KPI。\n業種拡張は、子会社の表を参照する"),
+        ("子会社8社のLakehouse", f"{lh_tables_total - lh_tables_parent}表",
+         "各社の原本。会社ごとに分けたまま残し、\n書き換えない")]),
+]
+for li, (layer, accent, boxes) in enumerate(env_layers):
+    y = 2.58 + li * .96
+    box(s, .62, y, 1.45, .88, accent, rounded=True)
+    text(s, layer, .62, y + .26, 1.45, .35, 15, WHITE, True, PP_ALIGN.CENTER)
+    for bi, (name, stat, desc) in enumerate(boxes):
+        bx, bw = (2.2, 5.05) if bi == 0 else (7.4, 5.3)
+        box(s, bx, y, bw, .88, WHITE, rounded=True)
+        text(s, name, bx + .18, y + .07, bw - .36, .26, 13.5, NAVY, True)
+        text(s, stat, bx + .18, y + .08, bw - .36, .26, 11.5, accent, True, PP_ALIGN.RIGHT)
+        text(s, desc, bx + .18, y + .34, bw - .36, .46, 11, INK)
+tiles = [
+    ("365日", "2025-10-01から2026-09-30"),
+    (f"契約{env_counts['contracts']}件", "各社12件"),
+    (f"活動{env_counts['activities']:,}件", "受注や売上の明細\n各社1日3件"),
+    (f"イベント{env_counts['events']}件", f"根拠{env_counts['evidence']}件、効果{env_counts['effects']:,}件\n効果は影響額の明細"),
+    ("容量F16", "ワークスペース　Trading"),
+]
+for ti, (big, small) in enumerate(tiles):
+    x = .62 + ti * 2.445
+    box(s, x, 5.5, 2.3, .9, WHITE, rounded=True)
+    text(s, big, x + .16, 5.58, 2.0, .3, 16, TEAL, True)
+    text(s, small, x + .16, 5.93, 2.0, .42, 10.5, MUTED)
+
 # 03
 s = new_slide(
     "架空の8社を同じ尺度で比較",
     "国や事業が異なる会社のデータは、通貨や損益の定義がそのままでは揃いません。\nこのデモはJPYに換算し、全額と持分管理寄与を分けます。",
     "背景  |  最初に共有する業務設定",
-    """【目安】45秒。
-【話す】「金属、エネルギー、食品、金融の4分野に、日本と米国の会社が1社ずつあります。各社の原本は別のLakehouseに残し、共通の分析用データを用意しています。」
-【指す】4セクターの枠を指し、国を跨ぐ比較であることを伝えます。次に年度と通貨、所有比率の欄を指します。
+    """【目安】準備時に45秒。ライブでは、通貨と所有比率だけを20秒ほどで話します（10分の進行の「0～1分」）。
+【話す】「ここまでに紹介した8社を、同じ尺度で比べます。日本円とドルの会社は円にそろえ、所有比率が100%の会社と51%の会社は、全額と持分で分けて持ちます。各社の原本は別のLakehouseに残し、共通の分析用データを用意しています。」
+【指す】左から、通貨、所有比率、対象年度の3つのカードを指します。会社の一覧は、「想定企業：架空の総合商社グループ」のページの表です。
 【補足】100%所有は4社、51%所有も4社です。国だけで決めた割当ではありません。全8社は支配子会社という設定なので、51%でも全額ベースの管理デモ集計には100%を取り込みます。一方で持分管理寄与には所有比率を掛けます。法定の連結財務諸表や持分法損益とは区別します。
 【実データ】業務、契約、根拠、イベント、価格は架空です。為替だけは公開されたECBの日次観測値を使用しています。USD/JPYはEUR建ての2通貨から計算し、休日は直前観測を最大5日補完します。
 【為替の言い方】「為替だけは実データです。ECBが公開している日次の参考レートで、ドル建ての金額を円に換算しています。」
@@ -543,15 +687,22 @@ s = new_slide(
 ECBの参考レートは公表用の参考値で、企業の決算で使う換算レートではありません。
 【つなぎ】「次に、実演の前に確認しておく環境と、製品の状態を見ます。」""",
     ["docs/architecture.md", "config/subsidiaries.json", "data/ecb_fx_raw.csv"],
-    "対象年度：2025-10-01～2026-09-30。最新データ日：2026-09-30")
-for i, name in enumerate(["金属", "エネルギー", "食品", "金融"]):
-    card(s, .62 + i * 3.1, 2.78, 2.78, 1.73, name, "日本1社＋米国1社", accent=TEAL)
-box(s, .62, 4.85, 12.07, 1.3, WHITE, rounded=True)
-text(s, "通貨", .88, 5.05, 1, .35, 18, TEAL, True)
-text(s, "JPY／USD → JPY", 1.95, 5.05, 3.15, .4, 20, INK, True)
-text(s, "所有比率", 5.48, 5.05, 1.5, .35, 18, TEAL, True)
-text(s, "100%×4社／51%×4社", 7.05, 5.05, 5.1, .4, 20, INK, True)
-text(s, "為替は実データ（ECBが公開する日次の参考レート）。会社、契約、金額は架空。", .88, 5.64, 11.2, .3, 16, INK)
+    "休日は直前の観測値を最大5日まで補完。ECBの参考レートは、決算で使う換算レートではない")
+usd_jpy = [Decimal(r["fx_rate"]) for r in dataset["fx_rates"] if r["from_currency"] == "USD"]
+assert len(usd_jpy) == 365 and (round(min(usd_jpy)), round(max(usd_jpy))) == (147, 164)
+for i, (head, big, small) in enumerate([
+    ("通貨", "JPY／USD → JPY",
+     f"為替は実データ。\nECBが公開する日次の参考レートを使う。\n対象年度のUSD/JPYは、\n約{round(min(usd_jpy))}円から約{round(max(usd_jpy))}円。"),
+    ("所有比率", "100%×4社／51%×4社",
+     "国では決めていない。\n全額連結と、所有比率を掛けた\n持分管理寄与を分けて持つ。"),
+    ("対象年度", "2025-10-01〜2026-09-30",
+     "365日分。\n最新データ日は2026-09-30。"),
+]):
+    x = .62 + i * 4.09
+    box(s, x, 3.0, 3.89, 2.85, WHITE, rounded=True)
+    text(s, head, x + .25, 3.25, 3.4, .4, 22, TEAL, True)
+    text(s, big, x + .25, 3.9, 3.45, .4, 19, NAVY, True)
+    text(s, small, x + .25, 4.5, 3.4, 1.25, 13, INK)
 
 # Sales foundations
 foundation_notes = """
