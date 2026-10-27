@@ -399,7 +399,7 @@ def new_slide(title, lead, section, notes, sources, takeaway=None):
     if takeaway:
         box(slide, .6, 6.54, 12.12, .43, PALE, rounded=True)
         text(slide, takeaway, .78, 6.62, 11.78, .29, 13, NAVY, True)
-    text(slide, "架空の業務データ／公開ECB為替を使用  |  検証済み構成：2026-10-26",
+    text(slide, "架空の業務データ／公開ECB為替を使用  |  検証済み構成：2026-10-27",
          .62, 7.12, 11.3, .22, 9, MUTED)
     text(slide, f"{n:02}", 12.17, 7.06, .55, .3, 13, TEAL, True)
     source_text = "\n".join(sources)
@@ -1666,6 +1666,9 @@ fx10 = usd_local * 10
 wide = json.loads((PROJECT / "reports/da_group_wide_2026-10-27.json").read_text())
 wide_runs = {r["id"]: r for r in wide["runs"]}
 live_seconds = {k: v["response_seconds"] for k, v in wide_runs.items()}
+# The same eight questions were asked again after the ontology relationships were set active.
+fixed = json.loads((PROJECT / "reports/da_traversal_fix_2026-10-27.json").read_text())
+fixed_runs = {r["id"]: r for r in fixed["runs"]}
 
 
 def wide_rows(run_id, column):
@@ -1715,6 +1718,12 @@ assert Decimal(str(_fx_row["yen_appreciation_10_jpy_sensitivity_oku_jpy"])) == o
 assert "算定できません" in wide_runs["fx_what_if_2"]["answer"]
 _traversals = [v["ontology_traversal"] for v in wide_runs.values() if isinstance(v["ontology_traversal"], list)]
 assert len(_traversals) == 6 and all(x[0]["chosenPath"] == "no_path_found" for x in _traversals)
+_fixed_traversals = [v["ontology_traversal"] for v in fixed_runs.values() if isinstance(v["ontology_traversal"], list)]
+assert len(_fixed_traversals) == 6
+_max_hops = max(len(t["hops"]) for v in _fixed_traversals for t in v)
+assert all(t["found"] and t["chosenPath"] == "single_engine_join" for v in _fixed_traversals for t in v)
+assert all(f"{oku2(fx10)}億円" in fixed_runs[k]["answer"] for k in ("fx_what_if_1", "fx_what_if_2"))
+assert all("内部取引" in fixed_runs[k]["answer"] for k in ("chain_1", "chain_2"))
 for _rid in ("chain_1", "chain_2"):
     assert "内部取引" in wide_runs[_rid]["answer"] or "intercompany" in wide_runs[_rid]["answer"]
 fx_live = -Decimal(str(_fx_row["yen_appreciation_10_jpy_sensitivity_oku_jpy"]))
@@ -1729,19 +1738,23 @@ s = new_slide(
 【指す】左の表を、上から読みます。会社は2社から8社、影響明細は84件から336件に増えています。次に、右の図で、8社すべてに影響が出ている点と、各社の年間EBITDAに対する比率が約{share_lo:.1f}〜{share_hi:.1f}%でそろっている点を指します。
 【全額と持分管理】全額は、8社を100%で足した額（{oku(reach['CROSS_NEG']['full'])}億円）です。持分管理は、所有比率を掛けた額（{oku(reach['CROSS_NEG']['mgmt'])}億円）で、51%所有の4社の分が小さくなるため、全額の約{mgmt_ratio:.0f}%です。
 【年間EBITDA比】年間のEBITDA（実績、{oku(actual_total['EBITDA'], False)}億円）に対する比率です。横断混乱は{pct_of_annual(reach['CROSS_NEG']['full'])}、食品損失は{pct_of_annual(reach['FOD_NEG']['full'])}で、前者は後者の約{cross_vs_food:.1f}倍です。ただし、横断混乱でも年間の約{cross_pct_1}%で、これより大きな規模の出来事は、このデモに収録していません。この割合を「小さい」「軽微」とは評価しません。重大性を判定する基準は、このデモにありません。次のページで、収録していない範囲も伝えます。
-【数字の出どころ】
+"""
+    f"""【数字の出どころ】
 DAが返したもの：横断2件を含む全10イベントの、イベントごとの金額（横断混乱 {reach['CROSS_NEG']['full']:+,.2f}円、横断回復 {reach['CROSS_POS']['full']:+,.2f}円）。さらに、2026-10-27の実測で、業種別、会社別、年間EBITDA比、最大のイベントも、公開済みDAが返しました。
 Graphで確認したもの：全{env_counts['effects']:,}効果が、根拠から全社KPIまでの経路でたどれること。横断混乱は{reach['CROSS_NEG']['effects']}件すべてです。2026-10-23のGraph更新後に確認しました。
 保存データから集計したもの：食品損失の年間EBITDA比（{pct_of_annual(reach['FOD_NEG']['full'])}）。DAには、年間EBITDA比を、最大のイベント（横断混乱）についてだけ聞きました。
-【2026-10-27の実測】公開済みDAで、チャットを空にして、1問ずつ聞きました（記録：reports/da_group_wide_2026-10-27.json）。①追加B（横断2件の業種別比較、{live_seconds['B_sector']}秒）、②横断混乱の会社別（年間EBITDA比つき、{live_seconds['company']}秒）、③「全社に同時に響いたマイナスの出来事は？会社ごとにどれくらい影響した？」（{live_seconds['casual_all_companies']}秒）、④「このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？」（{live_seconds['casual_largest_event']}秒）です。表の金額は、すべて保存データの集計と、小数第2位まで一致しました。③は、聞き方が短くても、横断混乱を選び、8社を返しました。④は、横断混乱の{oku(reach['CROSS_NEG']['full'])}億円、年間{oku(actual_total['EBITDA'], False)}億円の{pct_of_annual(reach['CROSS_NEG']['full'])}と答えました。
+【2026-10-27の実測（修正前の8回）】公開済みDAで、チャットを空にして、1問ずつ聞きました（記録：reports/da_group_wide_2026-10-27.json）。①追加B（横断2件の業種別比較、{live_seconds['B_sector']}秒）、②横断混乱の会社別（年間EBITDA比つき、{live_seconds['company']}秒）、③「全社に同時に響いたマイナスの出来事は？会社ごとにどれくらい影響した？」（{live_seconds['casual_all_companies']}秒）、④「このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？」（{live_seconds['casual_largest_event']}秒）です。表の金額は、すべて保存データの集計と、小数第2位まで一致しました。③は、聞き方が短くても、横断混乱を選び、8社を返しました。④は、横断混乱の{oku(reach['CROSS_NEG']['full'])}億円、年間{oku(actual_total['EBITDA'], False)}億円の{pct_of_annual(reach['CROSS_NEG']['full'])}と答えました。
 【DAの文章の注意】表の数字は一致しましたが、表のまわりの文章には誤りが出ることがあります。追加Bの答えは、持分管理の金融と食品の大小を説明しましたが、横断混乱の値（食品{oku(_sector_mgmt['CROSS_NEG', 'foods'])}億円、金融{oku(_sector_mgmt['CROSS_NEG', 'finance'])}億円）と合いませんでした。会社別の答えは、DAが自分で置いた基準（1億円超、または年間EBITDA比−1.55%超）で、優先度が「高」の会社を挙げましたが、基準に当てはまる3社が漏れていました。この基準は、デモの定義ではありません。実演では、表の数字を指して説明し、補足の文章は読み上げません。
-【DAの経路】この日の8回の実行のうち、DAがOntologyの経路探索を試した6回は、すべて「経路なし」が返り、答えは、Lakehouseの表へのSQLで求めたものでした。Ontologyの定義（17種類の実体）は、文脈としてDAに渡されています。「DAがGraphをたどって答えた」とは言いません。関係をたどる場面は、Step03のNotebook（Graph）で見せます。経路が見つからなかった理由は、この実行からは分かっていません。
+【DAの経路】この日の最初の8回では、DAがOntologyの経路探索を試した6回すべてで「経路なし」が返り、答えは、Lakehouseの表へのSQLで求めたものでした。原因は、Ontologyの42のリレーションシップがすべて無効に設定されていたことです。DAに渡る文脈で、どの関係も結合条件が空欄でした。\
+同じ日に、リレーションシップを有効にし、接続情報を再適用し、Graphを更新したあと、同じ8問を聞き直しました。経路探索を試した{len(_fixed_traversals)}回すべてで経路が見つかり（最大で{_max_hops}つの結合をたどる道筋）、金額は変わりませんでした（記録：reports/da_traversal_fix_2026-10-27.json）。\
+ただし、答えは今もLakehouseの表へのSQLで求めたものです。Ontologyは、どの表をどの列で結ぶかの道筋をDAに示す役目です。「DAがGraphをたどって答えた」とは言いません。関係をたどる場面は、Step03のNotebook（Graph）で見せます。
 【照合用の業種別の値（億円）】横断混乱の全額：{sector_line('CROSS_NEG', 'delta_ebitda_full_jpy')}。持分管理：{sector_line('CROSS_NEG', 'delta_management_jpy')}。横断回復の全額：{sector_line('CROSS_POS', 'delta_ebitda_full_jpy')}。持分管理：{sector_line('CROSS_POS', 'delta_management_jpy')}。丸めのため、足すと合計と0.01ずれることがあります。
 【避ける】横断回復÷横断混乱を、回復率と呼ぶこと。別の時期に設計した、独立のイベントです。各社の年間EBITDA比がそろっているのは、データの設計によるもので、現実の波及の姿を示すものではありません。実世界の因果の証明でもありません。
 【つなぎ】「同時に全社へ及ぶ形は、ここまでです。次のページで、連鎖する形や、大きな規模の想定まで扱えるかを整理します。」
 【コピー用Q5】\n""" + Q5,
     ["reports/qa_expected_event_totals.json", "reports/graph_all_event_paths.json",
      "reports/da_qa_published.json", "reports/da_group_wide_2026-10-27.json",
+     "reports/da_traversal_fix_2026-10-27.json",
      "data/demo_dataset.json:semantic_event_financial_effects、semantic_financial_metrics_daily（actual）",
      "config/event_generation_rules.yaml:event_mix"],
     "公開済みDAで聞いた業種別と会社別の金額は、元データの集計と一致した（2026-10-27）。説明では表の数字を示す")
@@ -1789,17 +1802,26 @@ s = new_slide(
 【話す】「『全社に波及する』には、大きく2つの形があります。1つは、港の混乱のように、全社に同時に当たる形です。これはこのデモに入っていて、食品損失と同じ経路で追えます。もう1つは、ある会社の問題が、取引を通じて別の会社に伝わる連鎖です。こちらは今のデモでは扱えていません。会社と会社を結ぶ関係を、Ontologyにまだ持っていないからです。」
 【指す】表を上から指します。「このデモ」の列で、扱えるのは1行目だけです。2行目以降は、足りない点を、そのまま伝えます。
 【連鎖が扱えない理由】Ontologyの関係は、{len(ontology_entities)}種類の実体の間の{len(ontology_relationships)}種類で、会社同士を結ぶものはありません。内部取引の表（{len(interco)}行、{interco_pairs}組）は親Lakehouseにあり、DAはSQLで読めますが、Ontologyの関係にはしていません。内部取引は、金融の会社とエネルギーの会社の間の2経路（日本同士、米国同士）だけで、売り手側の年間の額は約{interco_oku:.1f}億円です。横断の2件は、8社の各活動に直接配賦した記録で、1社の問題が別の社へ伝わる過程を計算したものではありません。
-【DAの実測：連鎖】2026-10-27に、「食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。」と、チャットを空にして2回聞きました（{live_seconds['chain_1']}秒、{live_seconds['chain_2']}秒）。どちらも、食品以外の子会社への配賦はなく、内部取引経由の影響は定量できないと答えました。1回目は、内部取引経由の影響を「未検証」としました。2回目は、内部取引の表に活動と契約の対応がなく、食品損失の効果に結べないためと説明し、「影響なし」とは判定しませんでした。ただし、2回目は、食品以外の子会社について、対象0件、0.00億円と表に出しました。聞き手には、「データに配賦がない」という意味だと添えます。「連鎖は起きない」とは言いません。
-【Microsoft Learnの記述】Graphは、複数のつながりを順にたどる問い、依存関係の分析、到達可能性、最短経路の問いに使う実行層です。集計や指標は、元のデータでの実行を続けられます（Ontology概要、2026-10-16更新）。関係型は、始点と終点の実体の種類を指定して作り、対応表で結べます（関係型の作成、2026-09-04更新）。同じ種類の実体の間（会社と会社）の関係を作れるかは、この資料では確認していません。実行する前に、Previewの画面で確認します。
+【DAの実測：連鎖】2026-10-27に、「食品の損失が、ほかの子会社にも連鎖した影響はある？グループ内の取引を通じた影響も見たい。」と、チャットを空にして2回聞きました（{live_seconds['chain_1']}秒、{live_seconds['chain_2']}秒）。どちらも、食品以外の子会社への配賦はなく、内部取引経由の影響は定量できないと答えました。\
+1回目は、内部取引経由の影響を「未検証」としました。2回目は、内部取引の表に活動と契約の対応がなく、食品損失の効果に結べないためと説明し、「影響なし」とは判定しませんでした。ただし、2回目は、食品以外の子会社について、対象0件、0.00億円と表に出しました。\
+聞き手には、「データに配賦がない」という意味だと添えます。Ontologyのリレーションシップを有効にした後の聞き直し（2回、{fixed_runs['chain_1']['response_seconds']}秒、{fixed_runs['chain_2']['response_seconds']}秒）も、同じ結論でした。内部取引の表に、食品の会社の行がないためです（金融とエネルギーの組だけ）。\
+「連鎖は起きない」とは言いません。
+"""
+    f"""【Microsoft Learnの記述】Graphは、複数のつながりを順にたどる問い、依存関係の分析、到達可能性、最短経路の問いに使う実行層です。集計や指標は、元のデータでの実行を続けられます（Ontology概要、2026-10-16更新）。関係型は、始点と終点の実体の種類を指定して作り、対応表で結べます（関係型の作成、2026-09-04更新）。同じ種類の実体の間（会社と会社）の関係を作れるかは、この資料では確認していません。実行する前に、Previewの画面で確認します。
 【連鎖を扱う場合の一案】内部取引の表を、会社と会社の関係として足し、金融の会社の問題が、取引でつながるエネルギーの会社へ及ぶ様子を、2社の小さな範囲で試します。ただし、伝わる大きさを決める規則とデータは、いまありません。関係を足すだけでは、金額は出ません。
 【規模】最大の横断混乱で、全額{oku(reach['CROSS_NEG']['full'])}億円、年間EBITDA（実績）の約{cross_pct_1}%です。これより大きな規模の出来事は、収録していません。8社それぞれの年間EBITDAに対する比率は、約{share_lo:.1f}〜{share_hi:.1f}%でそろっています。会社ごとの差が大きい例や、より大きな規模の例を見せる場合は、影響データの追加とGraphの更新が要ります。実体や関係の種類を変える場合は、Ontologyの定義も更新します。DAに「このデータで、グループのEBITDAにいちばん大きく響いた出来事は？年間のEBITDAの何%くらい？」と聞くと、横断混乱の{oku(reach['CROSS_NEG']['full'])}億円、年間{oku(actual_total['EBITDA'], False)}億円の{pct_of_annual(reach['CROSS_NEG']['full'])}と答えました（2026-10-27の実測）。
-【もしもの試算】2026-10-27に、「もし円が10円高くなったら、グループのEBITDAはいくら変わる？」と、チャットを空にして2回聞きました（{live_seconds['fx_what_if_1']}秒、{live_seconds['fx_what_if_2']}秒）。1回目は、ドル建てEBITDAに−10円を掛けた単純な感応度で、{oku(-fx_live * OKU)}億円と答えました（保存データからの概算と同じ値です）。2回目は、「ショック後のレートや感応度の定義がデータにないため、算定できない」と答え、ドル建てEBITDAの実績（約{usd_local / 10**6:.0f}百万ドル、{usd_group / OKU:.2f}億円）だけを示しました。同じ質問で答えが分かれるので、実演では使いません。聞かれたら、「このデモのDAは、記録済みのデータを集計して答えます。もしもの計算は、前提を決めて別に行います」と答えます。目安は、米国の4社のEBITDAが年間で約{usd_local / 10**6:.0f}百万ドル（全額で約{usd_group / OKU:.0f}億円、全社の{usd_group / actual_total['EBITDA'] * 100:.0f}%）なので、円高が10円進むと、換算だけで約{fx10 / OKU:.0f}億円（全社の{fx10 / actual_total['EBITDA'] * 100:.1f}%）の押し下げです。ヘッジや価格への転嫁は考慮していません。数字を出すときは「概算」と断ります。
+【もしもの試算】2026-10-27に、「もし円が10円高くなったら、グループのEBITDAはいくら変わる？」と、チャットを空にして2回聞きました（{live_seconds['fx_what_if_1']}秒、{live_seconds['fx_what_if_2']}秒）。1回目は、ドル建てEBITDAに−10円を掛けた単純な感応度で、{oku(-fx_live * OKU)}億円と答えました（保存データからの概算と同じ値です）。\
+2回目は、「ショック後のレートや感応度の定義がデータにないため、算定できない」と答え、ドル建てEBITDAの実績（約{usd_local / 10**6:.0f}百万ドル、{usd_group / OKU:.2f}億円）だけを示しました。\
+Ontologyのリレーションシップを有効にした後に、同じ質問をさらに2回聞くと（{fixed_runs['fx_what_if_1']['response_seconds']}秒、{fixed_runs['fx_what_if_2']['response_seconds']}秒）、2回とも{oku(-fx_live * OKU)}億円と答えました。同じ日の4回のうち3回が数字、1回が算定不可で、答えが分かれるので、実演では使いません。\
+聞かれたら、「このデモのDAは、記録済みのデータを集計して答えます。もしもの計算は、前提を決めて別に行います」と答えます。\
+目安は、米国の4社のEBITDAが年間で約{usd_local / 10**6:.0f}百万ドル（全額で約{usd_group / OKU:.0f}億円、全社の{usd_group / actual_total['EBITDA'] * 100:.0f}%）なので、円高が10円進むと、換算だけで約{fx10 / OKU:.0f}億円（全社の{fx10 / actual_total['EBITDA'] * 100:.1f}%）の押し下げです。ヘッジや価格への転嫁は考慮していません。\
+数字を出すときは「概算」と断ります。
 【避ける】「全社波及もすべて扱える」「連鎖も追える」と言いません。DAが答えた円高の概算を、シミュレーションの結果として紹介することも、しません。年間の約{cross_pct_1}%を「小さい」「軽微」と評価することも、しません（重大性を判定する基準は、このデモにありません）。「Ontologyでは連鎖を扱えない」とも言いません。会社間の関係を足せば扱える見込みはありますが、このデモでは未検証です。いずれも設計した配賦で、実世界の因果の証明ではありません。
 【つなぎ】「お客様のデータで連鎖を見たい場合は、会社間の取引表から、小さく始めます。進め方は、第5章にあります。」""",
     ["config/subsidiaries.json", "ontology_tmdl/entityRelationships.tmdl（会社同士の関係なし）",
      "data/demo_dataset.json:intercompany_transactions、semantic_financial_metrics_daily（actual）",
      "config/data_agent_create.json（DAが参照する表）", "reports/graph_all_event_paths.json",
-     "reports/da_group_wide_2026-10-27.json",
+     "reports/da_group_wide_2026-10-27.json", "reports/da_traversal_fix_2026-10-27.json",
      "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）",
      "Microsoft Learn：fabric/iq/ontology/how-to-create-relationship-types（2026-09-04更新）"],
     "聞き返す例：「全社に同時に及ぶ話ですか。会社から会社へ連鎖する話ですか」")
@@ -1809,14 +1831,14 @@ scope_rows = [
      "DAは、イベント別、業種別、会社別の金額を、保存データと同じ値で返しました（実測）。"),
     ("会社から会社へ連鎖する", "例：金融の問題がエネルギーに及ぶ", "未対応", CORAL,
      "会社同士の関係がOntologyになく、内部取引の表も金融とエネルギーの2経路だけです。\n"
-     "DAは2回とも「他の子会社への配賦なし、内部取引経由は確認できない」と答えました。\n"
+     "DAは4回とも「他の子会社への配賦なし、内部取引経由は確認できない」と答えました。\n"
      "表の0.00億円は、データに配賦がないことを示し、影響なしの確認にはなりません。"),
     ("もっと大きな規模の出来事", "例：全社の稼ぎが大きく動く出来事", "未収録", PURPLE,
      f"最大の横断混乱で、年間EBITDAの約{cross_pct_1}%です。これより大きな出来事は、収録していません。\n"
      "大きな出来事の追加には、影響データの追加とGraphの更新が要ります。"),
     ("もしもの試算", "例：円高が10円進んだら", "要注意", MUTED,
-     f"2回聞くと、1回は「円高10円で全額EBITDAは約{fx_live:.1f}億円減る」と単純計算で答え、\n"
-     "もう1回は「感応度の定義がない」と答え、算定しませんでした。実演では使いません。"),
+     f"同じ日に4回聞くと、3回は「円高10円で全額EBITDAは約{fx_live:.1f}億円減る」と単純計算で答え、\n"
+     "1回は「感応度の定義がない」と答え、算定しませんでした。実演では使いません。"),
 ]
 text(s, "聞かれ方", .8, 2.58, 2.6, .26, 12, TEAL, True)
 text(s, "このデモ", 3.55, 2.58, 1.2, .26, 12, TEAL, True)
