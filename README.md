@@ -15,14 +15,14 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（57枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（59枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
 
 | 章 | 内容 | 使う場面 |
 |---|---|---|
 | 1 全体像と準備 | 10分の進行、想定企業と場面、デモ環境の構成、8社を同じ尺度で比べる前提、実演前の確認事項（環境、製品の状態、日本語の扱い） | 実演の前 |
 | 2 営業向け基礎 | EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明 | 経営指標になじみのない相手に説明する前 |
 | 3 実演 | 4つの入力（Q1〜Q4）の全文と結果、Notebookの図、4つの金額の区別、締め | ライブの10分（Step04は時間があるとき） |
-| 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、カジュアルな質問への対応 | 質疑のとき |
+| 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、全社波及の扱い（同時に全社へ及ぶ形と、連鎖する形の区別）、カジュアルな質問への対応 | 質疑のとき |
 | 5 お客様データへの当てはめ | イベントの集め方、台帳の列の例、小さく始める進め方 | お客様と次の一歩を話すとき |
 | 6 構成の解説 | Lakehouse、ゼロコピーと実体化、Ontologyの全体マップ（既存データと要整備データ）、実体と表の対応、関係、設計の理由、GraphとDeltaの役割分担 | 技術の質問が出たとき |
 | 7 Ontologyの新機能 | 名前空間、ビジネスルール、共有プロパティ、継承、導入の順番（いずれもPreviewで、このデモでは未実装） | 今後の拡張を聞かれたとき |
