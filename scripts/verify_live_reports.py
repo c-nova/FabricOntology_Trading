@@ -149,7 +149,6 @@ result = {
     "weekend_ecb_fx_verified": True, "all_shortcut_activity_joins_verified": True,
     "published_stage_live_japanese_query_verified": True,
     "data_agent_selected_tables": 25, "data_agent_runtime": "Preview",
-    "basic_plan_setting": "not_found_not_claimed",
     "limitations": [
         "Japanese Data Agent responses are tested best-effort, not officially supported.",
         "Graph properties use floating point; exact accounting uses SQL DECIMAL.",

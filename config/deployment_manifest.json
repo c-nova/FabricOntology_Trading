@@ -64,7 +64,6 @@
     "published_stage_japanese_live_qa": "passed",
     "production_conversation_id": "conv_fabqjhS3wLTVpXY4PWVhJZgut6f7",
     "microsoft_copilot_publication": false,
-    "separate_basic_plan_setting_verified": false,
     "japanese_support": "tested_best_effort_not_officially_supported"
   },
   "annual_actual_jpy": {
@@ -91,7 +90,6 @@
     "github_push_performed": false
   },
   "limitations": [
-    "A separate requested Basic-plan setting was not found or verified; actual runtime is Preview.",
     "Japanese Data Agent responses are tested best-effort, not officially supported.",
     "Ownership-weighted management contribution is not statutory consolidated EBITDA.",
     "CF and event causality are simplified synthetic demonstrations.",

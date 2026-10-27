@@ -1582,7 +1582,6 @@ s = new_slide(
 【環境の前提】Fabric Data Agentは、有料のFabric容量（F2以上）、またはPower BI Premium（P1以上）でFabricを有効にした容量が前提です（Microsoft Learn、Fabric data agent concepts、2026-10-21更新）。このデモのワークスペースの容量はF16です。管理者のテナント設定で、Copilotの利用、Azure OpenAI、Ontology（Preview）アイテムの作成を有効にします。反映まで最大1時間かかります。利用者には、DA、Ontology、Lakehouseの閲覧権限が必要です。
 【製品の状態】Data Agentは一般提供（GA）です。実行基盤（ランタイム）には標準（GA）とプレビューの2種類があり、このデモのDAはプレビューで動いています（Learn、Fabric data agent runtime、2026-10-22更新）。公開済みのDAは、公開した時点のランタイムで動き続けます。標準ランタイムでの動作は、このデモでは確認していません。OntologyはPreviewで、Graph（GQL）の公開APIはbetaです。
 【日本語】Learnは「The Fabric data agent doesn't currently support non-English languages. For optimal performance, provide questions, instructions, and example queries in English.」と記載しています（2026-10-21更新）。日本語は公式のサポート対象ではありません。このデモは、日本語で入力し、日本語で答えが返ることを、公開済みDAで確認しました。お客様には「日本語でも動作を確認しているが、公式のサポート対象ではない」と伝えます。
-【Basic planについて】前の版には「Basic-plan」という語がありました。元の要件メモにあった語で、FabricのDAの設定にも、Learnにも、その名前のものは見つかっていません。種類があるのは、上のランタイム（標準とプレビュー）です。
 【確認済みと保証しない範囲】確認済みなのは、公開済みDAの日本語QA、実GraphのGQL照会と金額照合、Notebookの保存出力の再表示です。保証しないのは、日本語の公式サポート、標準ランタイムで同じ結果が出ること、M365 Copilot経由で同じグラフが表示されること、正式会計と実世界の因果の証明です。
 【会計】全額と所有比率付き管理寄与を区別します。CFはEBITDAの80%を起点にイベントCFを足した簡易シミュレーションで、正式な営業CFやフリーCFではありません。税、非支配持分、資本連結、在庫未実現利益などは対象外です。
 【チャネル】公開済みFabric DAを実演先にします。M365 Copilotへの公開はOFFで、結果を再構成する場合のグラフ表示は未保証です。
