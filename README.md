@@ -15,16 +15,19 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（45枚、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（55枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
 
-- 経営指標に詳しくない営業向けに、EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明
-- Data Agentに入力する質問Q1〜Q4の全文と、対応する結果。質問は [`prompts/presenter_prompts_ja.txt`](prompts/presenter_prompts_ja.txt) にもあります
-- 食品損失のDAG、金額の読み方、想定質問、実演前の確認事項、顧客データへの当てはめ方
-- 短い質問（カジュアルな聞き方）に答えさせるための指示文の足し方、前後の結果、使い方と限界
-- LakehouseとOntologyの構成の解説（9つのLakehouse、17実体と39関係の全体マップ、実体と表の対応、関係の読み方、設計判断）
-- Ontologyの新機能の解説（名前空間、ビジネスルール、共有プロパティ、継承、導入の優先順位）と、小さく始める進め方。いずれもPreviewで、このデモでの導入案は未実装です
+| 章 | 内容 | 使う場面 |
+|---|---|---|
+| 1 全体像と準備 | 10分の進行、8社の設定、実演前の確認事項（環境、製品の状態、日本語の扱い） | 実演の前 |
+| 2 営業向け基礎 | EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明 | 経営指標になじみのない相手に説明する前 |
+| 3 実演 | 4つの入力（Q1〜Q4）の全文と結果、Notebookの図、4つの金額の区別、締め | ライブの10分（Step04は時間があるとき） |
+| 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、カジュアルな質問への対応 | 質疑のとき |
+| 5 お客様データへの当てはめ | イベントの集め方、台帳の列の例、小さく始める進め方 | お客様と次の一歩を話すとき |
+| 6 構成の解説 | Lakehouse、ゼロコピーと実体化、Ontologyの全体マップ（既存データと要整備データ）、実体と表の対応、関係、設計の理由、GraphとDeltaの役割分担 | 技術の質問が出たとき |
+| 7 Ontologyの新機能 | 名前空間、ビジネスルール、共有プロパティ、継承、導入の順番（いずれもPreviewで、このデモでは未実装） | 今後の拡張を聞かれたとき |
 
-質問の流れは、Q1（月次のbaselineとactual）、Q2（10イベントの増減）、Q3（食品損失の根拠）、Q4（影響点の特定と対応案）です。
+質問は [`prompts/presenter_prompts_ja.txt`](prompts/presenter_prompts_ja.txt) にもあります。質問の流れは、Q1（月次のbaselineとactual）、Q2（10イベントの増減）、Q3（食品損失の根拠）、Q4（影響点の特定と対応案）です。章立ては `presentation/build_presenter_deck.py` の `CHAPTERS` で定義しており、章扉とページ番号はそこから生成します。
 
 ## ディレクトリ
 

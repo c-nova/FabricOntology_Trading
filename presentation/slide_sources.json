@@ -9,6 +9,20 @@
   },
   {
     "slide": 2,
+    "title": "資料の使い方と章立て",
+    "sources": [
+      "この資料の構成（presentation/build_presenter_deck.py の CHAPTERS）"
+    ]
+  },
+  {
+    "slide": 3,
+    "title": "第1章 全体像と準備",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 4,
     "title": "10分デモの進行と画面切替",
     "sources": [
       "prompts/demo_questions_ja.txt",
@@ -16,7 +30,7 @@
     ]
   },
   {
-    "slide": 3,
+    "slide": 5,
     "title": "架空の8社を同じ尺度で比較",
     "sources": [
       "docs/architecture.md",
@@ -25,7 +39,25 @@
     ]
   },
   {
-    "slide": 4,
+    "slide": 6,
+    "title": "実演前の確認事項",
+    "sources": [
+      "config/deployment_manifest.json:workspace.capacity_sku、data_agent.runtime",
+      "config/step3_deployment.json",
+      "Microsoft Learn：fabric/data-science/concept-data-agent（2026-10-21更新）",
+      "Microsoft Learn：fabric/data-science/data-agent-runtime（2026-10-22更新）",
+      "Microsoft Learn：fabric/data-science/data-agent-tenant-settings、fabric/iq/ontology/overview-tenant-settings"
+    ]
+  },
+  {
+    "slide": 7,
+    "title": "第2章 営業向け基礎",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 8,
     "title": "売上とEBITDAの違い",
     "sources": [
       "説明用の単純化した数値例",
@@ -33,7 +65,7 @@
     ]
   },
   {
-    "slide": 5,
+    "slide": 9,
     "title": "食品損失によるEBITDAの変化",
     "sources": [
       "前ページから継続する説明用の数値例",
@@ -42,7 +74,7 @@
     ]
   },
   {
-    "slide": 6,
+    "slide": 10,
     "title": "51%所有の金額を区別",
     "sources": [
       "config/subsidiaries.json",
@@ -50,7 +82,7 @@
     ]
   },
   {
-    "slide": 7,
+    "slide": 11,
     "title": "通貨と現金の読み違い",
     "sources": [
       "data/ecb_fx_raw.csv",
@@ -58,7 +90,24 @@
     ]
   },
   {
-    "slide": 8,
+    "slide": 12,
+    "title": "第3章 実演",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 13,
+    "title": "4つの入力の使い分け",
+    "sources": [
+      "prompts/demo_questions_ja.txt",
+      "prompts/presenter_prompts_ja.txt",
+      "prompts/da_instructions_ja.txt",
+      "説明者の現在環境での表示確認（色と配置は未固定）"
+    ]
+  },
+  {
+    "slide": 14,
     "title": "入力① 年間と月次の稼ぎ",
     "sources": [
       "Q1: 本ファイルのコピー用質問",
@@ -66,7 +115,7 @@
     ]
   },
   {
-    "slide": 9,
+    "slide": 15,
     "title": "Step01は基準値と実績の比較",
     "sources": [
       "data/demo_dataset.json:semantic_financial_metrics_daily",
@@ -74,7 +123,7 @@
     ]
   },
   {
-    "slide": 10,
+    "slide": 16,
     "title": "入力② 増減の理由を比較",
     "sources": [
       "Q2: 本ファイルのコピー用質問",
@@ -82,7 +131,7 @@
     ]
   },
   {
-    "slide": 11,
+    "slide": 17,
     "title": "Step02は10イベントの増減",
     "sources": [
       "reports/qa_expected_event_totals.json",
@@ -90,7 +139,15 @@
     ]
   },
   {
-    "slide": 12,
+    "slide": 18,
+    "title": "DAの金額を照合する正解表",
+    "sources": [
+      "reports/qa_expected_event_totals.json",
+      "data/demo_dataset.json:semantic_risk_events"
+    ]
+  },
+  {
+    "slide": 19,
     "title": "入力③ 食品損失の根拠",
     "sources": [
       "Q3: 本ファイルのコピー用質問",
@@ -98,14 +155,14 @@
     ]
   },
   {
-    "slide": 13,
+    "slide": 20,
     "title": "食品損失の回答を読む",
     "sources": [
       "reports/step3_live_audit.json:exact_*,representative_path"
     ]
   },
   {
-    "slide": 14,
+    "slide": 21,
     "title": "Step03で食品損失の経路を表示",
     "sources": [
       "reports/step3_food_loss_dag.svg",
@@ -114,31 +171,8 @@
     ]
   },
   {
-    "slide": 15,
-    "title": "矢印は3種類の意味を持つ",
-    "sources": [
-      "reports/step3_live_audit.json:diagram_relations",
-      "scripts/step3_food_loss_runtime.py:197-267"
-    ]
-  },
-  {
-    "slide": 16,
-    "title": "代表記録から読める範囲",
-    "sources": [
-      "reports/step3_live_audit.json:representative_path,cold_chain_observation",
-      "reports/da_qa_published.json"
-    ]
-  },
-  {
-    "slide": 17,
-    "title": "4つの金額は合算しない",
-    "sources": [
-      "reports/step3_live_audit.json:exact_*"
-    ]
-  },
-  {
-    "slide": 18,
-    "title": "Notebookは保存結果から開始",
+    "slide": 22,
+    "title": "Notebookは保存済みの結果から始める",
     "sources": [
       "scripts/build_step3_notebook.py:39-64",
       "scripts/step3_food_loss_runtime.py",
@@ -146,7 +180,31 @@
     ]
   },
   {
-    "slide": 19,
+    "slide": 23,
+    "title": "矢印は3種類の意味を持つ",
+    "sources": [
+      "reports/step3_live_audit.json:diagram_relations",
+      "scripts/step3_food_loss_runtime.py:197-267"
+    ]
+  },
+  {
+    "slide": 24,
+    "title": "代表記録でわかること、取れる行動",
+    "sources": [
+      "reports/step3_live_audit.json:representative_path,cold_chain_observation",
+      "reports/da_qa_published.json"
+    ]
+  },
+  {
+    "slide": 25,
+    "title": "4つの金額は範囲が違う",
+    "sources": [
+      "reports/step3_live_audit.json:exact_*",
+      "data/demo_dataset.json:semantic_financial_metrics_daily、semantic_event_financial_effects（2026-02-11の照合）"
+    ]
+  },
+  {
+    "slide": 26,
     "title": "入力④ 影響点の特定と対応案",
     "sources": [
       "Q4: 本ファイルのコピー用質問",
@@ -154,7 +212,7 @@
     ]
   },
   {
-    "slide": 20,
+    "slide": 27,
     "title": "影響が大きい契約と繰り返し影響を受けた契約",
     "sources": [
       "data/demo_dataset.json:semantic_event_financial_effects,semantic_contracts",
@@ -162,7 +220,7 @@
     ]
   },
   {
-    "slide": 21,
+    "slide": 28,
     "title": "優先度別の対応案（DA実行例）",
     "sources": [
       "説明者の公開済みDA実行例（対応案の部分）、2026-10-26",
@@ -170,41 +228,42 @@
     ]
   },
   {
-    "slide": 22,
-    "title": "説明の価値と追加質問",
+    "slide": 29,
+    "title": "デモで見せた3つの価値",
     "sources": [
       "docs/architecture.md:112-143",
-      "reports/qa_expected_event_totals.json"
-    ]
-  },
-  {
-    "slide": 23,
-    "title": "コピー用質問の使い分け",
-    "sources": [
-      "prompts/demo_questions_ja.txt",
-      "prompts/da_instructions_ja.txt",
-      "説明者の現在環境での表示確認（色と配置は未固定）"
-    ]
-  },
-  {
-    "slide": 24,
-    "title": "10イベントの照合用金額",
-    "sources": [
       "reports/qa_expected_event_totals.json",
-      "data/demo_dataset.json:semantic_risk_events"
+      "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）"
     ]
   },
   {
-    "slide": 25,
+    "slide": 30,
+    "title": "第4章 想定質問と答え方",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 31,
     "title": "想定質問への短い回答",
     "sources": [
       "docs/architecture.md",
       "reports/step3_live_audit.json",
-      "scripts/step3_food_loss_runtime.py"
+      "scripts/step3_food_loss_runtime.py",
+      "Microsoft Learn：fabric/data-science/concept-data-agent（2026-10-21更新）"
     ]
   },
   {
-    "slide": 26,
+    "slide": 32,
+    "title": "SQLとOntologyの違い",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）",
+      "reports/ontology_runtime_current.json",
+      "prompts/da_instructions_ja.txt"
+    ]
+  },
+  {
+    "slide": 33,
     "title": "カジュアルな質問に答えさせる",
     "sources": [
       "reports/da_casual_baseline_2026-10-26.json",
@@ -214,7 +273,7 @@
     ]
   },
   {
-    "slide": 27,
+    "slide": 34,
     "title": "カジュアルに聞くときの使い方と限界",
     "sources": [
       "reports/da_casual_after_2026-10-26.json:known_limits",
@@ -223,23 +282,14 @@
     ]
   },
   {
-    "slide": 28,
-    "title": "実演前の制約と確認先",
+    "slide": 35,
+    "title": "第5章 お客様データへの当てはめ",
     "sources": [
-      "config/deployment_manifest.json:limitations",
-      "config/step3_deployment.json",
-      "docs/architecture.md:135-144"
+      "章扉（この資料の構成）"
     ]
   },
   {
-    "slide": 29,
-    "title": "保存済みDA応答の実例",
-    "sources": [
-      "reports/da_qa_published.json:messages[0:2]"
-    ]
-  },
-  {
-    "slide": 30,
+    "slide": 36,
     "title": "社内にないイベントを集める方法",
     "sources": [
       "提案段階の構成（このデモでは未実装）",
@@ -247,7 +297,39 @@
     ]
   },
   {
-    "slide": 31,
+    "slide": 37,
+    "title": "イベントの列の例",
+    "sources": [
+      "ddl/10_common_subsidiary_tables.sql:risk_events",
+      "data/demo_dataset.json:semantic_risk_events（FOD_NEG）"
+    ]
+  },
+  {
+    "slide": 38,
+    "title": "影響額と根拠の列の例",
+    "sources": [
+      "ddl/10_common_subsidiary_tables.sql:event_financial_effects,event_impact_bridge,event_evidence",
+      "data/demo_dataset.json:semantic_event_financial_effects、semantic_event_evidence、semantic_event_impact_bridge（FOD_NEG）"
+    ]
+  },
+  {
+    "slide": 39,
+    "title": "小さく始める：最小のOntologyから広げる",
+    "sources": [
+      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",
+      "ontology_tmdl/entityRelationships.tmdl",
+      "reports/step3_live_audit.json:diagram_relations"
+    ]
+  },
+  {
+    "slide": 40,
+    "title": "第6章 構成の解説",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 41,
     "title": "9つのLakehouseの役割分担",
     "sources": [
       "reports/cloud_validation.json",
@@ -257,15 +339,16 @@
     ]
   },
   {
-    "slide": 32,
-    "title": "原本を分離した分析構成",
+    "slide": 42,
+    "title": "ゼロコピーと実体化の使い分け",
     "sources": [
       "docs/architecture.md:81-123",
-      "config/deployment_manifest.json"
+      "config/deployment_manifest.json",
+      "config/sector_shortcuts.json"
     ]
   },
   {
-    "slide": 33,
+    "slide": 43,
     "title": "4つの用語を食品の例で区別",
     "sources": [
       "reports/step3_live_audit.json:diagram_relations",
@@ -273,7 +356,7 @@
     ]
   },
   {
-    "slide": 34,
+    "slide": 44,
     "title": "Ontologyの全体マップ",
     "sources": [
       "ontology_tmdl/entities/",
@@ -282,7 +365,7 @@
     ]
   },
   {
-    "slide": 35,
+    "slide": 45,
     "title": "実体と元の表の対応",
     "sources": [
       "ontology_tmdl/entities/",
@@ -291,7 +374,7 @@
     ]
   },
   {
-    "slide": 36,
+    "slide": 46,
     "title": "39種類の関係と読み方",
     "sources": [
       "ontology_tmdl/entityRelationships.tmdl",
@@ -300,24 +383,33 @@
     ]
   },
   {
-    "slide": 37,
+    "slide": 47,
     "title": "この構成にした3つの理由",
     "sources": [
       "docs/architecture.md",
       "config/ontology_connection_bindings.json",
-      "config/sector_shortcuts.json"
+      "config/sector_shortcuts.json",
+      "Microsoft Learn：fabric/iq/ontology/how-to-bind-data（2026-10-21更新）"
     ]
   },
   {
-    "slide": 38,
-    "title": "関係照会と金額照合を分離",
+    "slide": 48,
+    "title": "関係はGraph、金額はDeltaで照合",
     "sources": [
       "scripts/step3_food_loss_runtime.py:85-182",
-      "reports/step3_live_audit.json"
+      "reports/step3_live_audit.json",
+      "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新、Optional graph execution）"
     ]
   },
   {
-    "slide": 39,
+    "slide": 49,
+    "title": "第7章 Ontologyの新機能",
+    "sources": [
+      "章扉（この資料の構成）"
+    ]
+  },
+  {
+    "slide": 50,
     "title": "新しいOntologyで増えた機能",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview",
@@ -326,7 +418,7 @@
     ]
   },
   {
-    "slide": 40,
+    "slide": 51,
     "title": "名前空間：同じ名前を領域ごとに区別する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-namespaces（2026-09-10更新）",
@@ -336,7 +428,7 @@
     ]
   },
   {
-    "slide": 41,
+    "slide": 52,
     "title": "ビジネスルール：業務の決まりを文章で定義する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-rules（2026-09-15更新）",
@@ -345,7 +437,7 @@
     ]
   },
   {
-    "slide": 42,
+    "slide": 53,
     "title": "共有プロパティ：同じ定義を1回だけ書く",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-reuse-properties（2026-10-20更新）",
@@ -354,7 +446,7 @@
     ]
   },
   {
-    "slide": 43,
+    "slide": 54,
     "title": "継承：共通の親から実体を派生させる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-inheritance（2026-10-20更新）",
@@ -364,21 +456,12 @@
     ]
   },
   {
-    "slide": 44,
+    "slide": 55,
     "title": "新機能を入れる順番と注意点",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview、how-to-add-metadata、how-to-use-rules、how-to-use-inheritance、how-to-use-namespaces",
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-ontology-graph、resources-troubleshooting",
       "提案：説明者の整理（実機では未検証）"
-    ]
-  },
-  {
-    "slide": 45,
-    "title": "小さく始める：最小のOntologyから広げる",
-    "sources": [
-      "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",
-      "ontology_tmdl/entityRelationships.tmdl",
-      "reports/step3_live_audit.json:diagram_relations"
     ]
   }
 ]

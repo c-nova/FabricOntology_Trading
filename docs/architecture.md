@@ -134,8 +134,12 @@ query wrongly excluded `primary_sector='all'`; instructions were corrected and
 the **published production-stage query** returned all ten exact totals.
 Non-English Data Agent use is not officially supported
 by current Microsoft documentation; Japanese responses are verified best-effort.
-The UI exposes Standard/Preview runtimes; a separate "Basic plan" setting has
-not been verified.
+The UI exposes Standard (GA) and Preview runtimes (Microsoft Learn, Fabric data agent
+runtime, updated 2026-10-22); the published agent runs on Preview. A separate "Basic plan"
+setting from the original requirement notes was never found in the UI or in Learn
+(rechecked 2026-10-27), so it is not claimed. Learn (Fabric data agent concepts, updated
+2026-10-21) still lists non-English languages as not currently supported; Japanese is
+verified best-effort only.
 
 The Data Agent was **actually published through Fabric**, not merely imported
 with a `published/` definition folder. Publication returned HTTP 200 and the UI
