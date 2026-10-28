@@ -10,6 +10,9 @@ services:
     password:
       enabled: false
     allowedRedirectUris:
+      # In git, the last entry is a placeholder. Before "rayfin up", run
+      # "python3 scripts/environment_ids.py restore" at the repository root.
+      # Before committing, run "redact" and then "check" (see ../../AGENTS.md).
       - http://localhost:5173
       - http://127.0.0.1:5173
       - https://__APP_HOST__

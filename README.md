@@ -4,6 +4,8 @@
 
 LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github.com/c-nova/FabricOntology_TradingLNG) にあります。
 
+AIエージェントで作業するときは、先に [`AGENTS.md`](AGENTS.md) を読んでください（公開リポジトリとしての約束、資料の作り直し、What-ifアプリの手順があります）。
+
 ## デモの内容
 
 - 8社：4セクター × 日本、米国。所有比率は100%が4社、51%が4社で、国では決めていません。全社を支配子会社として全額連結し、所有比率を掛けた「持分管理寄与」を別の指標として持ちます
@@ -75,7 +77,7 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 公開リポジトリのため、デモ環境のFabricの識別子は、`__WORKSPACE_ID__` のようなプレースホルダーに置き換えています。対象は、ワークスペース、キャパシティ、各アイテム（Lakehouse、Notebook、Ontology、Graph、Data Agent）、ジョブ、SQLエンドポイントのIDとホスト名、Data Agentの会話などのIDです。What-ifアプリの公開先ホスト名、アイテムID、テナントID、公開キーも含みます。認証情報は含みません。
 
 - 実際の値は、Git管理外の `config/environment_ids.local.json` に置きます（`.gitignore` 済み。項目の一覧と形式は `config/environment_ids.example.json`）
-- Fabricに接続するスクリプトやNotebookを使う前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します
+- Fabricに接続するスクリプトやNotebookを使う前、アプリを `rayfin up` でデプロイする前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します
 - コミットの前に、`python3 scripts/environment_ids.py redact` でプレースホルダーに戻し、`python3 scripts/environment_ids.py check` で残りがないことを確認します。`check` は対応表がなくても、ランダムなGUIDと、SQLエンドポイントおよびFabric Appsのホスト名を探します
 - プレースホルダーのままでは、Fabricに接続するスクリプトやNotebookは動きません。`decks/` の説明者ガイドにあるFabricへのリンクも、プレースホルダーのままです。実際のリンクが要るときは、`restore` のあとに `python3 presentation/build_presenter_deck.py` で作り直してください
 

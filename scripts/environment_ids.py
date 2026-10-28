@@ -37,7 +37,7 @@ ALLOW_GUIDS = {
     "4053a155-34a9-4b74-9bc2-e162f1b27fc7",  # sample dataset ID in the Rayfin scaffold README (whatif-app/README.md)
 }
 # Documentation of the placeholders themselves; `restore` must not rewrite them.
-KEEP_PLACEHOLDERS = {"README.md", "scripts/environment_ids.py", "config/environment_ids.example.json"}
+KEEP_PLACEHOLDERS = {"README.md", "AGENTS.md", "scripts/environment_ids.py", "config/environment_ids.example.json"}
 SKIP_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".pdf", ".ico", ".zip")
 SQL_HOST_SUFFIX = ".datawarehouse.fabric.microsoft.com"
 CAPACITY_HOST_SUFFIX = ".pbidedicated.windows.net"
