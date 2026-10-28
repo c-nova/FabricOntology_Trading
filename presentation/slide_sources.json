@@ -269,13 +269,22 @@
   },
   {
     "slide": 33,
+    "title": "任意の実演：予測にイベントを仮定して比べる",
+    "sources": [
+      "reports/whatif_future_live_verification_2026-10-28.json",
+      "Microsoft Learn：fabric/data-science/how-to-use-automated-machine-learning-fabric（2026-07-22更新）",
+      "Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/graph/gql-query-api（2026-09-29更新）"
+    ]
+  },
+  {
+    "slide": 34,
     "title": "第4章 想定質問と答え方",
     "sources": [
       "章扉（この資料の構成）"
     ]
   },
   {
-    "slide": 34,
+    "slide": 35,
     "title": "想定質問への短い回答",
     "sources": [
       "docs/architecture.md",
@@ -285,7 +294,7 @@
     ]
   },
   {
-    "slide": 35,
+    "slide": 36,
     "title": "SQLとOntologyの違い",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）",
@@ -294,7 +303,7 @@
     ]
   },
   {
-    "slide": 36,
+    "slide": 37,
     "title": "全社に及ぶイベントの影響範囲",
     "sources": [
       "reports/qa_expected_event_totals.json",
@@ -307,7 +316,7 @@
     ]
   },
   {
-    "slide": 37,
+    "slide": 38,
     "title": "全社波及で扱える範囲と未対応の範囲",
     "sources": [
       "config/subsidiaries.json",
@@ -322,7 +331,7 @@
     ]
   },
   {
-    "slide": 38,
+    "slide": 39,
     "title": "カジュアルな質問に答えさせる",
     "sources": [
       "reports/da_casual_baseline_2026-10-26.json",
@@ -332,7 +341,7 @@
     ]
   },
   {
-    "slide": 39,
+    "slide": 40,
     "title": "カジュアルに聞くときの使い方と限界",
     "sources": [
       "reports/da_casual_after_2026-10-26.json:known_limits",
@@ -341,7 +350,7 @@
     ]
   },
   {
-    "slide": 40,
+    "slide": 41,
     "title": "業務アプリの想定質問と答え方",
     "sources": [
       "reports/whatif_app_live_verification_2026-10-28.json",
@@ -350,14 +359,23 @@
     ]
   },
   {
-    "slide": 41,
+    "slide": 42,
+    "title": "予測と将来の仮定の想定質問と答え方",
+    "sources": [
+      "reports/whatif_future_live_verification_2026-10-28.json",
+      "Microsoft Learn：fabric/data-science/how-to-use-automated-machine-learning-fabric（2026-07-22更新）",
+      "Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/graph/gql-query-api（2026-09-29更新）"
+    ]
+  },
+  {
+    "slide": 43,
     "title": "第5章 お客様データへの当てはめ",
     "sources": [
       "章扉（この資料の構成）"
     ]
   },
   {
-    "slide": 42,
+    "slide": 44,
     "title": "社内にないイベントを集める方法",
     "sources": [
       "提案段階の構成（このデモでは未実装）",
@@ -365,7 +383,7 @@
     ]
   },
   {
-    "slide": 43,
+    "slide": 45,
     "title": "イベントの列の例",
     "sources": [
       "ddl/10_common_subsidiary_tables.sql:risk_events",
@@ -373,7 +391,7 @@
     ]
   },
   {
-    "slide": 44,
+    "slide": 46,
     "title": "影響額と根拠の列の例",
     "sources": [
       "ddl/10_common_subsidiary_tables.sql:event_financial_effects,event_impact_bridge,event_evidence",
@@ -381,7 +399,7 @@
     ]
   },
   {
-    "slide": 45,
+    "slide": 47,
     "title": "小さく始める：最小のOntologyから広げる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-generate-from-semantic-models、how-to-create-data-agent、how-to-use-ontology-graph",
@@ -390,14 +408,14 @@
     ]
   },
   {
-    "slide": 46,
+    "slide": 48,
     "title": "第6章 構成の解説",
     "sources": [
       "章扉（この資料の構成）"
     ]
   },
   {
-    "slide": 47,
+    "slide": 49,
     "title": "9つのLakehouseの役割分担",
     "sources": [
       "reports/cloud_validation.json",
@@ -407,7 +425,7 @@
     ]
   },
   {
-    "slide": 48,
+    "slide": 50,
     "title": "ゼロコピーと実体化の使い分け",
     "sources": [
       "docs/architecture.md:81-123",
@@ -416,7 +434,7 @@
     ]
   },
   {
-    "slide": 49,
+    "slide": 51,
     "title": "4つの用語を食品の例で区別",
     "sources": [
       "reports/step3_live_audit.json:diagram_relations",
@@ -424,7 +442,7 @@
     ]
   },
   {
-    "slide": 50,
+    "slide": 52,
     "title": "Ontologyの全体マップ",
     "sources": [
       "ontology_tmdl/entities/",
@@ -433,7 +451,7 @@
     ]
   },
   {
-    "slide": 51,
+    "slide": 53,
     "title": "実体と元の表の対応",
     "sources": [
       "ontology_tmdl/entities/",
@@ -442,7 +460,7 @@
     ]
   },
   {
-    "slide": 52,
+    "slide": 54,
     "title": "39種類の関係と読み方",
     "sources": [
       "ontology_tmdl/entityRelationships.tmdl",
@@ -451,7 +469,7 @@
     ]
   },
   {
-    "slide": 53,
+    "slide": 55,
     "title": "この構成にした3つの理由",
     "sources": [
       "docs/architecture.md",
@@ -461,7 +479,7 @@
     ]
   },
   {
-    "slide": 54,
+    "slide": 56,
     "title": "関係はGraph、金額はDeltaで照合",
     "sources": [
       "scripts/step3_food_loss_runtime.py:85-182",
@@ -470,14 +488,14 @@
     ]
   },
   {
-    "slide": 55,
+    "slide": 57,
     "title": "第7章 Ontologyの新機能",
     "sources": [
       "章扉（この資料の構成）"
     ]
   },
   {
-    "slide": 56,
+    "slide": 58,
     "title": "新しいOntologyで増えた機能",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview",
@@ -486,7 +504,7 @@
     ]
   },
   {
-    "slide": 57,
+    "slide": 59,
     "title": "名前空間：同じ名前を領域ごとに区別する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-namespaces（2026-09-10更新）",
@@ -496,7 +514,7 @@
     ]
   },
   {
-    "slide": 58,
+    "slide": 60,
     "title": "ビジネスルール：業務の決まりを文章で定義する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-rules（2026-09-15更新）",
@@ -505,7 +523,7 @@
     ]
   },
   {
-    "slide": 59,
+    "slide": 61,
     "title": "共有プロパティ：同じ定義を1回だけ書く",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-reuse-properties（2026-10-20更新）",
@@ -514,7 +532,7 @@
     ]
   },
   {
-    "slide": 60,
+    "slide": 62,
     "title": "継承：共通の親から実体を派生させる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） how-to-use-inheritance（2026-10-20更新）",
@@ -524,7 +542,7 @@
     ]
   },
   {
-    "slide": 61,
+    "slide": 63,
     "title": "新機能を入れる順番と注意点",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-10-26に確認、Preview） overview、how-to-add-metadata、how-to-use-rules、how-to-use-inheritance、how-to-use-namespaces",

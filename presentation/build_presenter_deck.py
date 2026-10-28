@@ -122,7 +122,9 @@ DA_ACTION_TEXT = """対応案
 # Chapter structure. The divider pages and the agenda page are generated from this table, so the
 # page numbers always agree with the final slide order. Page titles must match the slide titles.
 T_APP_DEMO = "任意の実演：業務アプリで条件を変える"
+T_APP_FDEMO = "任意の実演：予測にイベントを仮定して比べる"
 T_APP_QA = "業務アプリの想定質問と答え方"
+T_APP_FQA = "予測と将来の仮定の想定質問と答え方"
 
 CHAPTERS = [
     {"n": 1, "name": "全体像と準備",
@@ -154,12 +156,12 @@ CHAPTERS = [
          ("通貨と現金の読み違い", "4 通貨とキャッシュフロー"),
      ]},
     {"n": 3, "name": "実演",
-     "agenda": "4つの入力、結果と図、金額の区別、アプリ",
+     "agenda": "4つの入力、結果と図、金額の区別、アプリ2種",
      "summary": "4つの入力をDAに順に入れ、\n結果の読み方、食品損失の経路、\n金額の区別を示します。\n最後に、任意で業務アプリを見せます。",
      "when": "ライブの10分（④は任意）",
      "when_long": "ライブの10分（Step04は時間があるときだけ）\n業務アプリは、10分のあとの追加",
      "note": "【進め方】4つの入力を、DAに順に入れます。必須はStep01からStep03で、Step04は時間があるときだけ実行します。各入力のページに全文があり、次のページに参考結果と読み方があります。\n"
-             "【所要】ライブは10分です。ページは、説明者が実演の前に読む順に並んでいます。業務アプリの実演（最後のページ）は、10分に含めず、求められたときに使う追加の5分です。\n"
+             "【所要】ライブは10分です。ページは、説明者が実演の前に読む順に並んでいます。業務アプリの実演（最後の2ページ。過去の差額と、将来の予測）は、10分に含めず、求められたときに使う追加の時間です（過去が5分、将来が3分）。\n"
              "【注意】参考結果のページは、保存データから作った照合用です。ライブの回答とは呼びません。\n"
              "【つなぎ】実演のあとに質問が出たら、第4章へ進みます。",
      "pages": [
@@ -181,12 +183,13 @@ CHAPTERS = [
          ("優先度別の対応案（DA実行例）", "Step04 影響点と対応案（DAの実行例）"),
          ("デモで見せた3つの価値", "締め"),
          (T_APP_DEMO, "業務アプリ（任意の実演）"),
+         (T_APP_FDEMO, "業務アプリ（任意の実演：将来）"),
      ]},
     {"n": 4, "name": "想定質問と答え方",
      "agenda": "短い回答、SQL、全社波及、カジュアル、アプリ",
-     "summary": "質疑でよく出る質問への短い答え、\nOntologyの価値、全社波及の扱い、\nカジュアルな聞き方、業務アプリの質問です。",
+     "summary": "質疑でよく出る質問への短い答え、\nOntologyの価値、全社波及の扱い、\nカジュアルな聞き方、業務アプリと\n予測の質問です。",
      "when": "質疑のとき",
-     "note": "【進め方】質疑でよく出る質問に、短く答えるための章です。SQLとの違いは、Ontologyの価値を問われたときに、1ページを使って説明します。全社波及の2ページは、「全社に及ぶ出来事も扱えるか」と聞かれたときに使います。カジュアルな質問の2ページは、質問の自由度を聞かれたときに使います。業務アプリの質問の1ページは、第3章の最後のページで画面を見せたあとに使います。\n"
+     "note": "【進め方】質疑でよく出る質問に、短く答えるための章です。SQLとの違いは、Ontologyの価値を問われたときに、1ページを使って説明します。全社波及の2ページは、「全社に及ぶ出来事も扱えるか」と聞かれたときに使います。カジュアルな質問の2ページは、質問の自由度を聞かれたときに使います。業務アプリの質問の1ページと、予測と将来の仮定の質問の1ページは、第3章の最後の2ページで画面を見せたあとに使います。\n"
              "【所要】必要なページだけを選んで使います。\n"
              "【つなぎ】お客様のデータで進めたい場合は第5章、技術の詳細を聞かれたら第6章へ進みます。",
      "pages": [
@@ -197,6 +200,7 @@ CHAPTERS = [
          ("カジュアルな質問に答えさせる", "カジュアルな質問（結果と設定）"),
          ("カジュアルに聞くときの使い方と限界", "カジュアルな質問（使い方と限界）"),
          (T_APP_QA, "業務アプリの質問"),
+         (T_APP_FQA, "予測と将来の仮定の質問"),
      ]},
     {"n": 5, "name": "お客様データへの当てはめ",
      "agenda": "イベントの集め方、台帳の列、小さく始める",
@@ -1690,9 +1694,9 @@ s = new_slide(
 【応答しないとき】再試行を1回だけ押します。直らなければ、お客様向け資料の第4章の実画面と経路のページ（保存した画像）に切り替え、「保存した画像で、いまのライブの結果ではありません」と告げます。権限の変更や再デプロイを、その場で試みません。
 【避ける】「Ontologyが金額を計算した」「本番で使える」「利用者ごとに見える範囲を変えられる」とは言いません。円高10%は、USD建ての子会社の円換算レートだけを10%下げる仮定で、為替ヘッジ、価格への転嫁、取引量の変化は反映していません。金額は、設計した配賦と仮定の為替による試算で、実際の損益の予測ではありません。
 【現状】確認した日は2026年10月28日です。Fabric AppsとOntologyはPreview、グラフのクエリ用APIはbetaです。アプリのURLは、この資料に載せていません。事前に、説明者のブックマークに保存します。
-【つなぎ】「アプリについての質問は、第4章の最後のページ（p.{PAGE_OF[T_APP_QA]}）に、答え方をそろえてあります。」""",
+【つなぎ】「アプリについての質問は、第4章の最後から2ページ目（p.{PAGE_OF[T_APP_QA]}）に、答え方をそろえてあります。」続けて「来期の見通しは」と聞かれたら、将来タブの実演（p.{PAGE_OF[T_APP_FDEMO]}）に進みます。""",
     APP_SOURCES,
-    f"質問が出たら、p.{PAGE_OF[T_APP_QA]}の答え方で答える。未確認のことは「未検証」と言う", foot=APP_FOOT)
+    f"質問が出たら、p.{PAGE_OF[T_APP_QA]}の答え方で答える。見通しを聞かれたら、p.{PAGE_OF[T_APP_FDEMO]}へ", foot=APP_FOOT)
 box(s, .62, 2.62, 7.62, 3.78, WHITE, rounded=True)
 text(s, "手順（約5分）", .87, 2.74, 5.0, .3, 16, TEAL, True)
 for i, (act, shows) in enumerate([
@@ -1721,7 +1725,7 @@ s = new_slide(
     "アプリの画面を見せたあとは、「Ontologyが計算したのか」という質問が出やすくなります。\n"
     "確認した範囲を超えて答えないよう、6つの答えをそろえておきます。",
     "",
-    f"""【目安】質疑のとき。必要な質問だけを、1つ30秒ほどで答えます。業務アプリの実演（第3章の最後のページ、p.{PAGE_OF[T_APP_DEMO]}）のあとに使います。
+    f"""【目安】質疑のとき。必要な質問だけを、1つ30秒ほどで答えます。業務アプリの実演（第3章の最後から2ページ目、p.{PAGE_OF[T_APP_DEMO]}）のあとに使います。予測や将来の仮定の質問は、p.{PAGE_OF[T_APP_FQA]}にあります。
 【Q：Ontologyが金額を計算したの？】A：「いいえ。つながり（経路）は、Ontologyのグラフから取得しています。金額は、Lakehouseの値を、決まった手順で計算しています。」理由：Data Agentの円高の試算は、実行ごとの答えが安定しなかったので、条件を動かす用途では、金額を言語モデルに任せていません。
 【Q：FabricのアプリからOntologyに、標準でつなげる？】A：「現在のコネクタの対象は、Lakehouse、Warehouse、SQLデータベース、セマンティックモデルで、Ontologyは含まれません（Microsoft Learn、2026-09-29更新）。このデモでは、FunctionsからGraphのクエリ用API（GQL Query API）を直接呼んでいます。」このAPIはbetaです。
 【Q：利用者ごとに、見える範囲を変えられる？】A：「Functionsが外部を呼ぶときのIDは、現在、アプリの所有者です（Learn）。画面を見る利用者の権限は、反映されません。利用者ごとに変える設計は、このデモでは検証していません。PoCの最初に決めます。」お客様向け資料の第3章の権限のページは、Ontologyのアイテムとデータ側の権限の話で、別です。
@@ -1746,6 +1750,127 @@ app_qa = [
      "Fabric Appsはリージョンが限定的です（Learn）。このデモはWest US 3で確認しました。東日本など、他のリージョンは未確認です。"),
 ]
 for i, (q, a) in enumerate(app_qa):
+    y = 2.58 + i * .65
+    box(s, .62, y, 12.08, .6, WHITE, rounded=True)
+    text(s, q, .85, y + .05, 4.1, .52, 14.5, TEAL, True)
+    text(s, a, 5.1, y + .06, 7.4, .5, 12.5, INK)
+
+
+
+# Optional live demo of the future tab (forecast + hypothetical event) and the questions it draws. Every figure comes
+# from the saved live-check report and is tied to numbers this deck already derives; nothing is typed in by hand.
+fut = json.loads((PROJECT / "reports/whatif_future_live_verification_2026-10-28.json").read_text())
+assert fut["status"] == "verified_live_with_limits" and fut["identifiers_recorded"] is False
+FUT_BASE = Decimal(fut["forecast"]["baseline_jpy"])
+FUT_SC = fut["scenarios"]
+FUT_A, FUT_B, FUT_C = FUT_SC["fod_neg_nov15_100"], FUT_SC["fod_neg_dec20_100"], FUT_SC["fod_neg_dec31_100"]
+assert (FUT_A["event_id"], FUT_A["event_date"], FUT_A["scale"]) == ("FOD_NEG", "2026-11-15", 1)
+assert (FUT_B["event_date"], FUT_B["included_effects"], FUT_B["excluded_effects"]) == ("2026-12-20", 57, 27)
+assert (FUT_C["event_date"], FUT_C["included_effects"], Decimal(FUT_C["delta_jpy"])) == ("2026-12-31", 0, 0)
+for _sc in (FUT_A, FUT_B, FUT_C):
+    assert Decimal(_sc["baseline_jpy"]) == FUT_BASE
+    assert Decimal(_sc["scenario_jpy"]) - FUT_BASE == Decimal(_sc["delta_jpy"])
+    assert _sc["included_effects"] + _sc["excluded_effects"] == _sc["historical_effects"] == 84
+# the food-loss effect that the 11/15 scenario replays is the one this deck reports for FOD_NEG, to the yen
+assert Decimal(FUT_A["delta_jpy"]) == Decimal(events["FOD_NEG"]["full_jpy"]).quantize(Decimal("0.01")) == Decimal("-114461186.25")
+assert sum(Decimal(q["total_jpy"]) for q in fut["actual_by_quarter"]) == Decimal(fut["annual_actual_ebitda_full_jpy"]) == APP_BASE["full"]
+assert all(e["ids_match_exactly"] and e["graph_paths"] == e["lakehouse_effects"] == graph_paths[e["eventId"]]
+           for e in fut["graph_vs_lakehouse_per_event"]) and len(fut["graph_vs_lakehouse_per_event"]) == 10
+_FM = {m["model"]: m for m in fut["notebook"]["models"]}
+assert (_FM["AutoML + Graph"]["q4_error_percent"], _FM["AutoML"]["q4_error_percent"], _FM["直近91日日平均"]["q4_error_percent"]) == (
+    1.6, -5.44, -1.73)
+assert Decimal(str(_FM["AutoML + Graph"]["next_q_forecast_oku"])) == (FUT_BASE / OKU).quantize(Decimal("0.001")) == Decimal("114.895")
+assert fut["ui_observations"]["console_errors"] == 0 and "25" in fut["ui_observations"]["first_open_seconds_observed"]
+_FNV = " ".join(fut["not_verified"])
+assert all(w in _FNV for w in ("一般化", "二重計上", "将来の為替", "持分管理", "権限", "性能"))
+
+
+def fut_oku(v, places="0.01", sign=False):
+    q = (Decimal(v) / OKU).quantize(Decimal(places), rounding=ROUND_HALF_UP)
+    return (f"{q:+.{len(places.split('.')[1])}f}" if sign else f"{q:.{len(places.split('.')[1])}f}").replace("-", "−")
+
+
+F_BASE2 = fut_oku(FUT_BASE)
+F_AFTER_A = fut_oku(FUT_A["scenario_jpy"])
+F_DELTA_A = fut_oku(FUT_A["delta_jpy"], sign=True)
+F_DELTA_B = fut_oku(FUT_B["delta_jpy"], sign=True)
+assert (F_BASE2, F_AFTER_A, F_DELTA_A, F_DELTA_B) == ("114.90", "113.75", "−1.14", "−0.93")
+F_ERR = {k_: f"{Decimal(str(v_['q4_error_percent'])).quantize(Decimal('0.01')):+.2f}".replace("-", "−") for k_, v_ in _FM.items()}
+assert F_ERR == {"直近91日日平均": "−1.73", "AutoML": "−5.44", "AutoML + Graph": "+1.60"}
+FUT_FOOT = "架空の業務データ／公開ECB為替を使用  |  将来タブの確認：2026-10-28（予測は探索的。Fabric AppsとOntologyはPreview、クエリ用APIはbeta）"
+FUT_SOURCES = ["reports/whatif_future_live_verification_2026-10-28.json",
+               "Microsoft Learn：fabric/data-science/how-to-use-automated-machine-learning-fabric（2026-07-22更新）",
+               "Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/graph/gql-query-api（2026-09-29更新）"]
+
+# Chapter 3, the last page: an optional demo of the future tab, three minutes
+s = new_slide(
+    T_APP_FDEMO,
+    "「来期の見通しは」と続けて聞かれたときに使う、任意の3分です。\n"
+    "予測は保存済みの結果で、イベントは仮定です。Ontologyが予測した、とは言いません。",
+    "",
+    f"""【目安】3分（任意）。業務アプリの実演（p.{PAGE_OF[T_APP_DEMO]}）のあとで、「来期の見通しは」「このイベントが起きたら」と聞かれたときだけ使います。時間がなければ、お客様向け資料の第4章「次の四半期の予測にOntologyの関係を使う」と「将来のイベントを仮定して予測と比べる」の2ページで代えます。
+【前準備】アプリは、見せる直前に開き、「将来の予測」タブを一度開いておきます。モデルの読み込み後、将来タブの初回の表示は約25〜30秒でした（2026年10月28日の実測）。放置したあとの最初の呼び出しは、グラフの起動に約1分かかります（p.{PAGE_OF[T_APP_DEMO]}の【前準備】と同じ）。予測は、Notebookが保存した結果を読んでいるだけで、画面を開くたびに予測を計算し直してはいません。
+【手順】①「将来の予測」タブを開きます。折れ線は、実績4四半期（FY26 Q1〜Q4。年度は10月始まり）と、予測の1四半期（FY27 Q1。点線）です。棒は、業種別の積み上げで、右の軸（0から始まる別の目盛り）です。基準予測は{F_BASE2}億円です。②タブを開いたときの初期値は、「過去イベントのパターン」が「コールドチェーンの劣化（食品ロス）」、「仮の発生日」が2026年11月15日、「追加する影響の大きさ」が100%です。「イベント想定後」は{F_AFTER_A}億円、「予測との差」は{F_DELTA_A}億円です（四捨五入のため、引き算とは0.01億円ずれます）。この差は、第2章で見た食品損失の全期間の合計と同額ですが、同じ84件の影響額を足し合わせているので当然で、予測の良し悪しを確かめた結果ではありません。「照合 84 件。期間内 84 件、期間外 0 件」と表示されます。③日付を2026年12月20日に変えます。差は{F_DELTA_B}億円になり、四半期に収まる影響額は{FUT_B['included_effects']}件、{FUT_B['excluded_effects']}件は四半期の外です。④日付を2026年12月31日にすると、差は0になります（収まる影響額は0件）。画面で選べる日付は、予測の四半期の最終日である12月31日までです。⑤「参照した過去のOntology経路」を開いて、過去の同じイベントの影響額と、Graphの経路を指します。
+【話す】「基準予測は、Notebookで動かしたAutoMLにGraphの情報を加えた方法が、1年分のデータで学習し直して出した、次の四半期の保存済みの値です。そこに、過去に起きた同じイベントの影響を、仮定した日に移して足しています。影響額は、Ontologyのグラフの経路と、Lakehouseの値を、IDで突き合わせて取り出しています。Ontologyが予測したわけではありません。」
+【待ち時間が出たら】将来タブの初回は、表示まで25〜30秒ほどかかります。画面に「Notebookの保存済み予測を読み込み中…」と出ます。「保存済みの予測を読み込んでいます」と伝え、その間に、お客様向け資料の第4章「次の四半期の予測にOntologyの関係を使う」のページで、AutoMLとOntologyの担当の違いを話します。
+【応答しないとき】再試行を1回だけ押します。直らなければ、お客様向け資料の第4章の2ページ（保存した画像）に切り替え、「保存した画像で、いまのライブの結果ではありません」と告げます。権限の変更や再デプロイを、その場で試みません。
+【避ける】「Ontologyが予測した」「予測は当たる」「Graphを使うと精度が上がる」「この見通しは確定」とは言いません。予測は、合成データの最後の1四半期の1回で検証しただけで、その四半期の実績は、比べる前にすでに見ています（探索的）。基準予測には、過去のイベントの影響がすでに含まれている可能性があり（二重計上）、将来の為替は予測していません。イベントも予測せず、利用者が仮定します。全額連結の金額だけに対応し、持分管理には対応していません。
+【現状】確認した日は2026年10月28日です。Fabric AppsとOntologyはPreview、グラフのクエリ用APIはbetaです。アプリのURLは、この資料に載せていません。
+【つなぎ】「予測や将来の仮定についての質問は、第4章の最後のページ（p.{PAGE_OF[T_APP_FQA]}）に、答え方をそろえてあります。」""",
+    FUT_SOURCES,
+    f"質問が出たら、p.{PAGE_OF[T_APP_FQA]}の答え方で答える。予測の精度は「未確認」と言う", foot=FUT_FOOT)
+box(s, .62, 2.62, 7.62, 3.78, WHITE, rounded=True)
+text(s, "手順（約3分）", .87, 2.74, 5.0, .3, 16, TEAL, True)
+for i, (act, shows) in enumerate([
+        ("「将来の予測」タブを開く", f"基準予測 {F_BASE2}億円。折れ線は実績4四半期と予測1四半期"),
+        ("初期値のまま（食品ロス、11月15日、100%）", f"イベント想定後 {F_AFTER_A}億円。予測との差 {F_DELTA_A}億円"),
+        ("日付を2026年12月20日に変える", f"差 {F_DELTA_B}億円。期間内 {FUT_B['included_effects']}件、期間外 {FUT_B['excluded_effects']}件"),
+        ("日付を2026年12月31日にする", "差は0。四半期に収まる影響額が0件"),
+        ("「参照した過去のOntology経路」を開く", "過去の同じイベントの影響額を、Graphの経路とLakehouseで照合")]):
+    y = 3.2 + i * .62
+    dot(s, str(i + 1), 1.1, y + .26, .2, TEAL)
+    text(s, act, 1.5, y, 6.5, .27, 14, NAVY, True)
+    text(s, shows, 1.5, y + .28, 6.5, .27, 12, INK)
+box(s, 8.42, 2.62, 4.28, 3.78, WHITE, rounded=True)
+text(s, "準備と、困ったとき", 8.67, 2.74, 3.8, .3, 16, TEAL, True)
+stack_items(s, 8.67, 3.2, 3.8, [
+    ("開くタイミング", "見せる直前に開き、将来タブを一度表示しておく。初回は約25〜30秒"),
+    ("待ち時間が出たら", "「保存済みの予測を読み込んでいます」と伝え、お客様向け資料の予測のページで補う"),
+    ("応答しないとき", "再試行は1回だけ。直らなければ、保存した画像に切り替え、保存した画像と告げる"),
+    ("言わないこと", "「Ontologyが予測した」「予測は当たる」。予測の精度は未確認"),
+], TEAL, size=11.5, gap=.12)
+
+# Chapter 4, the last page: the questions the forecast and the future tab draw
+s = new_slide(
+    T_APP_FQA,
+    "予測を見せたあとは、「当たるのか」「Ontologyは何をしたのか」という質問が出やすくなります。\n"
+    "確認した範囲を超えて答えないよう、6つの答えをそろえておきます。",
+    "",
+    f"""【目安】質疑のとき。必要な質問だけを、1つ30秒ほどで答えます。将来の実演（第3章の最後のページ、p.{PAGE_OF[T_APP_FDEMO]}）のあとに使います。
+【Q：予測は当たるの？】A：「確認できていません。検証は、デモのデータの最後の1四半期の1回だけで、その四半期の実績は、比べる前にすでに見ています（探索的）。最初の3四半期で学習し、最後の四半期を予測させたとき、誤差は、直近91日の日平均が{F_ERR['直近91日日平均']}%、AutoMLが{F_ERR['AutoML']}%、AutoMLにGraphの情報を加えたものが{F_ERR['AutoML + Graph']}%でした。貴社のデータで、複数の四半期を使って確かめます。」データは合成データで、季節性などの形も、設計したものです。
+【Q：Ontologyが予測しているの？／Graphを使うと精度が上がるの？】A：「予測を計算しているのは、AutoMLです。Ontologyのグラフは、過去のイベントが、どの影響額、会社、日の指標につながるかを返します。Notebookが、その結果とLakehouseの金額から、予測の入力を作ります。Graphを加えたモデルは誤差が小さく見えましたが、選ばれたモデルの種類も異なるため（AutoMLはrf、Graphを加えたものはextra_tree）、Graphが精度を上げたとは言えません。」
+【Q：イベントを足すと、二重に数えない？】A：「その可能性があります。基準予測は、過去の実績から作っており、過去のイベントの影響が、すでに含まれている可能性があります。そこに、同じ種類のイベントの影響を足すと、二重に数えるおそれがあります。分離は確かめていません。」
+【Q：為替や、将来のイベントは予測しているの？】A：「いいえ。将来の為替は予測していません。イベントも、予測せず、利用者が仮定します。仮定は、過去の同じイベントの影響額を、指定した発生日に移し、倍率を掛けて、予測の四半期に収まる分だけを足したものです。」
+【Q：なぜ3四半期で学習したの？】A：「デモのデータが1年分（4四半期）だけなので、方法の比べ方では、最初の3四半期で学習し、最後の1四半期を検証に使いました。アプリの基準予測は、4四半期すべてで学習し直した値です（学習の行数は、検証用が176、基準予測用が288）。1年分のデータでは、季節性を複数年にわたって確かめられません。学習に使う92日の期間は、週ごとに重なっており、独立した観測の数ではありません。」
+【Q：持分管理や、他の指標（売上など）も出せる？】A：「将来タブは、全額連結のEBITDAだけに対応しています。持分管理は、未対応です。売上などの指標は、このデモでは扱っていません。」
+【避ける】「予測は当たる」「Graphで精度が上がる」「Ontologyが予測した」「二重計上はない」とは言いません。精度の数字（誤差のパーセント）を、一般的な性能として示しません。答えが未確認なら、「未検証」と明示します。""",
+    FUT_SOURCES,
+    "未確認の質問は、お客様向け資料の確認範囲のページ（第4章末）と、予測のページで、どの列かを示す", foot=FUT_FOOT)
+fut_qa = [
+    ("予測は当たるの？",
+     f"未確認です。検証は1四半期の1回で、実績は先に見ています（探索的）。誤差：日平均 {F_ERR['直近91日日平均']}%、AutoML {F_ERR['AutoML']}%、AutoML + Graph {F_ERR['AutoML + Graph']}%。"),
+    ("Ontologyが予測しているの？",
+     "いいえ。予測はAutoMLです。Graphは過去のイベントの影響を返し、Notebookが入力を作ります。Graphで精度が上がったとは言えません。"),
+    ("イベントを足すと、二重に数えない？",
+     "その可能性があります。基準予測に、過去のイベントの影響が含まれている場合があります。分離は未確認です。"),
+    ("為替や将来のイベントは予測している？",
+     "いいえ。将来の為替は予測せず、イベントは利用者が仮定します（過去の影響を、仮定した日に移して足します）。"),
+    ("なぜ3四半期で学習したの？",
+     "検証用に、最初の3四半期で学習しました。アプリの値は1年分で学習し直しています。1年分では季節性を確かめられません。"),
+    ("持分管理や売上も出せる？",
+     "将来タブは、全額連結のEBITDAだけです。持分管理は未対応で、売上などは、このデモでは扱っていません。"),
+]
+for i, (q, a) in enumerate(fut_qa):
     y = 2.58 + i * .65
     box(s, .62, y, 12.08, .6, WHITE, rounded=True)
     text(s, q, .85, y + .05, 4.1, .52, 14.5, TEAL, True)

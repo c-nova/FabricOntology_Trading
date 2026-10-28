@@ -259,6 +259,29 @@
   },
   {
     "slide": 26,
+    "title": "次の四半期の予測にOntologyの関係を使う",
+    "sources": [
+      "Microsoft Learn：fabric/data-science/how-to-use-automated-machine-learning-fabric（2026-07-22更新）",
+      "Microsoft Learn：fabric/graph/gql-query-api（2026-09-29更新）",
+      "デモ環境での確認（Notebookの実行、2026年10月28日）"
+    ],
+    "trace": [
+      "reports/whatif_future_live_verification_2026-10-28.json:notebook,forecast,actual_by_quarter,not_verified"
+    ]
+  },
+  {
+    "slide": 27,
+    "title": "将来のイベントを仮定して予測と比べる",
+    "sources": [
+      "デモ環境での確認（Fabric Apps（Rayfin）のアプリ、2026年10月28日）",
+      "Microsoft Learn：fabric/graph/gql-query-api（2026-09-29更新）、fabric/apps/overview（2026-09-29更新）"
+    ],
+    "trace": [
+      "reports/whatif_future_live_verification_2026-10-28.json:forecast,scenarios,graph_vs_lakehouse_per_event,not_verified"
+    ]
+  },
+  {
+    "slide": 28,
     "title": "確認できたこと、記載に基づくこと、未確認のこと",
     "sources": [
       "Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/apps/functions（2026-09-29更新）",
@@ -268,18 +291,19 @@
     ],
     "trace": [
       "reports/whatif_app_live_verification_2026-10-28.json",
-      "reports/whatif_app_live_verification_2026-10-28.json:not_verified,learn_sources"
+      "reports/whatif_app_live_verification_2026-10-28.json:not_verified,learn_sources",
+      "reports/whatif_future_live_verification_2026-10-28.json:not_verified,learn_sources"
     ]
   },
   {
-    "slide": 27,
+    "slide": 29,
     "title": "第5章 進め方",
     "sources": [
       "本資料の構成"
     ]
   },
   {
-    "slide": 28,
+    "slide": 30,
     "title": "質問1つから小さく始めて広げる",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-09〜10更新）",
@@ -291,7 +315,7 @@
     ]
   },
   {
-    "slide": 29,
+    "slide": 31,
     "title": "PoCで確認する項目とご準備いただく情報",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology（2026-09〜10更新）、how-to-bind-data（2026-10-20更新）",
@@ -300,21 +324,22 @@
     "trace": []
   },
   {
-    "slide": 30,
+    "slide": 32,
     "title": "現時点の提供状況とご留意いただく点",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）、how-to-create-data-agent（2026-09-13更新）",
       "Microsoft Learn：fabric/apps/overview（2026-09-29更新）",
-      "デモ環境での確認（2026年10月26日〜27日）"
+      "デモ環境での確認（2026年10月26日〜28日）"
     ],
     "trace": [
       "README.md:検証の状況",
       "reports/da_casual_after_2026-10-26.json:known_limits",
-      "reports/da_group_wide_2026-10-27.json"
+      "reports/da_group_wide_2026-10-27.json",
+      "reports/whatif_future_live_verification_2026-10-28.json:not_verified"
     ]
   },
   {
-    "slide": 31,
+    "slide": 33,
     "title": "貴社の質問とデータでPoCを設計する",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology/overview"
@@ -322,14 +347,14 @@
     "trace": []
   },
   {
-    "slide": 32,
+    "slide": 34,
     "title": "付録",
     "sources": [
       "本資料の構成"
     ]
   },
   {
-    "slide": 33,
+    "slide": 35,
     "title": "付録1 デモ環境の構成",
     "sources": [
       "デモ環境の設計と検証記録（2026年10月23日構築、10月27日確認）"
@@ -344,7 +369,7 @@
     ]
   },
   {
-    "slide": 34,
+    "slide": 36,
     "title": "付録2 概念17種類と関係39種類の一覧",
     "sources": [
       "デモのOntology定義とGraphの件数（2026-10-27確認）"
@@ -356,7 +381,7 @@
     ]
   },
   {
-    "slide": 35,
+    "slide": 37,
     "title": "付録3 デモで使った質問と回答の要点",
     "sources": [
       "デモ環境での確認（2026年10月26日〜27日、公開済みのData Agent。金額を元データの集計と照合）"
@@ -368,16 +393,18 @@
     ]
   },
   {
-    "slide": 36,
+    "slide": 38,
     "title": "付録4 よくあるご質問",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）、how-to-create-data-agent（2026-09-13更新）",
-      "デモ環境での確認（2026年10月26日〜27日）"
+      "デモ環境での確認（2026年10月26日〜28日）"
     ],
-    "trace": []
+    "trace": [
+      "reports/whatif_future_live_verification_2026-10-28.json:notebook,not_verified"
+    ]
   },
   {
-    "slide": 37,
+    "slide": 39,
     "title": "付録5 用語集",
     "sources": [
       "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）、how-to-use-ontology-graph（2026-09-18更新）、how-to-use-rules（2026-09-15更新）",
