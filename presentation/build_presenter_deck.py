@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Build the Japanese presenter guide deck from the verified Trading demo artifacts.
 
 Run from any directory with python3 (python-pptx and Pillow are required).
@@ -120,6 +121,9 @@ DA_ACTION_TEXT = """対応案
 
 # Chapter structure. The divider pages and the agenda page are generated from this table, so the
 # page numbers always agree with the final slide order. Page titles must match the slide titles.
+T_APP_DEMO = "任意の実演：業務アプリで条件を変える"
+T_APP_QA = "業務アプリの想定質問と答え方"
+
 CHAPTERS = [
     {"n": 1, "name": "全体像と準備",
      "agenda": "10分の進行、企業、環境、前提、確認事項",
@@ -150,12 +154,12 @@ CHAPTERS = [
          ("通貨と現金の読み違い", "4 通貨とキャッシュフロー"),
      ]},
     {"n": 3, "name": "実演",
-     "agenda": "4つの入力、結果と図の読み方、金額の区別",
-     "summary": "4つの入力をDAに順に入れ、\n結果の読み方、食品損失の経路、\n金額の区別を示します。",
+     "agenda": "4つの入力、結果と図、金額の区別、アプリ",
+     "summary": "4つの入力をDAに順に入れ、\n結果の読み方、食品損失の経路、\n金額の区別を示します。\n最後に、任意で業務アプリを見せます。",
      "when": "ライブの10分（④は任意）",
-     "when_long": "ライブの10分（Step04は時間があるときだけ）",
+     "when_long": "ライブの10分（Step04は時間があるときだけ）\n業務アプリは、10分のあとの追加",
      "note": "【進め方】4つの入力を、DAに順に入れます。必須はStep01からStep03で、Step04は時間があるときだけ実行します。各入力のページに全文があり、次のページに参考結果と読み方があります。\n"
-             "【所要】ライブは10分です。ページは、説明者が実演の前に読む順に並んでいます。\n"
+             "【所要】ライブは10分です。ページは、説明者が実演の前に読む順に並んでいます。業務アプリの実演（最後のページ）は、10分に含めず、求められたときに使う追加の5分です。\n"
              "【注意】参考結果のページは、保存データから作った照合用です。ライブの回答とは呼びません。\n"
              "【つなぎ】実演のあとに質問が出たら、第4章へ進みます。",
      "pages": [
@@ -176,12 +180,13 @@ CHAPTERS = [
          ("影響が大きい契約と繰り返し影響を受けた契約", "Step04 影響点と対応案（参考結果）"),
          ("優先度別の対応案（DA実行例）", "Step04 影響点と対応案（DAの実行例）"),
          ("デモで見せた3つの価値", "締め"),
+         (T_APP_DEMO, "業務アプリ（任意の実演）"),
      ]},
     {"n": 4, "name": "想定質問と答え方",
-     "agenda": "短い回答、SQL、全社波及、カジュアルな質問",
-     "summary": "質疑でよく出る質問への短い答え、\nOntologyの価値、全社波及の扱い、\nカジュアルな聞き方への対応です。",
+     "agenda": "短い回答、SQL、全社波及、カジュアル、アプリ",
+     "summary": "質疑でよく出る質問への短い答え、\nOntologyの価値、全社波及の扱い、\nカジュアルな聞き方、業務アプリの質問です。",
      "when": "質疑のとき",
-     "note": "【進め方】質疑でよく出る質問に、短く答えるための章です。SQLとの違いは、Ontologyの価値を問われたときに、1ページを使って説明します。全社波及の2ページは、「全社に及ぶ出来事も扱えるか」と聞かれたときに使います。カジュアルな質問の2ページは、質問の自由度を聞かれたときに使います。\n"
+     "note": "【進め方】質疑でよく出る質問に、短く答えるための章です。SQLとの違いは、Ontologyの価値を問われたときに、1ページを使って説明します。全社波及の2ページは、「全社に及ぶ出来事も扱えるか」と聞かれたときに使います。カジュアルな質問の2ページは、質問の自由度を聞かれたときに使います。業務アプリの質問の1ページは、第3章の最後のページで画面を見せたあとに使います。\n"
              "【所要】必要なページだけを選んで使います。\n"
              "【つなぎ】お客様のデータで進めたい場合は第5章、技術の詳細を聞かれたら第6章へ進みます。",
      "pages": [
@@ -191,6 +196,7 @@ CHAPTERS = [
          ("全社波及で扱える範囲と未対応の範囲", "全社波及（扱える範囲）"),
          ("カジュアルな質問に答えさせる", "カジュアルな質問（結果と設定）"),
          ("カジュアルに聞くときの使い方と限界", "カジュアルな質問（使い方と限界）"),
+         (T_APP_QA, "業務アプリの質問"),
      ]},
     {"n": 5, "name": "お客様データへの当てはめ",
      "agenda": "イベントの集め方、台帳の列、小さく始める",
@@ -387,7 +393,7 @@ def card(slide, x, y, w, h, title, body, accent=TEAL, number=None):
     text(slide, body, x + .25, y + .95, w - .5, h - 1.03, 18)
 
 
-def new_slide(title, lead, section, notes, sources, takeaway=None):
+def new_slide(title, lead, section, notes, sources, takeaway=None, foot=None):
     section = KICKER.get(title, section)
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     slide.background.fill.solid()
@@ -399,7 +405,7 @@ def new_slide(title, lead, section, notes, sources, takeaway=None):
     if takeaway:
         box(slide, .6, 6.54, 12.12, .43, PALE, rounded=True)
         text(slide, takeaway, .78, 6.62, 11.78, .29, 13, NAVY, True)
-    text(slide, "架空の業務データ／公開ECB為替を使用  |  検証済み構成：2026-10-27",
+    text(slide, foot or "架空の業務データ／公開ECB為替を使用  |  検証済み構成：2026-10-27",
          .62, 7.12, 11.3, .22, 9, MUTED)
     text(slide, f"{n:02}", 12.17, 7.06, .55, .3, 13, TEAL, True)
     source_text = "\n".join(sources)
@@ -1529,7 +1535,8 @@ s = new_slide(
 【Q：日本語は公式にサポートされている？】A：「公式には、英語以外は現在サポートされていません（Microsoft Learn、2026-10-21更新）。このデモは日本語で入力し、日本語で答えが返ることを確認しています。」詳細は、第1章の「実演前の確認事項」にあります。
 【Q：全社に波及するケースは扱える？】A：「全社に同時に及ぶ形は扱えます。横断の2件が、8社すべてに当たります。会社から会社へ連鎖する形は、会社同士を結ぶ関係をまだ持っていないので、このデモでは扱えていません。」詳細は、""" + RIPPLE_PAGES + """にあります。
 【Q：もっとカジュアルに聞ける？】A：「短い質問でも答えられるよう、言い回しの読み替えをDAの指示文に書きました。ただし、LLMなので毎回同じ答えにはなりません。」詳細は、""" + CASUAL_PAGES + """にあります。
-【Q：全部ゼロコピー？】A：「いいえ。ゼロコピーは業種拡張8表のショートカットです。分析用の投影とGraphModelは、コピーして作っています。」詳しくは、第6章の「ゼロコピーと実体化の使い分け」を使います。""",
+【Q：全部ゼロコピー？】A：「いいえ。ゼロコピーは業種拡張8表のショートカットです。分析用の投影とGraphModelは、コピーして作っています。」詳しくは、第6章の「ゼロコピーと実体化の使い分け」を使います。
+【Q：業務アプリでは、Ontologyが金額を計算しているの？】A：「いいえ。つながりはOntologyのグラフから取得し、金額はLakehouseの値を、決まった手順で計算しています。」詳細は、p.""" + str(PAGE_OF[T_APP_QA]) + """にあります。""",
     ["docs/architecture.md", "reports/step3_live_audit.json",
      "scripts/step3_food_loss_runtime.py",
      "Microsoft Learn：fabric/data-science/concept-data-agent（2026-10-21更新）"],
@@ -1613,6 +1620,137 @@ assert [len(reach["CROSS_NEG"][k]) for k in ("companies", "contracts")] == [8, 2
 assert reach["CROSS_NEG"]["companies"] == reach["CROSS_POS"]["companies"] == set(sector_of)
 assert (reach["FOD_NEG"]["effects"], reach["CROSS_NEG"]["effects"]) == (84, 336)
 assert sum(graph_paths.values()) == env_counts["effects"]
+
+
+# Optional live demo of the Fabric App (Rayfin) and the questions it draws. Every figure comes from the saved
+# live-check report and is asserted against numbers this deck already derives; nothing is typed in by hand.
+app = json.loads((PROJECT / "reports/whatif_app_live_verification_2026-10-28.json").read_text())
+APP_SC = app["scenarios"]
+APP_BOTH = APP_SC["food_loss_50_and_yen_up_10"]
+assert app["status"] == "verified_live_with_limits" and app["environment"]["identifiers_recorded"] is False
+assert app["probe"]["reconciliation"]["ok"] is True
+APP_BASE = {k_: Decimal(v_) for k_, v_ in app["probe"]["base_annual_ebitda_jpy"].items()}
+assert APP_BASE["full"] == actual_total["EBITDA"].quantize(Decimal("0.01"))
+APP_FOOD_ONLY = Decimal(APP_SC["food_loss_50"]["delta_full_jpy"])
+APP_STEPS = {k_: Decimal(v_) for k_, v_ in APP_BOTH["steps_full_jpy"].items()}
+APP_FOD = app["graph_paths_per_event"]["FOD_NEG"]
+assert (APP_FOD["FinancialEffect"], APP_FOD["Activity"], APP_FOD["Contract"], APP_FOD["FinancialMetric"],
+        APP_FOD["GroupKPI"]) == (84, 84, 6, 28, 15)
+assert APP_FOD["FinancialEffect"] == reach["FOD_NEG"]["effects"] and APP_FOD["Contract"] == len(reach["FOD_NEG"]["contracts"])
+assert "59" in app["ui_observations"]["first_open_after_idle_seconds_observed"]
+assert "63" in app["ui_observations"]["first_open_after_idle_seconds_observed"]
+assert "Sign in required" in app["ui_observations"]["signed_out_access"]
+assert APP_STEPS["events"] + APP_STEPS["fx"] == Decimal(APP_BOTH["delta_full_jpy"])
+
+
+def app_oku(v, sign=True):
+    """Hundred-million yen with one decimal, rounded half up, the way the app screen shows it."""
+    q = (Decimal(v) / OKU).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+    return (f"{q:+.1f}" if sign else f"{q:.1f}").replace("-", "−")
+
+
+def app_mil(v):
+    """Million yen with one decimal and an explicit sign (the unit of the app's breakdown)."""
+    q = (Decimal(v) / Decimal(10) ** 6).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+    return f"{q:+,.1f}".replace("-", "−")
+
+
+A_BASE_FULL, A_BASE_MGMT = app_oku(APP_BASE["full"], False), app_oku(APP_BASE["management"], False)
+A_FOOD = app_oku(APP_FOOD_ONLY)
+A_BOTH_FULL, A_BOTH_MGMT = app_oku(APP_BOTH["delta_full_jpy"]), app_oku(APP_BOTH["delta_management_jpy"])
+A_EV, A_FX, A_TOT = app_mil(APP_STEPS["events"]), app_mil(APP_STEPS["fx"]), app_mil(APP_BOTH["delta_full_jpy"])
+assert (A_BASE_FULL, A_BASE_MGMT, A_FOOD, A_BOTH_FULL, A_BOTH_MGMT) == ("447.6", "335.5", "+0.6", "−22.7", "−13.7")
+assert (A_EV, A_FX, A_TOT) == ("+57.2", "−2,331.8", "−2,274.6")
+APP_FOOT = "架空の業務データ／公開ECB為替を使用  |  アプリの確認：2026-10-28（Fabric AppsとOntologyはPreview、クエリ用APIはbeta）"
+APP_SOURCES = ["reports/whatif_app_live_verification_2026-10-28.json",
+               "Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/apps/functions（2026-09-29更新）",
+               "Microsoft Learn：fabric/graph/gql-query-api（2026-09-29更新）"]
+
+
+def dot(slide, label, cx, cy, r, fill):
+    shp = slide.shapes.add_shape(MSO_SHAPE.OVAL, Inches(cx - r), Inches(cy - r), Inches(2 * r), Inches(2 * r))
+    shp.fill.solid()
+    shp.fill.fore_color.rgb = RGBColor.from_string(fill)
+    shp.line.fill.background()
+    shp.shadow.inherit = False
+    text(slide, label, cx - r, cy - r + .035, 2 * r, 2 * r, 13, WHITE, True, align=PP_ALIGN.CENTER)
+
+
+# Chapter 3, the last page: an optional live demo after the 10 minutes
+s = new_slide(
+    T_APP_DEMO,
+    "10分の実演のあとに、画面を持つアプリでの使い方を求められる場合があります。\n"
+    "5つの操作で、つながりはOntology、金額はLakehouseと計算、という分担を、画面で示せます。",
+    "",
+    f"""【目安】5分（任意）。10分の実演のあとで、お客様が「画面を持つアプリで使えるのか」に関心を示したときだけ使います。時間がなければ、お客様向け資料の第4章「業務アプリで使う」の実画面のページで代えます。
+【前準備】アプリは、見せる直前に開き、経路の表示まで待ちます。放置したあとの最初の呼び出しは、グラフの起動に約1分かかります（2026年10月27日と28日の実測、59秒から63秒）。2回目以降は、グラフへの問い合わせが約1.1〜1.6秒でした（一度だけ6.1秒）。アプリがFunctionsに保持するデータは、約10分で入れ替わります（アプリの実装の値）。グラフ側が、どのくらい放置すると再び遅くなるかは、未確認です。10分の実演の前に開いておくと、見せるときに、再び待つ場合があります。サインインが必要で、未サインインでは、アプリの内容にもFunctionsにも届かないことを確認済みです。利用者ごとの見え方は、未検証です。
+【手順】①画面を開き、実績を読みます（全額連結{A_BASE_FULL}億円、持分管理{A_BASE_MGMT}億円、差は0）。画面の「実績」は、変えない状態の値で、第2章で見た実績と同じです。基準値（予算に相当する値）とは別です。②「食品損失を 50% 軽減」を押します（全額連結の差は{A_FOOD}億円）。③続けて「円高 10%」を押します（全額連結{A_BOTH_FULL}億円、持分管理{A_BOTH_MGMT}億円）。④「差の内訳」を指します（イベント{A_EV}、為替{A_FX}、合計の差{A_TOT}。いずれも百万円）。⑤「Ontologyの経路」で、イベントに食品損失（FOD_NEG）を選びます（影響額{APP_FOD['FinancialEffect']}件、取引活動{APP_FOD['Activity']}件、契約{APP_FOD['Contract']}件、日次指標{APP_FOD['FinancialMetric']}件、全社KPI{APP_FOD['GroupKPI']}件。「影響額の件数が一致しています」と表示されます）。⑥終わったら「実績に戻す」を押します。
+【話す】「条件を画面で動かすと、差額と内訳がその場で変わります。つながりはOntologyのグラフから取得し、金額はLakehouseの値を、決まった手順で計算しています。」
+【待ち時間が出たら】最初の画面に、「オントロジーのグラフと Lakehouse に接続しています…」と、「使われていなかった後の初回は、グラフの起動に最大 1 分ほどかかります。」（経過秒数つき）が出ます。イベントを選び直したときは、経路の欄に「グラフに問い合わせています…（初回は最大 1 分ほどかかります）」と出ます。慌てずに、「グラフの起動を待っています」と伝え、その間に、お客様向け資料の第4章の最初のページ（役割分担）を使って、つながりと金額の担当の違いを話します。
+【応答しないとき】再試行を1回だけ押します。直らなければ、お客様向け資料の第4章の実画面と経路のページ（保存した画像）に切り替え、「保存した画像で、いまのライブの結果ではありません」と告げます。権限の変更や再デプロイを、その場で試みません。
+【避ける】「Ontologyが金額を計算した」「本番で使える」「利用者ごとに見える範囲を変えられる」とは言いません。円高10%は、USD建ての子会社の円換算レートだけを10%下げる仮定で、為替ヘッジ、価格への転嫁、取引量の変化は反映していません。金額は、設計した配賦と仮定の為替による試算で、実際の損益の予測ではありません。
+【現状】確認した日は2026年10月28日です。Fabric AppsとOntologyはPreview、グラフのクエリ用APIはbetaです。アプリのURLは、この資料に載せていません。事前に、説明者のブックマークに保存します。
+【つなぎ】「アプリについての質問は、第4章の最後のページ（p.{PAGE_OF[T_APP_QA]}）に、答え方をそろえてあります。」""",
+    APP_SOURCES,
+    f"質問が出たら、p.{PAGE_OF[T_APP_QA]}の答え方で答える。未確認のことは「未検証」と言う", foot=APP_FOOT)
+box(s, .62, 2.62, 7.62, 3.78, WHITE, rounded=True)
+text(s, "手順（約5分）", .87, 2.74, 5.0, .3, 16, TEAL, True)
+for i, (act, shows) in enumerate([
+        ("画面を開き、実績を読む", f"全額連結 {A_BASE_FULL}億円、持分管理 {A_BASE_MGMT}億円。差は0"),
+        ("「食品損失を 50% 軽減」を押す", f"全額連結の差は {A_FOOD}億円"),
+        ("続けて「円高 10%」を押す", f"全額連結 {A_BOTH_FULL}億円、持分管理 {A_BOTH_MGMT}億円"),
+        ("「差の内訳」を指す", f"イベント {A_EV}、為替 {A_FX}、合計の差 {A_TOT}（百万円）"),
+        ("経路で、イベントに食品損失を選ぶ",
+         f"影響額{APP_FOD['FinancialEffect']}件、契約{APP_FOD['Contract']}件。「影響額の件数が一致」と表示")]):
+    y = 3.2 + i * .62
+    dot(s, str(i + 1), 1.1, y + .26, .2, TEAL)
+    text(s, act, 1.5, y, 6.5, .27, 14, NAVY, True)
+    text(s, shows, 1.5, y + .28, 6.5, .27, 12, INK)
+box(s, 8.42, 2.62, 4.28, 3.78, WHITE, rounded=True)
+text(s, "準備と、困ったとき", 8.67, 2.74, 3.8, .3, 16, TEAL, True)
+stack_items(s, 8.67, 3.2, 3.8, [
+    ("開くタイミング", "見せる直前に開き、経路の表示まで待つ。空きが長いと、再び待つ場合がある"),
+    ("待ち時間が出たら", "「グラフの起動を待っています」と伝え、お客様向け資料の役割分担のページで補う"),
+    ("応答しないとき", "再試行は1回だけ。直らなければ、保存した実画面に切り替え、保存した画像と告げる"),
+    ("見られる人", "サインインが必要。利用者ごとの見え方は未検証"),
+], TEAL, size=11.5, gap=.12)
+
+# Chapter 4, the last page: the questions the app draws
+s = new_slide(
+    T_APP_QA,
+    "アプリの画面を見せたあとは、「Ontologyが計算したのか」という質問が出やすくなります。\n"
+    "確認した範囲を超えて答えないよう、6つの答えをそろえておきます。",
+    "",
+    f"""【目安】質疑のとき。必要な質問だけを、1つ30秒ほどで答えます。業務アプリの実演（第3章の最後のページ、p.{PAGE_OF[T_APP_DEMO]}）のあとに使います。
+【Q：Ontologyが金額を計算したの？】A：「いいえ。つながり（経路）は、Ontologyのグラフから取得しています。金額は、Lakehouseの値を、決まった手順で計算しています。」理由：Data Agentの円高の試算は、実行ごとの答えが安定しなかったので、条件を動かす用途では、金額を言語モデルに任せていません。
+【Q：FabricのアプリからOntologyに、標準でつなげる？】A：「現在のコネクタの対象は、Lakehouse、Warehouse、SQLデータベース、セマンティックモデルで、Ontologyは含まれません（Microsoft Learn、2026-09-29更新）。このデモでは、FunctionsからGraphのクエリ用API（GQL Query API）を直接呼んでいます。」このAPIはbetaです。
+【Q：利用者ごとに、見える範囲を変えられる？】A：「Functionsが外部を呼ぶときのIDは、現在、アプリの所有者です（Learn）。画面を見る利用者の権限は、反映されません。利用者ごとに変える設計は、このデモでは検証していません。PoCの最初に決めます。」お客様向け資料の第3章の権限のページは、Ontologyのアイテムとデータ側の権限の話で、別です。
+【Q：最初に開くとき、遅いのはなぜ？】A：「放置したあとの最初の呼び出しは、グラフの起動に約1分かかりました（実測59秒から63秒）。2回目以降は、グラフへの問い合わせが約1.1〜1.6秒でした。」放置の時間の目安は、未確認です。
+【Q：本番で使える？】A：「Fabric AppsとOntologyはPreview、グラフのクエリ用APIはbetaです。Learnは、クエリ用APIの本番利用を推奨していません。性能、容量の消費量、コストは未確認で、PoCで確認します。」
+【Q：東日本のリージョンで使える？】A：「Fabric Appsはリージョンが限定的です（Learn）。このデモはWest US 3で確認しました。東日本など、他のリージョンは未確認です。」
+【避ける】「Ontologyが金額を計算した」「本番で使える」「利用者の権限が自動で効く」とは言いません。性能やコストの数値を、推測で答えません。答えが未確認なら、「未検証」と明示します。""",
+    APP_SOURCES,
+    "未確認の質問は、お客様向け資料の確認範囲のページ（第4章末）で、どの列かを示す", foot=APP_FOOT)
+app_qa = [
+    ("Ontologyが金額を計算したの？",
+     "いいえ。つながり（経路）はOntologyのグラフから取得し、金額はLakehouseの値を、決まった手順で計算しています。"),
+    ("FabricのアプリからOntologyに、標準でつなげる？",
+     "標準のコネクタの対象はLakehouseなどで、Ontologyは含まれません（Learn）。このデモはGraphのクエリ用API（beta）を直接呼んでいます。"),
+    ("利用者ごとに、見える範囲を変えられる？",
+     "呼び出しは、アプリの所有者のIDです（Learn）。画面を見る利用者の権限は反映されず、利用者ごとの設計は未検証です。PoCの最初に決めます。"),
+    ("最初に開くとき、遅いのはなぜ？",
+     "放置後の最初の呼び出しは、グラフの起動に約1分（実測59〜63秒）。2回目以降は、グラフへの問い合わせが約1.1〜1.6秒です。"),
+    ("本番で使える？",
+     "Fabric AppsとOntologyはPreview、クエリ用APIはbetaです（Learnは、クエリ用APIの本番利用を推奨していません）。性能とコストは、PoCで確認します。"),
+    ("東日本のリージョンで使える？",
+     "Fabric Appsはリージョンが限定的です（Learn）。このデモはWest US 3で確認しました。東日本など、他のリージョンは未確認です。"),
+]
+for i, (q, a) in enumerate(app_qa):
+    y = 2.58 + i * .65
+    box(s, .62, y, 12.08, .6, WHITE, rounded=True)
+    text(s, q, .85, y + .05, 4.1, .52, 14.5, TEAL, True)
+    text(s, a, 5.1, y + .06, 7.4, .5, 12.5, INK)
+
 
 
 def oku(v, sign=True):

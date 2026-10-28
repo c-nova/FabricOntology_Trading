@@ -15,19 +15,28 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 ## 説明者ガイド
 
-[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（59枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
+[`decks/TradingOntology_Demo_Presenter_Guide_JA.pptx`](decks/TradingOntology_Demo_Presenter_Guide_JA.pptx)（61枚、7章構成。各章の最初に章扉があり、全ページに発表者ノート）
 
 | 章 | 内容 | 使う場面 |
 |---|---|---|
 | 1 全体像と準備 | 10分の進行、想定企業と場面、デモ環境の構成、8社を同じ尺度で比べる前提、実演前の確認事項（環境、製品の状態、日本語の扱い） | 実演の前 |
 | 2 営業向け基礎 | EBITDA、baselineとactual、51%所有、通貨と現金を数値例で説明 | 経営指標になじみのない相手に説明する前 |
-| 3 実演 | 4つの入力（Q1〜Q4）の全文と結果、Notebookの図、4つの金額の区別、締め | ライブの10分（Step04は時間があるとき） |
-| 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、全社波及の扱い（同時に全社へ及ぶ形と、連鎖する形の区別）、カジュアルな質問への対応 | 質疑のとき |
+| 3 実演 | 4つの入力（Q1〜Q4）の全文と結果、Notebookの図、4つの金額の区別、締め、任意の業務アプリ（Fabric Apps）の実演 | ライブの10分（Step04と業務アプリは時間があるとき） |
+| 4 想定質問と答え方 | 短い回答集、SQLとOntologyの違い、全社波及の扱い（同時に全社へ及ぶ形と、連鎖する形の区別）、カジュアルな質問への対応、業務アプリの想定質問 | 質疑のとき |
 | 5 お客様データへの当てはめ | イベントの集め方、台帳の列の例、小さく始める進め方 | お客様と次の一歩を話すとき |
 | 6 構成の解説 | Lakehouse、ゼロコピーと実体化、Ontologyの全体マップ（既存データと要整備データ）、実体と表の対応、関係、設計の理由、GraphとDeltaの役割分担 | 技術の質問が出たとき |
 | 7 Ontologyの新機能 | 名前空間、ビジネスルール、共有プロパティ、継承、導入の順番（いずれもPreviewで、このデモでは未実装） | 今後の拡張を聞かれたとき |
 
 質問は [`prompts/presenter_prompts_ja.txt`](prompts/presenter_prompts_ja.txt) にもあります。質問の流れは、Q1（月次のbaselineとactual）、Q2（10イベントの増減）、Q3（食品損失の根拠）、Q4（影響点の特定と対応案）です。章立ては `presentation/build_presenter_deck.py` の `CHAPTERS` で定義しており、章扉とページ番号はそこから生成します。
+
+## What-ifアプリ（Fabric Apps）
+
+為替とイベントの影響を変えたときの、全社EBITDAの差額と内訳を出す画面です。Fabric Apps（Rayfin、Preview）で動きます。
+
+- 金額：LakehouseからSQLで読んだ行を、`whatif-engine` と同じ計算（Decimal、行ごとに小数2桁へ丸め）で出します。Ontologyのグラフは、計算の入力にしていません
+- Ontology：グラフ（GQL Query API、beta）に問い合わせて、イベント一覧と、イベントから全社KPIまでの経路を取得します。経路の影響額の件数は、Lakehouseの件数と照合して表示します
+- 確認：2026-10-28に、デプロイ済みのアプリで確認しました。確認できた範囲と未確認の範囲は、`reports/whatif_app_live_verification_2026-10-28.json` にあります
+- 接続設定（`.env`、`local.settings.json`、`.deployments.json`）はGit管理外です。`whatif-app/rayfin/rayfin.yml` の公開先ホストは、`__APP_HOST__` に置き換えてあります。デプロイの前に、`restore` で実際の値に戻してください（戻さないと、公開先でのサインインが通らない場合があります）。`rayfin/.project.json`（スキャフォールドの匿名の識別子）も、Git管理外です
 
 ## ディレクトリ
 
@@ -43,6 +52,8 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 | `reports/` | 検証結果（クラウド側、Graph、Data Agent） |
 | `scripts/` | データ生成、デプロイ補助、検証、環境IDの置き換え（`environment_ids.py`） |
 | `presentation/` | 説明者ガイドの生成と検証 |
+| `whatif-app/` | What-ifシミュレータ（Fabric Apps、Rayfin）。画面は `packages/frontend`、Functionsは `packages/functions` |
+| `whatif-engine/` | シナリオを金額にする計算（Decimal）とテスト。アプリのFunctionsには、`whatif-app/scripts/sync-engine.mjs` で取り込みます |
 | `decks/` | 生成した説明者ガイド |
 
 ## 再生成
@@ -61,11 +72,11 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 
 ## 環境ID（識別子）の扱い
 
-公開リポジトリのため、デモ環境のFabricの識別子は、`__WORKSPACE_ID__` のようなプレースホルダーに置き換えています。対象は、ワークスペース、キャパシティ、各アイテム（Lakehouse、Notebook、Ontology、Graph、Data Agent）、ジョブ、SQLエンドポイントのIDとホスト名、Data Agentの会話などのIDです。認証情報は含みません。
+公開リポジトリのため、デモ環境のFabricの識別子は、`__WORKSPACE_ID__` のようなプレースホルダーに置き換えています。対象は、ワークスペース、キャパシティ、各アイテム（Lakehouse、Notebook、Ontology、Graph、Data Agent）、ジョブ、SQLエンドポイントのIDとホスト名、Data Agentの会話などのIDです。What-ifアプリの公開先ホスト名、アイテムID、テナントID、公開キーも含みます。認証情報は含みません。
 
 - 実際の値は、Git管理外の `config/environment_ids.local.json` に置きます（`.gitignore` 済み。項目の一覧と形式は `config/environment_ids.example.json`）
 - Fabricに接続するスクリプトやNotebookを使う前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します
-- コミットの前に、`python3 scripts/environment_ids.py redact` でプレースホルダーに戻し、`python3 scripts/environment_ids.py check` で残りがないことを確認します。`check` は対応表がなくても、ランダムなGUIDとSQLエンドポイントのホスト名を探します
+- コミットの前に、`python3 scripts/environment_ids.py redact` でプレースホルダーに戻し、`python3 scripts/environment_ids.py check` で残りがないことを確認します。`check` は対応表がなくても、ランダムなGUIDと、SQLエンドポイントおよびFabric Appsのホスト名を探します
 - プレースホルダーのままでは、Fabricに接続するスクリプトやNotebookは動きません。`decks/` の説明者ガイドにあるFabricへのリンクも、プレースホルダーのままです。実際のリンクが要るときは、`restore` のあとに `python3 presentation/build_presenter_deck.py` で作り直してください
 
 ## 検証の状況（2026-10-27時点）

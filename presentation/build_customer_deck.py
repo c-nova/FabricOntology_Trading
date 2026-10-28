@@ -50,6 +50,7 @@ node_counts = {r["entity_type"]: r["instance_count"]
 edge_counts = {r["relationship_type"]: r["edge_count"]
                for r in load("reports/graph_edge_counts.json")["result"]["data"]}
 cloud = load("reports/cloud_validation.json")
+app = load("reports/whatif_app_live_verification_2026-10-28.json")
 
 OKU = Decimal(10) ** 8
 MINUS = "\u2212"
@@ -227,6 +228,50 @@ lh_tables = defaultdict(int)
 for _key in cloud["counts"]:
     lh_tables[_key.split(".")[0]] += 1
 assert (cloud["tables"], lh_tables["LH_Group_SAP"]) == (95, 17)
+
+
+# ---- Rayfin app (live check on 2026-10-28) ---------------------------------------------------------------
+# The what-if figures come from the saved live-check report. Each one is checked against numbers this deck
+# already derives from data/ and reports/, so a typo in the report cannot reach a slide.
+APP_SC = app["scenarios"]
+APP_BOTH = APP_SC["food_loss_50_and_yen_up_10"]
+APP_FULL = Decimal(APP_BOTH["delta_full_jpy"])
+APP_MGMT = Decimal(APP_BOTH["delta_management_jpy"])
+APP_STEP_EVENTS = Decimal(APP_BOTH["steps_full_jpy"]["events"])
+APP_STEP_FX = Decimal(APP_BOTH["steps_full_jpy"]["fx"])
+APP_FOOD_ONLY = Decimal(APP_SC["food_loss_50"]["delta_full_jpy"])
+APP_YEN_ONLY = Decimal(APP_SC["yen_up_10"]["delta_full_jpy"])
+APP_BASE_FULL = Decimal(app["probe"]["base_annual_ebitda_jpy"]["full"])
+assert app["status"] == "verified_live_with_limits" and app["environment"]["identifiers_recorded"] is False
+assert app["probe"]["reconciliation"] == {"ok": True, "group_mismatches": 0, "management_mismatches": 0,
+                                          "effect_mismatches": 0}
+assert (app["probe"]["counts"]["effects"], app["probe"]["counts"]["events"]) == (N_EFFECTS, N_EVENTS)
+assert APP_BASE_FULL == ACTUAL.quantize(Decimal("0.01")) == Decimal("44757399732.84")  # to the yen
+# 50% of the food-loss total, rounded per row by the app, equals half the total to the yen
+assert abs(APP_FOOD_ONLY - (-EV["FOD_NEG"] / 2)) < Decimal("0.01")
+assert APP_FOOD_ONLY == APP_STEP_EVENTS
+assert APP_STEP_EVENTS + APP_STEP_FX == APP_FULL
+assert sum(Decimal(v) for v in APP_BOTH["steps_management_jpy"].values()) == APP_MGMT
+assert (fmt(APP_FULL, "0.1"), fmt(APP_MGMT, "0.1")) == (MINUS + "22.7", MINUS + "13.7")
+# the two changes interact: the food-loss relief is also translated at the new rate
+APP_SUM_OF_SINGLES = APP_FOOD_ONLY + APP_YEN_ONLY
+assert APP_SUM_OF_SINGLES != APP_FULL and abs(APP_FULL - APP_SUM_OF_SINGLES) > Decimal(1_000_000)
+APP_PATHS = app["graph_paths_per_event"]
+assert set(APP_PATHS) == set(EVENT_ORDER)
+for _ev, _row in APP_PATHS.items():
+    assert _row["graph_effects_equal_lakehouse_effects"] is True
+    assert _row["FinancialEffect"] == graph_paths[_ev] == events[_ev]["effects"], _ev
+assert sum(r["FinancialEffect"] for r in APP_PATHS.values()) == N_EFFECTS
+assert APP_PATHS["FOD_NEG"]["Contract"] == len(FOD_ROWS) == 6
+assert APP_PATHS["CROSS_NEG"]["Contract"] == CROSS_CONTRACTS == 26
+assert app["not_verified"] and len(app["learn_sources"]) == 5
+APP_IMG = {k: HERE / "assets" / f"whatif_app_{k}.png" for k in ("result", "waterfall", "path")}
+assert all(p_.exists() for p_ in APP_IMG.values()), APP_IMG
+
+
+def mil(v, places="0.1"):
+    """A JPY amount in million yen with a real minus sign (the app's breakdown unit)."""
+    return format((v / Decimal(10) ** 6).quantize(Decimal(places), rounding=ROUND_HALF_UP), f"+,.{len(places.split('.')[1])}f").replace("-", MINUS)
 
 
 # =====================================================================================================
@@ -574,7 +619,8 @@ def set_background(slide, color):
     slide.background.fill.fore_color.rgb = RGBColor.from_string(color)
 
 
-FOOT = "デモのデータは架空です（為替のみECB公表値）  |  Ontology、およびOntologyと連携するData AgentはPreview"
+FOOT = "デモのデータは架空です（為替のみECB公表値）  |  Ontology、Ontologyと連携するData Agent、Fabric AppsはPreview"
+FOOT_APP = "デモのデータは架空です（為替のみECB公表値）  |  Fabric AppsとOntologyはPreview。グラフのクエリ用APIはbeta"
 
 
 def finish_notes(slide, notes, sources):
@@ -588,7 +634,7 @@ def base_slide(bg):
     return slide
 
 
-def new_slide(kicker, title, lead, notes, sources, takeaway=None, trace=None):
+def new_slide(kicker, title, lead, notes, sources, takeaway=None, trace=None, foot=None):
     slide = base_slide(BG)
     n = len(prs.slides)
     title_text(slide, title, .6, .72, 12.13, .62, 30, NAVY)
@@ -604,7 +650,7 @@ def new_slide(kicker, title, lead, notes, sources, takeaway=None, trace=None):
         text(slide, takeaway, .82, 6.38, 11.7, .54, 13, NAVY, True, anchor=MIDDLE, spacing=1.25)
         if est_lines(takeaway, 11.7, 13) > 2:
             WARN.append((n, "BAR>2 " + takeaway[:20], est_lines(takeaway, 11.7, 13), 2))
-    text(slide, FOOT, .62, 7.1, 10.8, .22, 10.5, MUTED, spacing=1.0)
+    text(slide, foot or FOOT, .62, 7.1, 10.8, .22, 10.5, MUTED, spacing=1.0)
     text(slide, f"{n:02}", 12.13, 7.04, .6, .3, 13, TEAL, True, RIGHT, spacing=1.0)
     finish_notes(slide, notes, sources)
     slide_metadata.append({"slide": n, "title": title, "sources": sources, "trace": trace or []})
@@ -635,6 +681,10 @@ T_DIFF = "定義とつながりを1か所で管理し、共有できる"
 T_DATA = "各社の原本は残し、分析用の表とGraphを作成する"
 T_GOV = "Fabricの権限の仕組みの上で動き、版も管理できる"
 T_SCALE = "拡張の機能：名前空間、継承、共有プロパティ、ルール"
+T_APP_ROLES = "つながりはOntology、金額はLakehouse、計算はアプリ"
+T_APP_SCREEN = "為替とイベントを変えた差額と内訳を確認"
+T_APP_PATH = "イベントからKPIまでの経路をアプリで取得"
+T_APP_SCOPE = "確認できたこと、記載に基づくこと、未確認のこと"
 T_SMALL = "質問1つから小さく始めて広げる"
 T_POC = "PoCで確認する項目とご準備いただく情報"
 T_CAVEAT = "現時点の提供状況とご留意いただく点"
@@ -658,7 +708,11 @@ CHAPTERS = [
      "lead": "従来の手段との違い、既存データの活用、\n権限、拡張の仕組みを示します。",
      "agenda": "従来との違い、既存データの活用、権限、拡張",
      "pages": [T_DIFF, T_DATA, T_GOV, T_SCALE]},
-    {"n": 4, "name": "進め方",
+    {"n": 4, "name": "業務アプリで使う",
+     "lead": "Data Agentとは別に、業務アプリ\n（Fabric Apps、Preview）から\nOntologyのグラフを使う例です。",
+     "agenda": "アプリでの役割分担、実画面、経路の取得、確認範囲",
+     "pages": [T_APP_ROLES, T_APP_SCREEN, T_APP_PATH, T_APP_SCOPE]},
+    {"n": 5, "name": "進め方",
      "lead": "小さく始める進め方、PoCの確認項目、\n現時点の留意点、次のステップです。",
      "agenda": "小さく始める、PoCの確認項目、留意点、次のステップ",
      "pages": [T_SMALL, T_POC, T_CAVEAT, T_NEXT]},
@@ -728,7 +782,7 @@ text(s, "デモのデータは架空です。為替のみ、ECBが公表する�
      BODY_ON_NAVY, spacing=1.0)
 finish_notes(s, """【話す】今日は、総合商社を模した架空のデータを使い、経営会議で問われる「EBITDAが動いた理由と根拠」に、Microsoft Fabric IQのOntologyでどう答えるかをお見せします。前半で考え方、中盤でデモ、後半で価値と進め方をお話しします。
 【前提】データはすべて架空です。為替だけは、ECBが公表している日次の参考レートを使っています。デモの金額や会社の動きは、実在の企業の実績を表すものではありません。
-【補足】OntologyとData AgentはPreviewの機能です。本資料の記載は、2026年10月時点のMicrosoft Learnと、デモ環境で確認した内容に基づきます。""",
+【補足】Ontology、Data Agent、第4章のFabric AppsはPreviewの機能です。本資料の記載は、2026年10月時点のMicrosoft Learnと、デモ環境で確認した内容に基づきます。""",
              ["Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）", "デモ環境の検証記録（2026-10-27）"])
 slide_metadata.append({"slide": 1, "title": T_TITLE, "sources": ["デモ環境の検証記録（2026-10-27）"]})
 
@@ -740,17 +794,19 @@ s = new_slide(
     "はじめに  |  構成",
     T_AGENDA,
     "デモを中心に、Ontologyが経営の問いにどう答えるかを確認します。\n最後に、貴社のデータで試す進め方をご提案します。",
-    """【話す】4つの章で進みます。第1章で経営会議の問いと課題を整理し、第2章で4つの質問を実際に入力して答えと根拠を確認します。第3章で従来の手段との違いや仕組みを整理し、第4章で貴社で試す進め方をご提案します。付録に、環境、一覧、質問と回答、FAQ、用語集があります。
+    """【話す】5つの章で進みます。第1章で経営会議の問いと課題を整理し、第2章で4つの質問を実際に入力して答えと根拠を確認します。第3章で従来の手段との違いや仕組みを整理し、第4章で、Data Agentとは別の使い方として、画面を持つ業務アプリからOntologyのグラフを使う例を示します。第5章で貴社で試す進め方をご提案します。付録に、環境、一覧、質問と回答、FAQ、用語集があります。
 【指す】章ごとの行を上から順に。ページ番号はスライド番号です。""",
     ["本資料の構成"])
+ROW_H, ROW_P = .64, .74
+assert 2.35 + len(CHAPTERS) * ROW_P + ROW_H <= 6.9
 for i, ch in enumerate(CHAPTERS + [APPENDIX]):
-    y = 2.35 + i * .8
-    box(s, .6, y, 12.13, .7, WHITE if ch["n"] else GRAY)
+    y = 2.35 + i * ROW_P
+    box(s, .6, y, 12.13, ROW_H, WHITE if ch["n"] else GRAY)
     if ch["n"]:
-        numdot(s, str(ch["n"]), 1.05, y + .35, .22, TEAL)
-    text(s, ch["name"], 1.5, y, 2.7, .7, 19, NAVY, True, anchor=MIDDLE, spacing=1.0)
-    text(s, ch["agenda"], 4.3, y, 6.6, .7, 14, INK, anchor=MIDDLE, spacing=1.2)
-    text(s, page_range(ch), 11.0, y, 1.5, .7, 15, TEAL, True, RIGHT, MIDDLE, spacing=1.0)
+        numdot(s, str(ch["n"]), 1.05, y + ROW_H / 2, .22, TEAL)
+    text(s, ch["name"], 1.5, y, 2.7, ROW_H, 19, NAVY, True, anchor=MIDDLE, spacing=1.0)
+    text(s, ch["agenda"], 4.3, y, 6.6, ROW_H, 14, INK, anchor=MIDDLE, spacing=1.2)
+    text(s, page_range(ch), 11.0, y, 1.5, ROW_H, 15, TEAL, True, RIGHT, MIDDLE, spacing=1.0)
 
 
 # =====================================================================================================
@@ -780,7 +836,7 @@ def divider(ch):
     deco_network(s, left=True)
     motif(s, .8, .78, 1.15, MINT)
     text(s, "章立て" if ch["n"] else "付録", 1.5, .82, 4.0, .3, 14, MINT, True, spacing=1.0)
-    text(s, ch["lead"], .82, 4.5, 5.9, 1.0, 18, BODY_ON_NAVY, spacing=1.5)
+    text(s, ch["lead"], .82, 4.5, 5.9, max(1.0, .4 * (ch["lead"].count("\n") + 1)), 18, BODY_ON_NAVY, spacing=1.5)
     cy = .75
     ch_pages = ch["pages"]
     LS, LW = 14, 4.35
@@ -798,6 +854,24 @@ def divider(ch):
     text(s, f"{n:02}", 12.13, 7.04, .6, .3, 13, MINT, True, RIGHT, spacing=1.0)
     finish_notes(s, f"【話す】{ch['lead'].replace(chr(10), '')}", [])
     slide_metadata.append({"slide": n, "title": ch["divider"], "sources": ["本資料の構成"]})
+
+
+def picture(slide, path, x, y, w, alt, frame=True, crop_top=0.0, crop_bottom=0.0):
+    """A screenshot at width w (height follows the aspect ratio after the crop) with alt text and a thin frame.
+    Returns its height."""
+    from PIL import Image
+    iw, ih = Image.open(path).size
+    h = w * ih * (1 - crop_top - crop_bottom) / iw
+    pic = slide.shapes.add_picture(str(path), Inches(x), Inches(y), width=Inches(w), height=Inches(h))
+    if crop_top:
+        pic.crop_top = crop_top
+    if crop_bottom:
+        pic.crop_bottom = crop_bottom
+    pic._element.xpath("./p:nvPicPr/p:cNvPr")[0].set("descr", alt)
+    if frame:
+        pic.line.color.rgb = RGBColor.from_string(LINE)
+        pic.line.width = Pt(.75)
+    return h
 
 
 def fix_app_xml(path, n_slides):
@@ -955,7 +1029,7 @@ s = new_slide(
     ["デモのOntology定義（17種類の概念、39種類の関係）", "Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）"],
     trace=["ontology_tmdl/entities", "ontology_tmdl/entityRelationships.tmdl"],
     takeaway=f"このデモの全体は、17種類の概念と39種類の関係です（p.{PAGE_OF[T_A_MAP]}）。"
-    "質問ごとに必要な範囲は、第4章で示します。")
+    "質問ごとに必要な範囲は、第5章で示します。")
 parts = [
     ("概念（エンティティ）", TEAL, "業務に登場する「もの」や「こと」", "例：会社、契約、イベント、影響額（17種類）"),
     ("属性（プロパティ）", PURPLE, "概念が持つ項目", "例：契約ID、日付、金額、通貨、所有比率"),
@@ -1677,9 +1751,247 @@ for i, (name, color, what, case, caution) in enumerate(feat):
 
 
 # =====================================================================================================
-# Chapter 4
+# Chapter 4: a business app (Rayfin) that reads the ontology graph
 # =====================================================================================================
 divider(CHAPTERS[3])
+
+APP_LEARN = ["Microsoft Learn：fabric/apps/overview（2026-09-29更新）、fabric/apps/functions（2026-09-29更新）",
+             "Microsoft Learn：fabric/graph/gql-query-api（2026-09-29更新）、fabric/iq/ontology/how-to-use-ontology-graph（2026-09-29更新）"]
+APP_TRACE = ["reports/whatif_app_live_verification_2026-10-28.json"]
+APP_ROWS = app["probe"]["counts"]["ebitda_rows"]
+assert APP_ROWS == 2920
+assert "Sign in required" in app["ui_observations"]["signed_out_access"]
+APP_DONE_BY = "デモ環境での確認（Fabric Apps（Rayfin）のアプリ、2026年10月28日）"
+
+
+def app_node(slide, x, y, w, h, jp, en, count, color):
+    """A node of the path diagram. Same shape as the ontology diagram on p.7, plus the count the graph returned."""
+    box(slide, x, y, w, h, WHITE, color, lw=1.75, radius=.07)
+    text(slide, [[(jp, {"bold": True, "size": 13.5, "color": INK})], [(en, {"size": 10, "color": MUTED})],
+                 [(f"{count:,}件", {"bold": True, "size": 17, "color": color})]],
+         x, y, w, h, 12, align=CENTER, anchor=MIDDLE, spacing=1.15)
+
+
+# 23 -----------------------------------------------------------------------------------------------
+expect(T_APP_ROLES)
+s = new_slide(
+    k(T_APP_ROLES, "アプリでの役割分担"), T_APP_ROLES,
+    f"Data Agentの円高の試算は、実行ごとの答えが安定しませんでした（p.{PAGE_OF[T_CAVEAT]}）。\n"
+    "条件を動かすアプリでは、金額を言語モデルに任せず、決まった手順で計算します。",
+    f"""【話す】ここまでは、Data Agentに日本語で質問して、答えと根拠を確認しました。この章は、別の使い方として、画面を持つ業務アプリからOntologyを使う例です。条件を画面で動かしながら、EBITDAがどう変わるかを見ます。
+Data Agentの円高の試算は、実行ごとの答えが安定しませんでした（p.{PAGE_OF[T_CAVEAT]}）。画面で条件を動かす用途では、同じ条件には同じ答えを返してほしいので、金額の計算は言語モデルに任せず、決まった手順で行います。そのうえで、Ontologyには、つながりを担当してもらいます。
+【指す】上の帯が、画面と、アプリの裏側（Functions）です。Functionsは、下の3つを使って答えを組み立てます。左がOntologyのグラフで、イベントが、どの影響額、契約、全社KPIにつながるかを返します。中央がLakehouseで、日次のEBITDA、影響額の金額、為替、持分を返します。右が計算で、条件を金額に当てはめ、差額と内訳を返します。計算は、Functionsの中で動きます。各カードの下段は、そのカードが返さないもの、または、守ることです。
+【補足】Microsoft Learnは、OntologyとGraphの関係を「ontologyが意味を定義し、graphが関係を実行する」と説明しています。Graphは任意の層です。FunctionsがGraphとLakehouseを読むときは、アプリのID（現在は、アプリの所有者のID）を使います（p.{PAGE_OF[T_APP_SCOPE]}）。Fabric Appsのコネクタの対象は、Lakehouse、Warehouse、SQLデータベース、セマンティックモデルで、Ontologyは含まれません。このデモでは、FunctionsからGraphのクエリ用API（GQL Query API）を直接呼んでいます。
+【注意】Ontologyが金額を計算したわけではありません。Ontologyが担うのは、つながりの定義と、Graphでの経路の取得です。GQL Query APIはbeta、Fabric AppsとOntologyはPreviewです。""",
+    APP_LEARN + [APP_DONE_BY],
+    takeaway="OntologyにつなぐFabric Appsの標準コネクタはなく、FunctionsからGraphのクエリ用API（beta）を直接呼んでいます。",
+    trace=APP_TRACE + ["reports/da_casual_after_2026-10-26.json:known_limits"],
+    foot=FOOT_APP)
+CW, GAPX = 3.85, (12.13 - 3 * 3.85) / 2
+CXS = [.6 + i * (CW + GAPX) + CW / 2 for i in range(3)]
+# 上の帯: 画面 -> Functions
+box(s, .6, 2.35, 12.13, .62, WHITE, LINE)
+chip(s, "画面", .8, 2.51, .8, TEAL, PALE, 12, .3)
+text(s, "条件を動かす（為替、イベントの影響）", 1.75, 2.35, 3.6, .62, 13, INK, anchor=MIDDLE, spacing=1.2)
+arrow(s, 5.35, 2.66, CXS[1] - .72, 2.66, TEAL, width=2.0)
+chip(s, "Functions", CXS[1] - .6, 2.51, 1.2, NAVY, PALE, 12, .3)
+text(s, "アプリの裏側の処理。下の3つを使い、答えを組み立てる", CXS[1] + .78, 2.35, 5.15, .62, 13, INK, anchor=MIDDLE,
+     spacing=1.2)
+# Functions から3つへ分かれる
+BUS_Y = 3.15
+arrow(s, CXS[1], 2.81, CXS[1], BUS_Y, STEEL, width=1.75, head=False)
+arrow(s, CXS[0], BUS_Y, CXS[2], BUS_Y, STEEL, width=1.75, head=False)
+for cx in CXS:
+    arrow(s, cx, BUS_Y, cx, 3.34, STEEL, width=1.75)
+roles = [
+    ("Ontologyのグラフ", TEAL, "つながり",
+     "イベントが、どの影響額、契約、全社KPIにつながるか（経路と件数）", "返さないもの", "金額の計算", CORAL_PALE, CORAL),
+    ("Lakehouse", NAVY, "金額",
+     "日次のEBITDA、影響額の金額、為替、持分", "返さないもの", "条件の反映", CORAL_PALE, CORAL),
+    ("計算（Functions内）", CORAL, "条件の反映",
+     "為替とイベントの条件を金額に当てはめ、差額と内訳を返す", "守ること", "同じ条件には同じ答え", PALE, NAVY),
+]
+CY, CH = 3.38, 2.84
+for i, (name, color, job, gives, flag, flag_val, flag_fill, flag_color) in enumerate(roles):
+    x = .6 + i * (CW + GAPX)
+    box(s, x, CY, CW, CH, WHITE, LINE)
+    box(s, x, CY, CW, .1, color, None, radius=.04)
+    text(s, name, x + .25, CY + .28, CW - .5, .36, 18, color, True, spacing=1.0)
+    text(s, [[("担当", {"size": 10.5, "color": MUTED, "bold": True})],
+             [(job, {"size": 16, "color": NAVY, "bold": True})]], x + .25, CY + .78, CW - .5, .62, 14, spacing=1.2)
+    text(s, [[("返すもの", {"size": 10.5, "color": MUTED, "bold": True})],
+             [(gives, {"size": 12.5, "color": INK})]], x + .25, CY + 1.5, CW - .5, .8, 12.5, spacing=1.3)
+    box(s, x + .2, CY + 2.38, CW - .4, .34, flag_fill, None, radius=.07)
+    text(s, [[(flag + "　", {"size": 10.5, "color": MUTED, "bold": True}),
+              (flag_val, {"size": 12, "color": flag_color, "bold": True})]],
+         x + .32, CY + 2.38, CW - .64, .34, 12, anchor=MIDDLE, spacing=1.0)
+
+# 24 -----------------------------------------------------------------------------------------------
+expect(T_APP_SCREEN)
+assert (mil(APP_STEP_EVENTS), mil(APP_STEP_FX), mil(APP_FULL), mil(APP_SUM_OF_SINGLES)) == (
+    "+57.2", MINUS + "2,331.8", MINUS + "2,274.6", MINUS + "2,271.6")
+assert mil(APP_FULL - APP_SUM_OF_SINGLES) == mil(APP_STEP_FX - APP_YEN_ONLY) == MINUS + "3.0"
+s = new_slide(
+    k(T_APP_SCREEN, "実画面"), T_APP_SCREEN,
+    "経営の場では、「この条件なら、全社のEBITDAはどう変わるか」という仮定の問いが出ます。\n"
+    "条件を変えるたびに集計をやり直す運用では、その場で答えにくくなります。",
+    f"""【話す】左が、実際に動かしている画面です。食品損失を50%軽減し、同時に円高を10%進めた条件で、全社のEBITDAの、実績との差額を出しています。全額連結で{fmt(APP_FULL, "0.1")}億円、持分管理で{fmt(APP_MGMT, "0.1")}億円です。条件はスライダーで連続的に変えられ、変えるたびに差額と内訳が再計算されます。
+【指す】左上の2枚の枠が結果で、全額連結と持分管理の差額を並べています。左下の棒グラフが内訳で、全額連結の差額を、イベントの影響を変えた分と、為替を変えた分に分けています。右の枠は、画面の左側にある条件（この図には写っていません）と、内訳の読み取りです。
+【数字】全額連結の差は{yen(APP_FULL)}、持分管理の差は{yen(APP_MGMT)}です。全額連結の内訳は、イベントが{yen(APP_STEP_EVENTS)}、為替が{yen(APP_STEP_FX)}で、合計は差額と一致します。画面の「実績」（変えない状態）は{yen(APP_BASE_FULL)}で、第2章の実績と同じ値です。p.{PAGE_OF[T_Q1]}の基準値（予算に相当する値）とは別です。
+【円高10%の意味】USD建ての子会社の、円換算のレートだけを10%下げる仮定です。為替ヘッジ、価格への転嫁、取引量の変化は反映していません。実際のレートの予想ではありません。
+【内訳の読み方】内訳は、イベント、為替の順に分けています。軽減した分（USD建ての食品会社の損失の減少）にも円高が掛かるので、為替の段階（{mil(APP_STEP_FX)}）は、円高だけの差（{mil(APP_YEN_ONLY)}）と{mil(APP_STEP_FX - APP_YEN_ONLY)}違います（いずれも百万円）。同じ理由で、食品損失の軽減だけの差（{mil(APP_FOOD_ONLY)}）と、円高だけの差の和は{mil(APP_SUM_OF_SINGLES)}で、合計（{mil(APP_FULL)}）と一致しません。順序を変えると各段階の金額は変わりますが、合計は変わりません。
+【端数】日次の行ごとに、小数2桁へ丸めて合計しているため、手計算の比例計算とは、1円未満ずれることがあります。円高10%と円安10%の差額が、完全には対称にならないのも、この丸めによるものです（差は0.01円から0.15円）。
+【注意】金額は、デモのために設計した配賦と、仮定の為替です。実世界の因果の証明でも、実際の損益の予測でもありません。""",
+    [APP_DONE_BY, "デモのデータ（架空）"],
+    takeaway="円高10%は、USD建ての子会社の円換算レートだけを10%下げる仮定です。為替ヘッジ、価格への転嫁、取引量の変化は反映していません。",
+    trace=APP_TRACE, foot=FOOT_APP)
+IMG_X, IMG_W = .6, 6.9
+h1 = picture(s, APP_IMG["result"], IMG_X, 2.4, IMG_W,
+             "アプリの結果表示。全額連結は22.7億円の減少、持分管理は13.7億円の減少。")
+h2 = picture(s, APP_IMG["waterfall"], IMG_X, 2.4 + h1 + .18, IMG_W,
+             "差の内訳。イベントは+57.2、為替は−2,331.8、合計の差は−2,274.6（百万円）。")
+assert 2.4 + h1 + .18 + h2 <= 6.28, (h1, h2)
+RX, RW = 7.75, 4.98
+box(s, RX, 2.4, RW, 3.8, WHITE, LINE)
+
+
+def card_head(y, label, color):
+    box(s, RX + .25, y + .03, .07, .22, color, None, radius=.035)
+    text(s, label, RX + .45, y, RW - .65, .28, 12.5, color, True, spacing=1.0)
+
+
+card_head(2.55, "条件（画面の左側で操作）", TEAL)
+text(s, [[("食品損失を50%軽減", {"size": 15, "color": NAVY, "bold": True})],
+         [("円高10%", {"size": 15, "color": NAVY, "bold": True})],
+         [("どちらもスライダーで連続的に変えられます", {"size": 10.5, "color": MUTED})]],
+     RX + .45, 2.93, RW - .65, .86, 12, spacing=1.3)
+card_head(3.95, "差の内訳（全額連結、百万円）", CORAL)
+for yy, label, value, color, size in [(4.33, "イベント", mil(APP_STEP_EVENTS), NAVY, 15),
+                                      (4.69, "為替", mil(APP_STEP_FX), CORAL, 15),
+                                      (5.13, "合計の差", mil(APP_FULL), CORAL, 16)]:
+    text(s, label, RX + .45, yy, 1.6, .34, 12.5, MUTED if yy < 5 else INK, yy > 5, anchor=MIDDLE, spacing=1.0)
+    text(s, value, RX + 2.0, yy, RW - 2.3, .34, size, color, True, RIGHT, MIDDLE, spacing=1.0)
+box(s, RX + .45, 5.07, RW - .75, .012, LINE, None, rounded=False)
+text(s, "段階は、イベント、為替の順です。順序を変えると、各段階の金額は変わります。", RX + .45, 5.58, RW - .7, .5, 10.5, MUTED,
+     spacing=1.3)
+
+# 25 -----------------------------------------------------------------------------------------------
+expect(T_APP_PATH)
+_biz = [e for e in EVENT_ORDER if not e.startswith("CROSS")]
+_cross = [e for e in EVENT_ORDER if e.startswith("CROSS")]
+assert len(_biz) == 8 and len(_cross) == 2
+assert {APP_PATHS[e]["FinancialEffect"] for e in _biz} == {84} and {APP_PATHS[e]["FinancialEffect"] for e in _cross} == {336}
+assert {events[e]["effects"] for e in _biz} == {84} and {events[e]["effects"] for e in _cross} == {336}
+assert 8 * 84 + 2 * 336 == N_EFFECTS == 1344
+BIZ_CT = (min(APP_PATHS[e]["Contract"] for e in _biz), max(APP_PATHS[e]["Contract"] for e in _biz))
+CROSS_CT = (min(APP_PATHS[e]["Contract"] for e in _cross), max(APP_PATHS[e]["Contract"] for e in _cross))
+assert (BIZ_CT, CROSS_CT) == ((6, 8), (24, 26))
+FOD_CHAIN = APP_PATHS["FOD_NEG"]
+assert (FOD_CHAIN["FinancialEffect"], FOD_CHAIN["Activity"], FOD_CHAIN["Contract"], FOD_CHAIN["FinancialMetric"],
+        FOD_CHAIN["GroupKPI"]) == (84, 84, 6, 28, 15)
+s = new_slide(
+    k(T_APP_PATH, "経路の取得"), T_APP_PATH,
+    "画面の差額が、どのイベントに由来し、何件の契約や指標につながるかを、その場で示せる必要があります。",
+    f"""【話す】画面で差額を見たあと、イベントを選ぶと、そのイベントがOntologyのグラフ上で何につながっているかが、同じ画面に表示されます。アプリは、Graphに問い合わせて、イベントから影響額、取引活動、契約、日次指標、全社KPIまでの経路と件数を取得しています。第2章で確認した経路と同じ種類です。
+【指す】左の図は、食品損失（FOD_NEG）を選んだときにグラフが返した件数です。イベント1件から、影響額{FOD_CHAIN['FinancialEffect']}件、取引活動{FOD_CHAIN['Activity']}件、契約{FOD_CHAIN['Contract']}件へつながり、影響額から分かれて、日次指標{FOD_CHAIN['FinancialMetric']}件、全社KPI{FOD_CHAIN['GroupKPI']}件につながります。矢印の名前は、p.{PAGE_OF[T_PARTS]}と同じ関係です（画面では、EventHasEffectなどの英語の名前で表示します）。右の画像が、その実画面です。画面は、上から下へ1列に並べて表示するため、1本の鎖のように見えますが、日次指標は契約からではなく、影響額から分かれています（画面の関係名の横に「影響額から」と表示しています）。
+【確認した範囲】全10イベントで、グラフが返した影響額の件数が、Lakehouseの件数と一致しました。業種別の8イベントは各84件、横断の2イベントは各336件で、合計は{N_EFFECTS:,}件です。グラフが返した契約は、業種別で{BIZ_CT[0]}〜{BIZ_CT[1]}件、横断で{CROSS_CT[0]}〜{CROSS_CT[1]}件です。以前にGraphを直接照会した検証（第2章）とも、10イベントすべてで件数が一致しました。一致しない場合は、画面が不一致と表示します。
+【補足】確認したのは、影響額の件数です。どの契約につながるかといった中身は、第2章の検証で確認しています。金額は、Lakehouseの値で計算しており、Graphの結果は使っていません。画面の名称は、資料の用語にそろえています（影響額、取引活動、日次指標）。
+【注意】GQL Query APIはbetaで、Microsoft Learnは本番利用を推奨していません。Graphは、Ontologyの任意の層で、Fabricは、利用者が選ぶまでGraphを作りません。""",
+    APP_LEARN + [APP_DONE_BY + "、Graphの直接照会（2026年10月27日）"],
+    takeaway="確認したのは影響額の件数で、契約など経路の中身は、第2章の検証で確認しています。",
+    trace=APP_TRACE + ["reports/graph_all_event_paths.json"], foot=FOOT_APP)
+LX, LW = .6, 9.45
+box(s, LX, 2.4, LW, 3.82, WHITE, LINE)
+text(s, "食品損失（FOD_NEG）を選んだときに、グラフが返した経路", LX + .25, 2.52, LW - .5, .28, 13, TEAL, True, spacing=1.0)
+NW, NH, GX = 1.62, .92, .78
+NX = [LX + .35 + c * (NW + GX) for c in range(4)]
+ROW1, ROW2 = 3.0, 4.38
+chain_ = [("イベント", "RiskEvent", 1, PURPLE), ("影響額", "FinancialEffect", FOD_CHAIN["FinancialEffect"], CORAL),
+          ("取引活動", "Activity", FOD_CHAIN["Activity"], NAVY), ("契約", "Contract", FOD_CHAIN["Contract"], NAVY)]
+for c, (jp, en, cnt, color) in enumerate(chain_):
+    app_node(s, NX[c], ROW1, NW, NH, jp, en, cnt, color)
+for c, label in enumerate(["生む", "対象", "属する"]):
+    x1, x2 = NX[c] + NW + .04, NX[c + 1] - .04
+    arrow(s, x1, ROW1 + NH / 2, x2, ROW1 + NH / 2, STEEL, width=1.75)
+    text(s, label, x1 - .1, ROW1 + NH / 2 - .3, x2 - x1 + .2, .22, 10.5, STEEL, True, CENTER, spacing=1.0)
+app_node(s, NX[1], ROW2, NW, NH, "日次指標", "FinancialMetric", FOD_CHAIN["FinancialMetric"], TEAL)
+app_node(s, NX[2], ROW2, NW, NH, "全社KPI", "GroupKPI", FOD_CHAIN["GroupKPI"], TEAL)
+arrow(s, NX[1] + NW / 2, ROW1 + NH + .04, NX[1] + NW / 2, ROW2 - .04, STEEL, width=1.75)
+text(s, "反映", NX[1] + NW / 2 + .12, (ROW1 + NH + ROW2) / 2 - .11, .8, .22, 10.5, STEEL, True, spacing=1.0)
+arrow(s, NX[1] + NW + .04, ROW2 + NH / 2, NX[2] - .04, ROW2 + NH / 2, STEEL, width=1.75)
+text(s, "集約", NX[1] + NW - .06, ROW2 + NH / 2 - .3, GX + .2, .22, 10.5, STEEL, True, CENTER, spacing=1.0)
+text(s, f"矢印は関係の向きで、p.{PAGE_OF[T_PARTS]}と同じです。数字は、グラフが返した件数です。", NX[0], ROW2 + .02, NW + .55, NH, 10.5,
+     MUTED, anchor=MIDDLE, spacing=1.3)
+box(s, LX + .2, 5.5, LW - .4, .012, LINE, None, rounded=False)
+chip(s, "全10イベントで一致", LX + .25, 5.68, 2.1, TEAL, PALE, 12.5, .34)
+text(s, f"グラフが返した影響額は、業種別の8イベントで各84件、横断の2イベントで各336件、合計{N_EFFECTS:,}件です。Lakehouseの件数と同じです。",
+     LX + 2.6, 5.56, LW - 2.85, .56, 12, INK, anchor=MIDDLE, spacing=1.3)
+PX, PW = 12.73 - 2.1, 2.1
+ph = picture(s, APP_IMG["path"], PX, 2.4, PW,
+             f"食品損失を選んだときの経路の表示。イベント1件から、影響額{FOD_CHAIN['FinancialEffect']}件、取引活動{FOD_CHAIN['Activity']}件、"
+             f"契約{FOD_CHAIN['Contract']}件、日次指標{FOD_CHAIN['FinancialMetric']}件、全社KPI{FOD_CHAIN['GroupKPI']}件。"
+             "グラフとLakehouseで影響額の件数が一致（84件）。")
+assert 2.4 + ph <= 5.6, ph
+text(s, [[("実画面（食品損失を選択）", {"size": 10.5, "color": MUTED, "bold": True})],
+         [("画面は1列の表示です。日次指標は、影響額から分かれます。", {"size": 10.5, "color": MUTED})]],
+     PX, 2.4 + ph + .05, PW, .72, 10.5, align=CENTER, spacing=1.25)
+
+# 26 -----------------------------------------------------------------------------------------------
+expect(T_APP_SCOPE)
+_nv = " ".join(app["not_verified"])
+assert all(w in _nv for w in ("利用者ごとの権限", "性能", "コスト", "リージョン", "beta", "鮮度"))
+assert app["ui_observations"]["console_errors"] == 0
+s = new_slide(
+    k(T_APP_SCOPE, "確認範囲"), T_APP_SCOPE,
+    "デモで動いたことと、記載に基づくことが混ざると、PoCで何を評価するかを決めにくくなります。\n"
+    "確認の根拠ごとに分けると、PoCの評価項目が、未確認の列にそのまま並びます。",
+    f"""【話す】この章で確認できたこと、Microsoft Learnの記載に基づくこと、まだ確認していないことを、分けてお示しします。確認できたのは4つです。1つ目は、アプリから10イベントすべての経路をGraphで取得でき、影響額の件数がLakehouseと一致したことです。2つ目は、アプリが実績を再計算した結果が、Lakehouseの保存値と1円単位で一致したことです（日次{APP_ROWS:,}行、不一致0件）。3つ目は、放置したあとの最初の呼び出しで、グラフの起動に約1分かかり、画面が待ち時間を表示して待つことです。2回目以降は、グラフへの問い合わせが約1.1〜1.6秒でした（一度だけ6.1秒）。4つ目は、サインインしていない利用者には、アプリの内容にもFunctionsにも届かないことです。
+【記載に基づく前提】Microsoft Learnの記載で、このデモでは検証していない点です。Fabric AppsはPreviewです。GQL Query APIはbetaで、Learnは本番利用を推奨していません。FunctionsがFabricを呼び出すときのアイデンティティは、現在はアプリの所有者で、画面を見る利用者の権限は反映されません。Fabric Appsのリージョンは限定的で、割り当てた容量のCUを消費します。
+【未確認】利用者数、同時アクセス、データ量を増やしたときの性能、容量の消費量とコスト、デモ環境以外のリージョンでの動作、グラフが古くなったときの挙動です。件数の一致は確認していますが、内容の鮮度は確認していません。いずれもPoCで確認します。
+【権限について】p.{PAGE_OF[T_GOV]}の権限のページは、Ontologyのアイテムとデータ側の権限の話です。この章のアプリでは、別の話として、FunctionsがどのIDでFabricを呼び出すかが問題になります。現在の仕様では、呼び出しはアプリの所有者のIDで行われ、画面を見る全員に、同じ範囲が見えます。利用者ごとに見せる範囲を変える場合は、アプリ側の設計が要り、このデモでは検証していません。
+【初回の待ち】放置したあとの最初の呼び出しは、グラフの起動に約1分かかりました（2026年10月27日と28日の実測、59秒から63秒）。Functionsの実行は、Learnの記載で最大240秒です。
+【確認の仕方】確認した日は2026年10月28日で、Fabricのアプリを実際に開いて確認しました。保存した記録は、reportsフォルダの「whatif_app_live_verification」で始まるファイルです。""",
+    APP_LEARN + ["Microsoft Learn：fabric/apps/pricing（2026-09-15更新）", APP_DONE_BY],
+    takeaway="呼び出しは所有者のIDで行われます。画面を見る全員に同じ範囲を見せてよいかを、PoCの最初に決めます。",
+    trace=APP_TRACE + ["reports/whatif_app_live_verification_2026-10-28.json:not_verified,learn_sources"],
+    foot=FOOT_APP)
+scope = [
+    ("確認した", TEAL, "このデモで、実際に動かして確認", [
+        "10イベントの経路をGraphで取得。影響額の件数がLakehouseと一致",
+        f"実績EBITDAの再計算が、保存値と一致（日次{APP_ROWS:,}行、不一致0件）",
+        "放置後の初回は約1分、2回目以降は約1.1〜1.6秒",
+        "未サインインでは、アプリにもFunctionsにも届かない"]),
+    ("記載に基づく前提", PURPLE, "Microsoft Learnの記載。デモでは未検証", [
+        "Fabric AppsはPreview。クエリ用APIはbeta（本番利用は非推奨）",
+        f"呼び出しは所有者のID。利用者ごとの権限は反映されない（p.{PAGE_OF[T_GOV]}のOntologyの権限とは別）",
+        "リージョンは限定的。容量のCUを消費する"]),
+    ("未確認", CORAL, "PoCで確認する項目", [
+        "利用者数、同時アクセス、データ量を増やしたときの性能",
+        "容量の消費量とコスト",
+        "デモ環境以外のリージョンでの動作",
+        "グラフが古くなったときの挙動"]),
+]
+for i, (head, color, sub_, items) in enumerate(scope):
+    x = .6 + i * 4.09
+    box(s, x, 2.4, 3.95, 3.82, WHITE, LINE)
+    box(s, x, 2.4, 3.95, .1, color, None, radius=.04)
+    numdot(s, str(i + 1), x + .45, 2.95, .27, color, size=15)
+    text(s, head, x + .85, 2.7, 2.9, .4, 18, NAVY, True, spacing=1.2)
+    text(s, sub_, x + .85, 3.08, 2.95, .24, 10.5, MUTED, True, spacing=1.0)
+    yy = 3.55
+    for it in items:
+        nl = est_lines(it, 3.3, 12.5)
+        hh = nl * 12.5 * 1.3 / 72
+        box(s, x + .25, yy + .05, .07, hh - .02, color, None, radius=.035)
+        text(s, it, x + .47, yy, 3.3, hh + .02, 12.5, INK, spacing=1.3)
+        yy += hh + .2
+    assert yy <= 6.2 + .1, (head, yy)
+
+
+# =====================================================================================================
+# Chapter 5
+# =====================================================================================================
+divider(CHAPTERS[4])
 
 # 23 -----------------------------------------------------------------------------------------------
 expect(T_SMALL)
@@ -1730,9 +2042,10 @@ s = new_slide(
     k(T_POC, "PoCの進め方"), T_POC,
     "PoCの目的は、貴社のデータと問いで、同じ形の答えと根拠が出るかを確かめることです。\n"
     "評価の基準を先に決めておくと、結果を判断しやすくなります。",
-    """【話す】PoCの目的は、貴社のデータと、経営会議で実際に問われる問いで、今日と同じ形の答えと根拠が出るかを確かめることです。左が評価の観点、右がご準備いただきたい情報です。
+    f"""【話す】PoCの目的は、貴社のデータと、経営会議で実際に問われる問いで、今日と同じ形の答えと根拠が出るかを確かめることです。左が評価の観点、右がご準備いただきたい情報です。
 【進め方の例】質問を5〜10問決め、最初は1事業、1〜2システムのデータで、最小のOntologyを作ります。既存のレポートの数字を正解として、金額が一致するかを確かめます。同じ質問を複数回実行して、回答のぶれも評価します。
 【利用環境】Fabricの容量と、OntologyおよびData Agentを使うためのテナント設定の有効化が、前提になります（Microsoft Learnの前提条件）。
+【アプリで使う場合】第4章のように、画面を持つアプリで使う場合は、呼び出しのID（権限の扱い）、性能、容量の消費量も、評価に加えます（p.{PAGE_OF[T_APP_SCOPE]}）。
 【イベントの記録】整ったイベントの一覧が最初から社内にないのは普通です。基準値と実績の差が大きい月と会社から、差異分析のコメントや、事故、契約変更の記録を拾い、小さな台帳として育てます。AIで候補を抽出し、担当者が確認して登録する進め方もあります。20〜30件は、仮の目安です。
 【注意】進め方、件数、期間は、対象の範囲とデータの状態によって調整します。""",
     ["Microsoft Learn：fabric/iq/ontology（2026-09〜10更新）、how-to-bind-data（2026-10-20更新）", "デモ環境での検証の進め方"],
@@ -1743,6 +2056,7 @@ poc_left = [
     ("質問の自由度", "現場の言葉の短い質問で、同じ答えが得られるか"),
     ("権限と秘密度", "既存の権限や秘密度ラベルのもとで、想定どおりに動くか"),
     ("再現性と運用", "同じ質問の回答のぶれ。定義の変更と更新の手順"),
+    ("アプリでの利用（任意）", f"画面を持つアプリ：権限の扱い、性能、容量の消費量（p.{PAGE_OF[T_APP_SCOPE]}）"),
 ]
 poc_right = [
     ("代表的な質問", "経営会議で実際に問われる質問を、5〜10問（仮）"),
@@ -1766,18 +2080,19 @@ for col, (title, items, color) in enumerate([("確認すること", poc_left, TE
 expect(T_CAVEAT)
 s = new_slide(
     k(T_CAVEAT, "留意点"), T_CAVEAT,
-    "OntologyとData Agentは、現在Previewです。\n"
+    "OntologyとData Agentに加えて、第4章のFabric Appsも、現在Previewです。\n"
     "次の点を前提に、PoCの範囲と評価の基準を決めることをお勧めします。",
-    """【話す】OntologyとData Agentは、現在Previewの機能です。デモで確認できたことと、まだ確認できていないこと、製品側の制限をお伝えします。PoCの範囲と評価の基準は、これらを前提に決めます。
-【6つの点】①提供状況：OntologyとData AgentはPreview、Graphのクエリ用APIはbetaで、仕様や制限が変わる場合があります。②日本語：日本語で動作を確認した範囲での対応で、公式のサポート保証ではありません。③回答のばらつき：言語モデルのため、文面や優先度の線引きは、実行ごとに変わります。デモの確認では、表の金額は元データと一致しましたが、周辺の説明文に誤りが出ることがありました。「円高になったら」のような試算の問いは、結果が不安定でした。④対応していない範囲：会社から会社への連鎖は、関係の追加が必要で未対応です。セマンティックモデルに結んだOntologyは、Data Agentが動作しない既知の問題があり、グラフ化もできません。⑤データ：デモは合成データです。規模、性能、コストは、貴社のデータで別途確認が必要です。⑥従来版の廃止：Ontologyの従来版（旧体験）は2027-01-31に廃止され、新しい体験へのコピーによる移行が必要です。
+    """【話す】OntologyとData Agent、第4章のFabric Appsは、現在Previewの機能です。デモで確認できたことと、まだ確認できていないこと、製品側の制限をお伝えします。PoCの範囲と評価の基準は、これらを前提に決めます。
+【6つの点】①提供状況：Ontology、Data Agent、Fabric AppsはPreview、Graphのクエリ用APIはbetaで、仕様や制限が変わる場合があります。②日本語：日本語で動作を確認した範囲での対応で、公式のサポート保証ではありません。③回答のばらつき：言語モデルのため、文面や優先度の線引きは、実行ごとに変わります。デモの確認では、表の金額は元データと一致しましたが、周辺の説明文に誤りが出ることがありました。「円高になったら」のような試算の問いは、結果が不安定でした。④対応していない範囲：会社から会社への連鎖は、関係の追加が必要で未対応です。セマンティックモデルに結んだOntologyは、Data Agentが動作しない既知の問題があり、グラフ化もできません。⑤データ：デモは合成データです。規模、性能、コストは、貴社のデータで別途確認が必要です。⑥従来版の廃止：Ontologyの従来版（旧体験）は2027-01-31に廃止され、新しい体験へのコピーによる移行が必要です。
 【補足】デモのOntologyは、新しい体験で作っているため、廃止の影響を受けません。""",
     ["Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）、how-to-create-data-agent（2026-09-13更新）",
+     "Microsoft Learn：fabric/apps/overview（2026-09-29更新）",
      "デモ環境での確認（2026年10月26日〜27日）"],
     takeaway="回答のばらつきとデータの規模は、貴社のデータを使ったPoCで確かめられます。",
     trace=["README.md:検証の状況", "reports/da_casual_after_2026-10-26.json:known_limits",
            "reports/da_group_wide_2026-10-27.json"])
 cav = [
-    ("提供状況", CORAL, "OntologyとData AgentはPreview、Graphのクエリ用APIはbetaです。仕様や制限は変わる場合があります。"),
+    ("提供状況", CORAL, "Ontology、Data Agent、Fabric Apps（第4章）はPreview、Graphのクエリ用APIはbetaです。仕様や制限は変わる場合があります。"),
     ("日本語", PURPLE, "日本語の質問は、動作を確認した範囲での対応です。公式のサポート保証ではありません。"),
     ("回答のばらつき", CORAL, "言語モデルのため、文面や優先度の線引きは、実行ごとに変わります。表の金額は一致しましたが、説明文に誤りが出る場合があります。「円高になったら」のような試算は不安定でした。"),
     ("対応していない範囲", PURPLE, "会社から会社への連鎖は、関係の追加が必要で未対応です。セマンティックモデルに結んだOntologyは、Data Agentが動作しない既知の問題があり、グラフ化もできません。"),
@@ -1798,7 +2113,7 @@ s = base_slide(NAVY)
 n = len(prs.slides)
 title_text(s, T_NEXT, .8, 1.35, 11.8, .62, 30, WHITE)
 motif(s, .8, .78, 1.15, MINT)
-text(s, "第4章 進め方  |  次のステップ", 1.5, .82, 8.0, .3, 14, MINT, True, spacing=1.0)
+text(s, "第5章 進め方  |  次のステップ", 1.5, .82, 8.0, .3, 14, MINT, True, spacing=1.0)
 if est_lines(T_NEXT, 11.8, 30) != 1:
     WARN.append((n, "TITLE WRAPS", T_NEXT, 1))
 text(s, "本日確認した内容をもとに、貴社の問いとデータで、小さく検証する進め方をご提案します。", .82, 2.1, 11.6, .4, 16,
@@ -1807,10 +2122,11 @@ text(s, "本日の要点", .85, 2.95, 5.4, .32, 16, MINT, True, spacing=1.0)
 for i, line in enumerate([
         "EBITDAの増減を、イベント、契約、根拠記録までたどって説明できました。",
         "各社の原本は残したまま、定義と関係をData Agentから参照できました（コピーした表とGraphを含みます）。",
+        "業務アプリから、条件を変えた差額と、Ontologyのグラフ上の経路を確認できました（Preview）。",
         "小さな範囲から始める進め方を、ご提案します。Previewの留意点は、PoCの評価で確認します。"]):
-    yy = 3.4 + i * 1.0
-    numdot(s, str(i + 1), 1.1, yy + .34, .22, MINT, NAVY, 13)
-    text(s, line, 1.5, yy, 4.75, .9, 15, BODY_ON_NAVY, anchor=MIDDLE, spacing=1.35)
+    yy = 3.4 + i * .8
+    numdot(s, str(i + 1), 1.1, yy + .39, .22, MINT, NAVY, 13)
+    text(s, line, 1.5, yy, 4.75, .78, 14, BODY_ON_NAVY, anchor=MIDDLE, spacing=1.3)
 box(s, 6.7, 2.95, 6.03, 3.5, WHITE, None, radius=.14)
 text(s, "PoCの進め方", 7.0, 3.1, 5.4, .32, 16, TEAL, True, spacing=1.0)
 for i, (head, body) in enumerate([
@@ -1822,12 +2138,13 @@ for i, (head, body) in enumerate([
     text(s, head, 7.65, yy, 4.9, .28, 14.5, NAVY, True, spacing=1.0)
     text(s, body, 7.65, yy + .32, 4.9, .52, 12, INK, spacing=1.3)
 text(s, "参考：Microsoft Learn「What is ontology (preview)?」  learn.microsoft.com/fabric/iq/ontology/overview",
-     .85, 6.6, 11.0, .26, 11, BODY_ON_NAVY, spacing=1.0)
-text(s, "デモのデータは架空です。OntologyはPreviewです。", .85, 7.1, 8.0, .22, 10.5, BODY_ON_NAVY, spacing=1.0)
+     .85, 6.72, 11.0, .26, 11, BODY_ON_NAVY, spacing=1.0)
+text(s, "デモのデータは架空です。Ontology、Data Agent、Fabric AppsはPreviewです。", .85, 7.1, 8.0, .22, 10.5, BODY_ON_NAVY,
+     spacing=1.0)
 text(s, f"{n:02}", 12.13, 7.04, .6, .3, 13, MINT, True, RIGHT, spacing=1.0)
-finish_notes(s, """【話す】今日は、EBITDAの増減を、イベント、契約、根拠記録までたどって説明できることを確認しました。次は、貴社の問いとデータで、小さく検証することをご提案します。
+finish_notes(s, """【話す】今日は、EBITDAの増減を、イベント、契約、根拠記録までたどって説明できることを確認しました。第4章では、画面を持つ業務アプリから、条件を変えた差額と、Ontologyのグラフ上の経路を確認する例もお見せしました。次は、貴社の問いとデータで、小さく検証することをご提案します。
 【次のステップ】①代表的な質問を決め、対象データを棚卸しする（ワークショップ形式）。②1事業、1つの質問で、最小のOntologyを作り、答え、根拠、再現性を確認する（PoC）。③結果をもとに、対象の事業や機能を広げるかを決める。期間は、対象の範囲に応じて調整します。
-【補足】OntologyとData AgentはPreviewのため、仕様や制限は変わる場合があります。最新の情報は、Microsoft Learnをご確認ください。""",
+【補足】Ontology、Data Agent、Fabric AppsはPreviewのため、仕様や制限は変わる場合があります。最新の情報は、Microsoft Learnをご確認ください。""",
              ["Microsoft Learn：fabric/iq/ontology/overview（2026-10-16更新）"])
 slide_metadata.append({"slide": n, "title": T_NEXT, "sources": ["Microsoft Learn：fabric/iq/ontology/overview"],
                        "trace": []})
@@ -1935,7 +2252,7 @@ s = new_slide(
     f"""【話す】デモのOntologyが持つ17種類の概念と39種類の関係の一覧です。質問されたときの参照用に使ってください。
 【指す】左の表が概念です。その右端の数字は、Graphに取り込んだ実例（ノード）の数で、合計は{sum(node_counts.values()):,}です。事業固有の観測は、事業と国ごとに1種類（8種類）で、各種類に365日分の実例があります。右側の表は、共通の15種類の関係です。英語の名前は、Fabricの画面に表示される名前です。
 【補足】事業固有の観測8種は、取引活動、会社、契約への関係を3本ずつ持ち、合計24種類です。共通の15種類と合わせて、関係は39種類です。
-【注意】デモ用に整理した定義です。貴社に適用する際は、質問に必要な範囲から定義します（第4章）。""",
+【注意】デモ用に整理した定義です。貴社に適用する際は、質問に必要な範囲から定義します（第5章）。""",
     ["デモのOntology定義とGraphの件数（2026-10-27確認）"],
     takeaway="関係は全部で39種類です。共通の15種類に、事業固有の観測8種が持つ24種類（8種×3）が加わります。",
     trace=["ontology_tmdl/entities/*.tmdl", "ontology_tmdl/entityRelationships.tmdl", "reports/graph_node_counts.json"])
