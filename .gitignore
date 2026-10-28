@@ -4,3 +4,4 @@ __pycache__/
 *.lock
 presentation/qa/
 config/environment_ids.local.json
+whatif-app/rayfin/.project.json

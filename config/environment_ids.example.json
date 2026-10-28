@@ -59,5 +59,9 @@
   "__DA_FILE_ID_12__": "Data Agent response file (file_...)",
   "__DA_MESSAGE_ID_01__": "Data Agent message (msg_...)",
   "__DA_MESSAGE_ID_02__": "Data Agent message (msg_...)",
-  "__DA_MESSAGE_ID_03__": "Data Agent message (msg_...)"
+  "__DA_MESSAGE_ID_03__": "Data Agent message (msg_...)",
+  "__APP_HOST__": "Host name of the deployed what-if app (the Fabric Apps hosting URL without https://)",
+  "__APP_ITEM_ID__": "Fabric Apps item of the what-if app (GUID)",
+  "__TENANT_ID__": "Microsoft Entra tenant of the Fabric workspace (GUID)",
+  "__APP_PUBLISHABLE_KEY__": "Publishable key of the what-if app (pk-...)"
 }

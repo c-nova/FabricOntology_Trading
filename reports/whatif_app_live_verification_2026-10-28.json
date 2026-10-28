@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "status": "verified_live_with_limits",
+  "captured_at_utc": "2026-10-28T05:22:00Z",
+  "subject": "Rayfin（Fabric Apps、Preview）のアプリから、Ontologyのグラフを読み、What-if画面を動かす",
+  "environment": {
+    "app": "Fabric App（Rayfin、Preview）。Functions がアプリの ID で Fabric を呼ぶ",
+    "ontology_graph_query": "GQL Query API（beta）。executeQuery を Functions から直接呼ぶ",
+    "amounts_source": "Lakehouse（SQL分析エンドポイント）。計算は whatif-engine（Decimal）",
+    "identifiers_recorded": false
+  },
+  "roles": {
+    "ontology_graph": "構造を返す（イベント→影響額→取引活動→契約、影響額→日次指標→全社KPI）。金額は計算しない",
+    "lakehouse": "日次EBITDA、影響額、為替、持分を返す",
+    "engine": "金額を再現できる計算（行ごとに小数2桁へ丸め）で、シナリオを適用する"
+  },
+  "probe": {
+    "counts": {
+      "companies": 8,
+      "ebitda_rows": 2920,
+      "effects": 1344,
+      "events": 10
+    },
+    "reconciliation": {
+      "ok": true,
+      "group_mismatches": 0,
+      "management_mismatches": 0,
+      "effect_mismatches": 0
+    },
+    "base_annual_ebitda_jpy": {
+      "full": "44757399732.84",
+      "management": "33547898914.09"
+    },
+    "graph": {
+      "events": 10,
+      "food_loss_path_rows": 84,
+      "food_loss_unique_effects": 84
+    }
+  },
+  "scenarios": {
+    "base": {
+      "delta_full_jpy": "0.00",
+      "delta_management_jpy": "0.00"
+    },
+    "food_loss_50": {
+      "inputs": {
+        "events": {
+          "FOD_NEG": "0.50"
+        }
+      },
+      "delta_full_jpy": "57230593.13",
+      "delta_management_jpy": "43815147.15",
+      "steps_full_jpy": {
+        "events": "57230593.13",
+        "fx": "0.00"
+      }
+    },
+    "yen_up_10": {
+      "inputs": {
+        "fx": {
+          "currency": "USD",
+          "factor": "0.90"
+        }
+      },
+      "delta_full_jpy": "-2328820955.71",
+      "delta_management_jpy": "-1409756134.67"
+    },
+    "yen_down_10": {
+      "inputs": {
+        "fx": {
+          "currency": "USD",
+          "factor": "1.10"
+        }
+      },
+      "delta_full_jpy": "2328820955.70",
+      "delta_management_jpy": "1409756134.82"
+    },
+    "food_loss_50_and_yen_up_10": {
+      "inputs": {
+        "events": {
+          "FOD_NEG": "0.50"
+        },
+        "fx": {
+          "currency": "USD",
+          "factor": "0.90"
+        }
+      },
+      "delta_full_jpy": "-2274575575.77",
+      "delta_management_jpy": "-1368926200.71",
+      "steps_full_jpy": {
+        "events": "57230593.13",
+        "fx": "-2331806168.90",
+        "ownership": "0.00"
+      },
+      "steps_management_jpy": {
+        "events": "43815147.15",
+        "fx": "-1412741347.86",
+        "ownership": "0.00"
+      }
+    }
+  },
+  "graph_paths_per_event": {
+    "MTL_NEG": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "MTL_POS": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "ENE_NEG": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 8,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "ENE_POS": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "FOD_NEG": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "FOD_POS": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "FIN_NEG": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 8,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "FIN_POS": {
+      "RiskEvent": 1,
+      "FinancialEffect": 84,
+      "Activity": 84,
+      "Contract": 6,
+      "FinancialMetric": 28,
+      "GroupKPI": 15,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "CROSS_NEG": {
+      "RiskEvent": 1,
+      "FinancialEffect": 336,
+      "Activity": 336,
+      "Contract": 26,
+      "FinancialMetric": 112,
+      "GroupKPI": 17,
+      "graph_effects_equal_lakehouse_effects": true
+    },
+    "CROSS_POS": {
+      "RiskEvent": 1,
+      "FinancialEffect": 336,
+      "Activity": 336,
+      "Contract": 24,
+      "FinancialMetric": 112,
+      "GroupKPI": 17,
+      "graph_effects_equal_lakehouse_effects": true
+    }
+  },
+  "independent_check": {
+    "compared_with": "reports/graph_all_event_paths.json（GQLを直接照会した以前の検証）",
+    "result": "10イベントすべてで、影響額の件数が一致（業種別の8件は各84、全業種の2件は各336）"
+  },
+  "ui_observations": {
+    "first_open_after_idle_seconds_observed": "約59〜63（2026-10-27〜28の実測。グラフの起動待ち）",
+    "graph_query_seconds_warm": "約1.1〜1.6（10イベントの取得。一度だけ6.1）",
+    "console_errors": 0,
+    "signed_out_access": "アプリの内容にも、Functions にも届かない（Sign in required）"
+  },
+  "rounding_note": "日次の行ごとに小数2桁へ丸めるため、円高10%と円安10%の差は完全には対称にならない（0.01〜0.15円の差）。",
+  "interaction_note": "食品損失の軽減分にも為替が掛かるため、両方を合わせた差は、単独の差の和にならない（和は-2271590362.58、実際は-2274575575.77）。",
+  "learn_sources": [
+    {
+      "page": "fabric/apps/overview",
+      "updated": "2026-09-29",
+      "used_for": "Fabric Apps は Preview。リージョンは限定。容量のCUを消費"
+    },
+    {
+      "page": "fabric/apps/functions",
+      "updated": "2026-09-29",
+      "used_for": "アプリのIDはBaaSアイテムの所有者。外部接続は所有者の権限で動き、利用者の権限は反映されない。実行は最大240秒"
+    },
+    {
+      "page": "fabric/graph/gql-query-api",
+      "updated": "2026-09-29",
+      "used_for": "GQL Query API は beta。本番利用は推奨されない"
+    },
+    {
+      "page": "fabric/iq/ontology/how-to-use-ontology-graph",
+      "updated": "2026-09-29",
+      "used_for": "Ontology が意味を定義し、Graph が関係を実行する。Graph は任意"
+    },
+    {
+      "page": "fabric/apps/pricing",
+      "updated": "2026-09-15",
+      "used_for": "Fabric Apps は Fabric 容量のCUを消費する"
+    }
+  ],
+  "not_verified": [
+    "利用者ごとの権限（アプリはBaaSアイテムの所有者のIDでFabricを読む。利用者の権限は反映されない）",
+    "利用者数・同時アクセス・データ量を増やしたときの性能",
+    "容量の消費量とコスト（Learnの記載のみ。このデモでは計測していない）",
+    "東日本など、West US 3 以外のリージョンでの動作",
+    "本番利用（GQL Query API は beta、Fabric Apps は Preview）",
+    "Ontology MCP サーバー経由の接続（この画面は使っていない）",
+    "グラフが古くなったときの挙動（件数の一致は確認するが、内容の鮮度は確認していない）"
+  ],
+  "post_capture_ui_changes": {
+    "what": "画面の用語を資料に合わせた（財務効果→影響額、事業活動→取引活動、日次メトリクス→日次指標、基準→実績）。日次指標は影響額から分かれることを、関係名の横に表示した。",
+    "rechecked_on_screen": "変更後の画面で、全額連結−22.7億円、持分管理−13.7億円、食品損失の影響額84件がグラフとLakehouseで一致、を確認した。金額と件数の計算は変えていない。",
+    "scope": "フロントエンドの表示だけ。Functionsは再デプロイしていない。"
+  }
+}

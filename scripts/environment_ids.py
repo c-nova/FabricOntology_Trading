@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Swap the demo environment's Fabric identifiers for placeholders, and back.
 
-The repository is public, so workspace, capacity, item, job, SQL endpoint and
-Data Agent conversation identifiers are stored as placeholders such as
+The repository is public, so workspace, capacity, item, job, SQL endpoint, Data Agent conversation
+identifiers and the what-if app's host name are stored as placeholders such as
 __WORKSPACE_ID__. The real values live in config/environment_ids.local.json
 (git-ignored; format: config/environment_ids.example.json).
 
@@ -11,8 +11,8 @@ __WORKSPACE_ID__. The real values live in config/environment_ids.local.json
     python3 scripts/environment_ids.py check     exit 1 if an environment-like identifier is left
 
 Replacement also reaches inside base64 payloads (Fabric item definitions) and
-.pptx XML parts. `check` needs no mapping: it flags any random (version 4) GUID
-or SQL endpoint host that is not a placeholder or on the allow-list below.
+.pptx XML parts. `check` needs no mapping: it flags any random (version 4) GUID,
+SQL endpoint host or Fabric Apps host that is not a placeholder or on the allow-list below.
 """
 import argparse
 import base64
@@ -34,12 +34,14 @@ ALLOW_GUIDS = {
     "c183d7f6-b498-43b3-948b-1728b52aa6e4", "bb962c8b-b14f-4d97-af65-f5344cb8ac3e",
     "5c22544a-7ee6-4342-b048-85bdc9fd1c3a", "e76ce94a-603c-4142-b9eb-6d1370010a27",
     "d31a062a-798a-4329-abdd-bba856620510",
+    "4053a155-34a9-4b74-9bc2-e162f1b27fc7",  # sample dataset ID in the Rayfin scaffold README (whatif-app/README.md)
 }
 # Documentation of the placeholders themselves; `restore` must not rewrite them.
 KEEP_PLACEHOLDERS = {"README.md", "scripts/environment_ids.py", "config/environment_ids.example.json"}
 SKIP_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".pdf", ".ico", ".zip")
 SQL_HOST_SUFFIX = ".datawarehouse.fabric.microsoft.com"
 CAPACITY_HOST_SUFFIX = ".pbidedicated.windows.net"
+APP_HOST_SUFFIX = ".webapp.fabricapps.net"
 
 V4_GUID = re.compile(r"(?<![0-9A-Fa-f])[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-"
                      r"[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}(?![0-9A-Fa-f])")
@@ -224,6 +226,8 @@ def check(paths):
                              if label and not re.fullmatch(r"__[A-Za-z0-9_]+__", label))
                 found.update(f"capacity host {label[:8]}…" for label in host_labels(text, CAPACITY_HOST_SUFFIX)
                              if re.fullmatch(r"[0-9A-Fa-f]{32}", label))
+                found.update(f"app host {label[:8]}…" for label in host_labels(text, APP_HOST_SUFFIX)
+                             if label and not re.fullmatch(r"__[A-Za-z0-9_]+__", label))
             found.update(f"mapped value {real[:8]}…" for real in real_values if real in text)
         problems.extend(f"{name}: {item}" for item in sorted(found))
     return problems

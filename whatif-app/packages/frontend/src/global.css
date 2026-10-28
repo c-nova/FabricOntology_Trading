@@ -1,0 +1,297 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bridged tokens — kept in `@theme static` so the CSS vars are always
+   emitted, not tree-shaken when no Tailwind utility consumes them.
+   Required because <VegaVisual> and <DataGrid> read these at runtime via
+   `useCssTheme()` and project them into a JS theme object (Vega's SVG output
+   cannot resolve `var()` references). */
+@theme static {
+  --color-brand: #1b4d7a; /* bar/area fills, button-like brand surfaces */
+  --color-brand-foreground: #1b4d7a; /* line/point marks, branded text & emphasis */
+  --color-hover: #efece4; /* row/cell hover surface in DataGrid + visuals */
+}
+
+@theme {
+  /* Color tokens — light theme
+     Usage: bg-*, text-*, border-* (e.g. bg-primary text-primary-foreground)
+     Each token has a -foreground pair for text on that surface. */
+  --color-background: #f7f5f0; /* page background: paper */
+  --color-foreground: #1d1c1a; /* default text: ink */
+
+  --color-card: #fffdf9; /* card surfaces */
+  --color-card-foreground: #1d1c1a;
+
+  --color-popover: #fffdf9; /* popover/dropdown surfaces */
+  --color-popover-foreground: #1d1c1a;
+
+  --color-primary: #1b4d7a; /* primary actions & buttons */
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f1eee6; /* secondary actions */
+  --color-secondary-foreground: #1d1c1a;
+
+  --color-muted: #efece4; /* subtle backgrounds */
+  --color-muted-foreground: #66625a; /* subdued text */
+
+  --color-accent: #e9e5da; /* accent highlights */
+  --color-accent-foreground: #1d1c1a;
+
+  --color-destructive: #b3261e; /* errors, decreases: ledger red */
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #ddd8cb; /* default border */
+  --color-input: #857f70; /* input field borders */
+  --color-ring: #1b4d7a; /* focus rings */
+
+  --radius-none: 0;
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
+  --radius-4xl: 12px;
+  --radius-5xl: 16px;
+  --radius-6xl: 20px;
+  --radius-full: 9999px;
+  --radius: 3px;
+
+  /* Spacing — 4px grid; use only these tokens, no interpolation. *-nudge = base − 2px.
+     Usage: p-*, m-*, gap-* (e.g. p-400 gap-300) */
+  --spacing-none: 0;
+  --spacing-100-nudge: 2px;
+  --spacing-100: 4px;
+  --spacing-200-nudge: 6px;
+  --spacing-200: 8px;
+  --spacing-300-nudge: 10px;
+  --spacing-300: 12px;
+  --spacing-400: 16px;
+  --spacing-500: 20px;
+  --spacing-600: 24px;
+  --spacing-700: 28px;
+  --spacing-800: 32px;
+  /* Layout — 画面の骨格で使う寸法。コンポーネントには生の値を書かず、ここから参照する */
+  --spacing-control: 2.25rem; /* ボタン・選択ボックスの高さ */
+  --spacing-table: 34rem; /* 内訳表の最小幅。これより狭いときは横にスクロールする */
+  --spacing-card: 14rem; /* 結果カードの骨組みの高さ */
+  --spacing-label: 12rem; /* 内訳グラフの行ラベルの幅 */
+  --spacing-amount: 11rem; /* 内訳グラフの金額欄の幅 */
+  --spacing-rail: 22rem; /* 左の条件パネルの幅 */
+  --spacing-aside: 24rem; /* 右の経路パネルの幅 */
+  --spacing-bar: 6rem; /* 内訳の差の棒グラフの最大幅 */
+  --container-content: 96rem; /* 画面全体の最大幅 */
+
+  /* Font Sizes — 100-based scale 
+     Usage: text-* (e.g. text-300, text-hero-900) */
+  --text-100: 10px;
+  --text-200: 12px;
+  --text-300: 14px;
+  --text-400: 16px;
+  --text-500: 20px;
+  --text-600: 24px;
+  --text-hero-700: 28px;
+  --text-hero-800: 32px;
+  --text-hero-900: 40px;
+  --text-hero-1000: 68px;
+
+  /* Line Heights — paired with font sizes
+     Usage: leading-* (e.g. leading-300) */
+  --leading-100: 14px;
+  --leading-200: 16px;
+  --leading-300: 20px;
+  --leading-400: 22px;
+  --leading-500: 28px;
+  --leading-600: 32px;
+  --leading-hero-700: 36px;
+  --leading-hero-800: 40px;
+  --leading-hero-900: 52px;
+  --leading-hero-1000: 92px;
+
+  /* Font Weights
+     Usage: font-* (e.g. font-semibold) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Font Families
+     Usage: font-* (e.g. font-heading, font-base) */
+  --font-heading:
+    'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho',
+    /* headings, titles, display text */ 'Segoe UI', serif;
+  --font-base:
+    'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic UI',
+    /* body text, labels, UI controls */ 'Segoe UI', -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  --font-monospace:
+    'IBM Plex Mono', Consolas, 'Courier New', Courier, monospace; /* code, pre-formatted text */
+  --font-numeric:
+    'IBM Plex Mono', 'Noto Sans JP',
+    /* KPI values, numeric displays */ Consolas, 'Courier New', monospace;
+
+  /* Icon Sizes — 100-based scale
+     Usage: icon-size-* custom utility (e.g. icon-size-200) */
+  --icon-size-100: 12px;
+  --icon-size-200: 16px;
+  --icon-size-300: 20px;
+  --icon-size-400: 24px;
+  --icon-size-500: 28px;
+  --icon-size-600: 32px;
+  --icon-size-700: 48px;
+}
+
+@utility icon-size-* {
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+}
+
+@layer base {
+  .dark {
+    /* Color tokens — dark theme */
+    --color-background: #1a1917;
+    --color-foreground: #f3f1ec;
+
+    --color-card: #232220;
+    --color-card-foreground: #f3f1ec;
+
+    --color-popover: #232220;
+    --color-popover-foreground: #f3f1ec;
+
+    --color-primary: #8ab4e0;
+    --color-primary-foreground: #10202f;
+
+    --color-secondary: #1e1d1b;
+    --color-secondary-foreground: #f3f1ec;
+
+    --color-muted: #141311;
+    --color-muted-foreground: #a8a398;
+
+    --color-accent: #34322e;
+    --color-accent-foreground: #f3f1ec;
+
+    --color-destructive: #f2776c;
+    --color-destructive-foreground: #2a0a08;
+
+    --color-border: #403d37;
+    --color-input: #8a8578;
+    --color-ring: #8ab4e0;
+
+    --color-brand: #8ab4e0;
+    --color-brand-foreground: #8ab4e0;
+    --color-hover: #34322e;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-base antialiased;
+  }
+
+  /* ネイティブの部品は、既定では本文のフォントを継承しない */
+  select,
+  input,
+  textarea,
+  button {
+    font-family: inherit;
+  }
+
+  /* 動きに弱い人のために、遷移とアニメーションを止める */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Range slider — --neutral は「基準（変更なし）」の位置（0〜100%）。呼び出し側がインラインで渡す。 */
+.range {
+  --neutral: 50%;
+  appearance: none;
+  width: 100%;
+  height: var(--spacing-control);
+  background: transparent;
+  cursor: pointer;
+}
+
+.range:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.range::-webkit-slider-runnable-track {
+  height: var(--spacing-100);
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    to right,
+    var(--color-input) 0,
+    var(--color-input) calc(var(--neutral) - 1px),
+    var(--color-foreground) calc(var(--neutral) - 1px),
+    var(--color-foreground) calc(var(--neutral) + 1px),
+    var(--color-input) calc(var(--neutral) + 1px),
+    var(--color-input) 100%
+  );
+}
+
+.range::-moz-range-track {
+  height: var(--spacing-100);
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    to right,
+    var(--color-input) 0,
+    var(--color-input) calc(var(--neutral) - 1px),
+    var(--color-foreground) calc(var(--neutral) - 1px),
+    var(--color-foreground) calc(var(--neutral) + 1px),
+    var(--color-input) calc(var(--neutral) + 1px),
+    var(--color-input) 100%
+  );
+}
+
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--spacing-500);
+  height: var(--spacing-500);
+  margin-top: calc((var(--spacing-100) - var(--spacing-500)) / 2);
+  border: 2px solid var(--color-card);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  outline: 1px solid var(--color-primary);
+}
+
+.range::-moz-range-thumb {
+  width: var(--spacing-500);
+  height: var(--spacing-500);
+  border: 2px solid var(--color-card);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  outline: 1px solid var(--color-primary);
+}
+
+.range:focus-visible {
+  outline: none;
+}
+
+.range:focus-visible::-webkit-slider-thumb {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.range:focus-visible::-moz-range-thumb {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}

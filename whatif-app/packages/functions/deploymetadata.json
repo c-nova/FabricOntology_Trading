@@ -1,0 +1,203 @@
+{
+  "runtime": "TypeScript",
+  "functionsMetadata": [
+    {
+      "name": "probe",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "probe"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ProbeResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'probe',\n  async (ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ProbeResult> => {\n    try {\n      const { data, source } = await load(tokens(ctx));\n      const t0 = Date.now();\n      const events = await readEvents(ctx.Tokens.Fabric, data.coordinates);\n      const paths = await readPaths(ctx.Tokens.Fabric, data.coordinates, 'FOD_NEG');\n      const pathMs = Date.now() - t0;\n      const result = simulate(data.prepared, {});\n      const r = data.reconciliation;\n      return {\n        ok: true,\n        source,\n        loadMs: data.loadMs,\n        cacheAgeMs: cacheAgeMs() ?? null,\n        counts: {\n          companies: data.base.companies.length,\n          ebitdaRows: data.base.ebitdaRows.length,\n          effects: data.base.effects.length,\n          events: data.base.events.length,\n        },\n        reconciliation: {\n          ok: r.ok,\n          groupMismatches: r.groupMismatches,\n          managementMismatches: r.managementMismatches,\n          effectMismatches: r.effectFullMismatches + r.effectManagementMismatches,\n        },\n        base: result.base,\n        graph: {\n          events: events.length,\n          eventIds: events.map((e) => e.eventId),\n          foodLossPathRows: paths.length,\n          foodLossUniqueEffects: new Set(paths.map((p) => p.effectId)).size,\n          pathMs,\n        },\n      };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    },
+    {
+      "name": "simulate",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "simulate"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<SimulateResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "scenario",
+            "dataType": "Scenario",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'simulate',\n  async (scenario: Scenario, ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<SimulateResult> => {\n    try {\n      const { data, source } = await load(tokens(ctx));\n      return { ok: true, source, result: simulate(data.prepared, scenario) };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    },
+    {
+      "name": "loadModel",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "loadModel"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ModelResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'loadModel',\n  async (ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ModelResult> => {\n    try {\n      const { data, source } = await load(tokens(ctx));\n      const events = await readEvents(ctx.Tokens.Fabric, data.coordinates);\n      const perEvent = new Map<string, number>();\n      for (const e of data.base.effects) perEvent.set(e.eventId, (perEvent.get(e.eventId) ?? 0) + 1);\n      return {\n        ok: true,\n        source,\n        model: {\n          events: events.map((e) => ({ ...e, effects: perEvent.get(e.eventId) ?? 0 })),\n          companies: data.base.companies.map((c) => ({\n            entityId: c.entityId,\n            name: c.entityName,\n            sector: c.sectorCode,\n            currency: c.currencyCode,\n            ownership: c.ownershipRatio,\n          })),\n          period: { from: data.prepared.firstDate, to: data.prepared.lastDate },\n        },\n      };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    },
+    {
+      "name": "eventPaths",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "eventPaths"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<PathsResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "eventId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'eventPaths',\n  async (eventId: string, ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<PathsResult> => {\n    try {\n      const { data } = await load(tokens(ctx));\n      if (!data.base.events.some((e) => e.eventId === eventId)) {\n        return { ok: false, code: 'UNKNOWN_EVENT', message: 'Unknown event.' };\n      }\n      return { ok: true, eventId, paths: await readPaths(ctx.Tokens.Fabric, data.coordinates, eventId) };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    }
+  ]
+}

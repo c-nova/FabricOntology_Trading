@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "2.0",
+  "functions": [
+    {
+      "functionName": "probe",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "Fabric",
+        "Sql"
+      ]
+    },
+    {
+      "functionName": "simulate",
+      "delegateParameters": [
+        {
+          "name": "scenario",
+          "type": "Scenario",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "Fabric",
+        "Sql"
+      ]
+    },
+    {
+      "functionName": "loadModel",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "Fabric",
+        "Sql"
+      ]
+    },
+    {
+      "functionName": "eventPaths",
+      "delegateParameters": [
+        {
+          "name": "eventId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "Fabric",
+        "Sql"
+      ]
+    }
+  ]
+}

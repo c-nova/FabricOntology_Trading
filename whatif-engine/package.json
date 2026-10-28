@@ -1,0 +1,19 @@
+{
+  "name": "trading-whatif-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Decimal what-if engine for the Trading ontology demo (pure functions, no Fabric dependency)",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test \"dist/test/*.test.js\"",
+    "verify": "npm run build && node dist/scripts/verify.js"
+  },
+  "dependencies": {
+    "decimal.js": "^10.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}
