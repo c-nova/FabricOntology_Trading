@@ -4,9 +4,10 @@ AIエージェント向けの指示です。このリポジトリは**公開**�
 
 ## 公開リポジトリとしての約束
 
-- **実際の識別子をコミットしない。** ワークスペース、キャパシティ、各アイテム、ジョブ、SQLエンドポイント、Data Agentの会話、What-ifアプリのホスト名・アイテムID・テナントID・公開キーは、`__WORKSPACE_ID__`、`__APP_HOST__` のようなプレースホルダーにしてあります。実際の値は、Git管理外の `config/environment_ids.local.json` にあります。認証情報は、リポジトリにありません。
-- **Fabricに接続する前、アプリを `rayfin up` でデプロイする前に、`python3 scripts/environment_ids.py restore` を実行する。** `whatif-app/rayfin/rayfin.yml` の公開先ホスト（`__APP_HOST__`）が残ったままデプロイすると、公開先でのサインインが通らない場合があります。
-- **コミットの前に、`python3 scripts/environment_ids.py redact`、続けて `python3 scripts/environment_ids.py check` を実行し、`ok: no environment identifiers found` を確認する。** `restore` したままのファイルは、コミットしない。`git add -A` や `git commit -a` の前は、特に注意する。
+- **実際の識別子をコミットしない。** ワークスペース、キャパシティ、各アイテム、ジョブ、SQLエンドポイント、Data Agentの会話のIDは、`__WORKSPACE_ID__` のようなプレースホルダーにしてあります。What-ifアプリの公開先ホスト、アイテムID、テナントID、公開キーは、どのファイルにも書いていません（`rayfin up` が、`rayfin.yml` に公開先ホストを追記します。下の項目を参照）。実際の値は、Git管理外の `config/environment_ids.local.json` にあります。認証情報は、リポジトリにありません。
+- **Fabricに接続するスクリプトやNotebookを使う前に、`python3 scripts/environment_ids.py restore` で実際の値に戻す。** 引数なしの `restore` は、追跡中の100個を超えるファイル（`ontology/`、`ontology_tmdl/`、`reports/`、`config/`、`notebooks/`、`decks/` など）に実際のIDを書き込みます。ファイル名を引数に渡すと、そのファイルだけを戻します。使い終わったら `redact` で戻します。
+- **アプリのデプロイ（`rayfin up`）に、`restore` は要らない。** Rayfinが、デプロイのたびに、公開先URLを `whatif-app/rayfin/rayfin.yml` の `allowedRedirectUris` に追記します（Rayfinの仕様。インストール済みのCLIのソースと `whatif-app/.agents/skills/rayfin/SKILL.md` で確認。`rayfin.yml` に公開先を書いていない状態でのデプロイは、まだ試していません）。**追記された行は、コミットしない。** デプロイのあとは、その行を消します。`rayfin.yml` にほかの未コミットの変更がなければ、`git restore whatif-app/rayfin/rayfin.yml` で戻せます（`check` も、その行を検出します）。
+- **コミットの前に、`python3 scripts/environment_ids.py check` を実行し、`ok: no environment identifiers found` を確認する。** `restore` を使った場合は、先に `python3 scripts/environment_ids.py redact` で戻す。`restore` したままのファイルは、コミットしない。`git add -A` や `git commit -a` の前は、特に注意する。
 - 次のファイルには、実際の値が入っています（Git管理外）。コミットせず、内容を資料、ログ、回答に貼らない：`config/environment_ids.local.json`、`whatif-app/rayfin/.env`、`whatif-app/rayfin/.deployments.json`、`whatif-app/packages/frontend/.env.local`、`whatif-app/packages/functions/local.settings.json`。`whatif-app/rayfin/.project.json`（スキャフォールドの匿名の識別子）も、Git管理外にしています。
 - `git push` は、ユーザーの明示の指示があるときだけ行う。履歴の書き換えと強制pushはしない（決定済み）。大きなpushがHTTP 400になるときは、`git -c http.postBuffer=157286400 push` にする。
 - Fabricへの書き込み（デプロイ、削除、容量の停止など）は、ユーザーが対象のワークスペースを確認してから行う。
@@ -38,4 +39,4 @@ pptxを直接編集しない。`presentation/` のビルダーを直して、作
 - 計算の元は `whatif-engine/src` です。`whatif-app/packages/functions/src/engine/` は生成されたコピーなので、直接編集しません。`whatif-app/` で `node scripts/sync-engine.mjs` を実行してコピーし、`--check` を付けて差分を調べます。
 - 検証：`whatif-engine/` で `npm test`、`npm run verify`。`whatif-app/` で `npm test`、`npm run lint`、`npm run typecheck`。
 - 実機の確認は、`whatif-app/scripts/live-check.mjs` です（読み取りのみ。`az` でサインイン済みで、`AZURE_TENANT` が必要）。結果は、`reports/whatif_app_live_verification_2026-10-28.json` にあります。資料の数字の出どころで、確認できた範囲と、未確認の範囲（`not_verified`）を含みます。
-- 画面だけを変えたときの再デプロイは、`whatif-app/` で `npx rayfin up --workspace Trading --exclude-services functions --json --yes` です（`restore` のあと、ユーザーの確認のあとで）。
+- 画面だけを変えたときの再デプロイは、`whatif-app/` で `npx rayfin up --workspace Trading --exclude-services functions --json --yes` です（ユーザーが対象のワークスペースを確認したあとで。デプロイのあとは、`git restore whatif-app/rayfin/rayfin.yml`）。

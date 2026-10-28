@@ -4,9 +4,9 @@
 
 This app lives in the public repository FabricOntology_Trading. Read the root `../AGENTS.md` before any commit or deployment. The short version:
 
-- Real identifiers (the app's host name, item ID, tenant ID, publishable key, and the workspace and capacity IDs) are never committed. In git, the redirect URI that holds the app's host name in `rayfin/rayfin.yml` is a placeholder.
-- Before `rayfin up` or any Fabric call, run `python3 scripts/environment_ids.py restore` at the repository root. Deploying with the placeholder can break sign-in at the live host.
-- Before committing, run `redact` and then `check` with the same script (`check` must print `ok`). Never commit a restored `rayfin/rayfin.yml`.
+- Real identifiers (the app's host name, item ID, tenant ID, publishable key, and the workspace and capacity IDs) are never committed. `rayfin/rayfin.yml` in git has no host-specific entry in `allowedRedirectUris`.
+- Deploying the app does not need `python3 scripts/environment_ids.py restore`. `rayfin up` appends the live hosting URL to `allowedRedirectUris` in `rayfin/rayfin.yml` (Rayfin's own behaviour). Do not commit that line: after deploying, remove it (if `rayfin.yml` has no other uncommitted changes, `git restore rayfin/rayfin.yml`).
+- Before committing, run `python3 scripts/environment_ids.py check` at the repository root; it must print `ok`. It flags the host that `rayfin up` writes into `rayfin.yml`. See `../AGENTS.md` for the repository rules.
 - `rayfin/.env`, `rayfin/.deployments.json`, `packages/frontend/.env.local`, `packages/functions/local.settings.json` and `rayfin/.project.json` stay untracked.
 - `packages/functions/src/engine/` is generated from `../whatif-engine/src` by `node scripts/sync-engine.mjs`. Do not edit it by hand.
 

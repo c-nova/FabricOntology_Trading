@@ -38,7 +38,7 @@ AIエージェントで作業するときは、先に [`AGENTS.md`](AGENTS.md) �
 - 金額：LakehouseからSQLで読んだ行を、`whatif-engine` と同じ計算（Decimal、行ごとに小数2桁へ丸め）で出します。Ontologyのグラフは、計算の入力にしていません
 - Ontology：グラフ（GQL Query API、beta）に問い合わせて、イベント一覧と、イベントから全社KPIまでの経路を取得します。経路の影響額の件数は、Lakehouseの件数と照合して表示します
 - 確認：2026-10-28に、デプロイ済みのアプリで確認しました。確認できた範囲と未確認の範囲は、`reports/whatif_app_live_verification_2026-10-28.json` にあります
-- 接続設定（`.env`、`local.settings.json`、`.deployments.json`）はGit管理外です。`whatif-app/rayfin/rayfin.yml` の公開先ホストは、`__APP_HOST__` に置き換えてあります。デプロイの前に、`restore` で実際の値に戻してください（戻さないと、公開先でのサインインが通らない場合があります）。`rayfin/.project.json`（スキャフォールドの匿名の識別子）も、Git管理外です
+- 接続設定（`.env`、`local.settings.json`、`.deployments.json`）はGit管理外です。`whatif-app/rayfin/rayfin.yml` には、公開先ホストを書いていません。`rayfin up` が、デプロイのたびに公開先URLを追記します（Rayfinの仕様）。追記された行はコミットせず、デプロイのあとに `git restore whatif-app/rayfin/rayfin.yml` で戻してください。アプリのデプロイに `restore` は要りません。`rayfin/.project.json`（スキャフォールドの匿名の識別子）も、Git管理外です
 
 ## ディレクトリ
 
@@ -77,7 +77,7 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 公開リポジトリのため、デモ環境のFabricの識別子は、`__WORKSPACE_ID__` のようなプレースホルダーに置き換えています。対象は、ワークスペース、キャパシティ、各アイテム（Lakehouse、Notebook、Ontology、Graph、Data Agent）、ジョブ、SQLエンドポイントのIDとホスト名、Data Agentの会話などのIDです。What-ifアプリの公開先ホスト名、アイテムID、テナントID、公開キーも含みます。認証情報は含みません。
 
 - 実際の値は、Git管理外の `config/environment_ids.local.json` に置きます（`.gitignore` 済み。項目の一覧と形式は `config/environment_ids.example.json`）
-- Fabricに接続するスクリプトやNotebookを使う前、アプリを `rayfin up` でデプロイする前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します
+- Fabricに接続するスクリプトやNotebookを使う前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します（引数なしだと、追跡中の多数のファイルを書き換えます。使うファイルだけを引数に渡すこともできます。アプリのデプロイには要りません）
 - コミットの前に、`python3 scripts/environment_ids.py redact` でプレースホルダーに戻し、`python3 scripts/environment_ids.py check` で残りがないことを確認します。`check` は対応表がなくても、ランダムなGUIDと、SQLエンドポイントおよびFabric Appsのホスト名を探します
 - プレースホルダーのままでは、Fabricに接続するスクリプトやNotebookは動きません。`decks/` の説明者ガイドにあるFabricへのリンクも、プレースホルダーのままです。実際のリンクが要るときは、`restore` のあとに `python3 presentation/build_presenter_deck.py` で作り直してください
 

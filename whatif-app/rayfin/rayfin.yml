@@ -10,12 +10,10 @@ services:
     password:
       enabled: false
     allowedRedirectUris:
-      # In git, the last entry is a placeholder. Before "rayfin up", run
-      # "python3 scripts/environment_ids.py restore" at the repository root.
-      # Before committing, run "redact" and then "check" (see ../../AGENTS.md).
+      # "rayfin up" appends the live hosting URL to this list. Do not commit that line:
+      # after deploying, run "git restore whatif-app/rayfin/rayfin.yml" (see ../../AGENTS.md).
       - http://localhost:5173
       - http://127.0.0.1:5173
-      - https://__APP_HOST__
   data:
     enabled: false
     path: packages/data
