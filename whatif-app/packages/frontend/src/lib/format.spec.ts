@@ -10,6 +10,8 @@ import {
   formatSignedOku,
   formatSignedYen,
   formatYen,
+  formatYenAsOku,
+  formatOkuNumber,
   subtract,
 } from './format';
 
@@ -63,6 +65,39 @@ describe('formatOku', () => {
     expect(formatSignedOku('57230593.13')).toBe('+5,723万円');
     expect(formatSignedOku('2328820955.71')).toBe('+23.3億円');
     expect(formatSignedOku('0')).toBe('0円');
+  });
+});
+
+describe('formatYenAsOku', () => {
+  it('1億円未満でも万円にせず、常に億円で出す（同じ画面のグラフ・表と単位をそろえる）', () => {
+    expect(formatYenAsOku('-93050000.00')).toBe('−0.93億円');
+    expect(formatYenAsOku('-93050000.00', 2, true)).toBe('−0.93億円');
+    expect(formatYenAsOku('93050000.00', 2, true)).toBe('+0.93億円');
+    expect(formatYenAsOku('11489536832.22')).toBe('114.90億円');
+    expect(formatYenAsOku('11375075645.97')).toBe('113.75億円');
+  });
+
+  it('0 や微小な値で「−0.00」を出さず、数値でないものは出さない', () => {
+    expect(formatYenAsOku('0.00', 2, true)).toBe('0.00億円');
+    expect(formatYenAsOku('-100.00', 2, true)).toBe('0.00億円');
+    expect(formatYenAsOku('abc')).toBe('—');
+    expect(formatYenAsOku('')).toBe('—');
+  });
+});
+
+describe('formatOkuNumber', () => {
+  it('億円の数値だけを出す。負は「−」、正の符号は求められたときだけ付ける', () => {
+    expect(formatOkuNumber(115.6138958, 1)).toBe('115.6');
+    expect(formatOkuNumber(-1.1446, 2)).toBe('−1.14');
+    expect(formatOkuNumber(1.1446, 2, true)).toBe('+1.14');
+    expect(formatOkuNumber(1.1446, 2)).toBe('1.14');
+  });
+
+  it('0 に丸まる値は、符号を付けない', () => {
+    expect(formatOkuNumber(-0.0004, 2)).toBe('0.00');
+    expect(formatOkuNumber(0.0004, 2, true)).toBe('0.00');
+    expect(formatOkuNumber(Number.NaN)).toBe('—');
+    expect(formatOkuNumber(Number.POSITIVE_INFINITY)).toBe('—');
   });
 });
 

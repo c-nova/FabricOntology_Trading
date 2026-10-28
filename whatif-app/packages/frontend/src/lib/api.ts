@@ -1,6 +1,6 @@
 import { getRayfinClient } from '@/lib/rayfin-client';
 
-import type { EventPathsOutput, LoadModelOutput, ScenarioInput, SimulateOutput } from './types';
+import type { EventPathsOutput, ForecastModelOutput, ForecastScenario, ForecastSimulationOutput, LoadModelOutput, ScenarioInput, SimulateOutput } from './types';
 
 // Functions の呼び出し口。フックはここだけを使う（テストでは、この 3 つを差し替える）。
 // サーバーが返した「期待される失敗」（ok: false）は値として返し、通信の失敗は例外のまま投げる。
@@ -15,6 +15,8 @@ export interface Api {
   loadModel: () => Promise<LoadModelOutput>;
   simulate: (scenario: ScenarioInput) => Promise<SimulateOutput>;
   eventPaths: (eventId: string) => Promise<EventPathsOutput>;
+  loadForecast: () => Promise<ForecastModelOutput>;
+  simulateForecast: (scenario: ForecastScenario) => Promise<ForecastSimulationOutput>;
 }
 
 export const api: Api = {
@@ -29,5 +31,13 @@ export const api: Api = {
   async eventPaths(eventId) {
     const client = await getRayfinClient();
     return client.functions.eventPaths.invoke({ eventId }, { timeoutMs: PATHS_TIMEOUT_MS });
+  },
+  async loadForecast() {
+    const client = await getRayfinClient();
+    return client.functions.loadForecast.invoke(undefined, { timeoutMs: LOAD_TIMEOUT_MS });
+  },
+  async simulateForecast(scenario) {
+    const client = await getRayfinClient();
+    return client.functions.simulateForecast.invoke({ scenario }, { timeoutMs: LOAD_TIMEOUT_MS });
   },
 };

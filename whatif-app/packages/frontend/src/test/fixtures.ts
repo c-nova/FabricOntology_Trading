@@ -1,5 +1,5 @@
 import type { Api } from '@/lib/api';
-import type { EventPathsOutput, LoadModelOutput, SimulateOutput } from '@/lib/types';
+import type { EventPathsOutput, ForecastModelOutput, ForecastSimulationOutput, LoadModelOutput, SimulateOutput } from '@/lib/types';
 
 // 実機の Functions が返した「形」に合わせたフィクスチャ。
 // 実機で確認した値は、全体の基準・シナリオ・差・段階（steps）と FOD_NEG の影響額だけ。
@@ -99,6 +99,40 @@ export const PATHS: Extract<EventPathsOutput, { ok: true }>['paths'] = Array.fro
   kpiId: `KPI_${i % 40}`,
 }));
 
+export const FORECAST: Extract<ForecastModelOutput, { ok: true }>['forecast'] = {
+  baseline: { asOf: '2026-09-30', period: { from: '2026-10-01', to: '2026-12-31' }, amountFull: '11489536832.22' },
+  generatedAt: '2026-10-28T08:21:36.287799+00:00',
+  model: 'AutoML + Graph',
+};
+
+// 四半期 × 業種の実績は、デモのデータから計算した実際の値。予測の業種別は、Notebookの会社別予測を業種ごとに足した代表値
+const HISTORY = (key: string, from: string, to: string, days: number, e: string, fi: string, fo: string, m: string, total: string) => ({
+  key, from, to, days, bySector: { energy: e, finance: fi, foods: fo, metals: m }, total,
+});
+
+export const FORECAST_LOADED: Extract<ForecastModelOutput, { ok: true }> = {
+  ok: true,
+  forecast: FORECAST,
+  history: [
+    HISTORY('2025-10', '2025-10-01', '2025-12-31', 92, '3659896223.83', '2215293991.93', '2268041186.13', '3450070964.81', '11593302366.70'),
+    HISTORY('2026-01', '2026-01-01', '2026-03-31', 90, '3051868478.21', '2006240974.71', '1899787513.32', '3407015356.32', '10364912322.56'),
+    HISTORY('2026-04', '2026-04-01', '2026-06-30', 91, '3641639908.28', '2025999134.02', '2182944718.51', '3387211701.26', '11237795462.07'),
+    HISTORY('2026-07', '2026-07-01', '2026-09-30', 92, '3436018594.32', '2338305881.58', '2301118582.61', '3485946523.00', '11561389581.51'),
+  ],
+  forecastBySector: { energy: '3468366385.09', finance: '2283752778.81', foods: '2282177748.07', metals: '3455239920.26' },
+};
+
+export const FORECAST_RESULT: Extract<ForecastSimulationOutput, { ok: true }>['result'] = {
+  period: FORECAST.baseline.period, asOf: FORECAST.baseline.asOf,
+  baselineFull: FORECAST.baseline.amountFull, scenarioFull: '11375075645.97',
+  deltaFull: '-114461186.25', eventId: 'FOD_NEG', eventDate: '2026-11-15', scale: '1',
+  includedEffects: 84, excludedEffects: 0, historicalEffects: 84,
+  byEntity: [{ entityId: 'SUB_FOD_JP_01', name: 'Caldriva Foods Japan KK', deltaFull: '-50000000.00' }],
+};
+export const FORECAST_GRAPH: Extract<ForecastSimulationOutput, { ok: true }>['graph'] = {
+  effects: 84, activities: 84, contracts: 6, evidence: 2, metrics: 28, kpis: 15,
+};
+
 // 条件に応じて結果を返す API のスタブ。呼び出しは記録する。
 export function stubApi(over: Partial<Api> = {}): Api & { calls: { simulate: unknown[]; eventPaths: string[]; loadModel: number } } {
   const calls = { simulate: [] as unknown[], eventPaths: [] as string[], loadModel: 0 };
@@ -118,6 +152,12 @@ export function stubApi(over: Partial<Api> = {}): Api & { calls: { simulate: unk
       calls.eventPaths.push(eventId);
       return { ok: true, eventId, paths: PATHS };
     },
+    loadForecast: async () => FORECAST_LOADED,
+    simulateForecast: async (scenario) => ({
+      ok: true,
+      result: { ...FORECAST_RESULT, eventId: scenario.eventId, eventDate: scenario.eventDate, scale: String(scenario.scale) },
+      graph: FORECAST_GRAPH,
+    }),
     ...over,
   };
 }

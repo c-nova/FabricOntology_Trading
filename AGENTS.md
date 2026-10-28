@@ -30,7 +30,7 @@ pptxを直接編集しない。`presentation/` のビルダーを直して、作
 
 - 各ページに、伝えたいことと、存在理由がある。章立てと章扉を保つ。
 - デモが示していないこと（規模、性能、コスト、権限、Graphの網羅性）は、断定しない。「Microsoft Learnの記載」「デモで未検証」「仮の目安」を書き分ける。
-- Ontologyの役割は、次のとおり。Ontologyは、金額を計算しない。Data Agentは、Ontologyの定義と関係を参照し、答えはLakehouseの表へのSQLで求める。What-ifアプリは、LakehouseからSQLで読んだ行を、アプリのコードで計算する。グラフ（GQL Query API、beta）が返すのは、イベント一覧と経路で、計算には使わない。
+- Ontologyは金額を計算しない。Data AgentはOntologyの定義と関係を参照し、答えはLakehouseの表へのSQLで求める。What-ifアプリの過去分析は、LakehouseからSQLで読んだ行をアプリのコードで計算し、Graphはイベント一覧と経路を表示する。将来分析では、Ontology由来Graph（GQL Query API、beta）から取得した影響額の経路をLakehouseの行とID単位で照合し、過去の影響額を仮定として予測値に加える。AutoMLの再予測や、実世界の因果の証明ではない。
 - 用語は、資料とアプリでそろえる：影響額、取引活動、日次指標、全社KPI、契約、イベント。画面の「実績」は、資料の「実績」（イベントの影響を反映した値）で、「基準値」（影響を加える前の想定値）とは別です。
 - Fabric Apps、Ontology、Data AgentはPreviewで、グラフのクエリ用APIはbetaです。
 

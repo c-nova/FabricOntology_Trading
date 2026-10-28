@@ -28,6 +28,11 @@ const directionRank = (direction: string): number => (direction === 'negative' ?
 
 const compare = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
+/** 業種コードを、画面の並び（金属・エネルギー・食品・金融・全業種・その他）にそろえる。 */
+export function orderedSectors(codes: Iterable<string>): string[] {
+  return [...new Set(codes)].sort((a, b) => sectorRank(a) - sectorRank(b) || compare(a, b));
+}
+
 /** セクター順（金属・エネルギー・食品・金融・全業種）→ 悪材料が先 → ID。 */
 export function sortEvents(events: readonly ModelEvent[]): ModelEvent[] {
   return [...events].sort(

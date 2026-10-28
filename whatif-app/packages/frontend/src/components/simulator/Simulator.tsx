@@ -13,6 +13,7 @@ import type { Metric, Model } from '@/lib/types';
 
 import { Breakdown } from './Breakdown';
 import { ConditionsPanel } from './ConditionsPanel';
+import { FuturePanel } from './FuturePanel';
 import { Notes } from './Notes';
 import { PathPanel } from './PathPanel';
 import { ResultBand, ResultBandSkeleton } from './ResultBand';
@@ -41,7 +42,7 @@ function Shell({ children, trailing }: { children: React.ReactNode; trailing?: R
         <div className="mx-auto flex max-w-content flex-wrap items-center justify-between gap-300 px-500 py-300">
           <div className="min-w-0">
             <h1 className="font-heading text-500 font-bold leading-500 text-foreground">What-if シミュレータ</h1>
-            <p className="text-200 text-muted-foreground">もし為替やイベントの影響が違っていたら、全社の EBITDA はどう変わるか。</p>
+            <p className="text-200 text-muted-foreground">過去の実績と将来の予測を、条件変更後の EBITDA と比べる。</p>
           </div>
           <div className="flex items-center gap-300">
             {trailing}
@@ -78,6 +79,8 @@ function Loading({ elapsedSec }: { elapsedSec: number }) {
 function Ready({ model, api }: { model: Model; api?: Api }) {
   const [scenario, setScenario] = useState<ScenarioState>(INITIAL_STATE);
   const [metric, setMetric] = useState<Metric>('full');
+  const [view, setView] = useState<'history' | 'future'>('history');
+  const [visitedFuture, setVisitedFuture] = useState(false);
   const sim = useSimulation(scenario, true, api);
 
   // 経路を見せるイベント。まだ選んでいなければ、基準の影響が最大のイベントにする
@@ -92,16 +95,30 @@ function Ready({ model, api }: { model: Model; api?: Api }) {
   return (
     <Shell
       trailing={
-        <Segmented
+        view === 'history' ? <Segmented
           legend="表示する指標"
           name="metric"
           value={metric}
           options={METRICS.map((m) => ({ id: m.id, label: m.label, title: m.hint }))}
           onChange={setMetric}
-        />
+        /> : undefined
       }
     >
       <div className="space-y-600">
+        <Segmented
+          legend="分析の切り替え"
+          name="analysis-view"
+          value={view}
+          options={[
+            { id: 'history', label: '過去の実績' },
+            { id: 'future', label: '将来の予測' },
+          ]}
+          onChange={(next) => {
+            setView(next);
+            if (next === 'future') setVisitedFuture(true);
+          }}
+        />
+        <div hidden={view !== 'history'} className="space-y-600">
         <section aria-labelledby="result-label" className="space-y-300">
           <div className="flex flex-wrap items-baseline justify-between gap-200">
             <SectionLabel id="result-label">結果</SectionLabel>
@@ -140,6 +157,10 @@ function Ready({ model, api }: { model: Model; api?: Api }) {
         <p className="text-200 text-muted-foreground">
           {model.events.length} 件のイベント、{model.companies.length} 社。集計期間 {formatDate(model.period.from)}〜{formatDate(model.period.to)}。
         </p>
+        </div>
+        <div hidden={view !== 'future'} className="space-y-600">
+          {visitedFuture && <FuturePanel events={model.events} api={api} />}
+        </div>
       </div>
     </Shell>
   );

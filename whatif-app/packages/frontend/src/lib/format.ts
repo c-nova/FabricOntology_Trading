@@ -75,6 +75,21 @@ export function formatSignedOku(value: string, digits = 1): string {
   return n > 0 ? `+${text}` : text;
 }
 
+/** グラフの数値ラベル用。億円の数値だけ（単位は軸や凡例に出す）。負は「−」、0 に近い値で「−0.0」を出さない。 */
+export function formatOkuNumber(oku: number, digits = 1, signed = false): string {
+  if (!Number.isFinite(oku)) return '—';
+  const text = Math.abs(oku).toFixed(digits);
+  if (!/[1-9]/.test(text)) return (0).toFixed(digits);
+  if (oku < 0) return `−${text}`;
+  return signed ? `+${text}` : text;
+}
+
+/** 円（10進の文字列）を、常に億円で出す。1億円未満でも「万円」にしない（同じ画面のグラフ・表と、単位をそろえるため）。 */
+export function formatYenAsOku(value: string, digits = 2, signed = false): string {
+  if (!isNumeric(value)) return '—';
+  return `${formatOkuNumber(Number(value) / 1e8, digits, signed)}億円`;
+}
+
 /** 基準に対する割合。基準が 0 のときは出さない。例: "−5.1%" */
 export function formatPercent(delta: string, base: string, digits = 1): string {
   if (!isNumeric(delta) || !isNumeric(base)) return '—';

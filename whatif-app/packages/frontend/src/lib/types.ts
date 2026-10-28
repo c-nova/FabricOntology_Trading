@@ -7,6 +7,9 @@ export type ScenarioInput = Fn['simulate']['input']['scenario'];
 export type SimulateOutput = Fn['simulate']['output'];
 export type LoadModelOutput = Fn['loadModel']['output'];
 export type EventPathsOutput = Fn['eventPaths']['output'];
+export type ForecastModelOutput = Fn['loadForecast']['output'];
+export type ForecastSimulationOutput = Fn['simulateForecast']['output'];
+export type ForecastScenario = Fn['simulateForecast']['input']['scenario'];
 
 export type Success<T extends { ok: boolean }> = Extract<T, { ok: true }>;
 export type Failure = { ok: false; code: string; message: string };
@@ -19,5 +22,10 @@ export type GraphPath = Success<EventPathsOutput>['paths'][number];
 export type EventImpact = SimulationResult['eventImpacts'][number];
 export type Breakdown = SimulationResult['byEntity'][number];
 export type Totals = SimulationResult['base'];
+export type ForecastSnapshot = Success<ForecastModelOutput>['forecast'];
+export type ForecastLoaded = Success<ForecastModelOutput>;
+export type HistoryQuarter = ForecastLoaded['history'][number];
+export type ForecastResult = Success<ForecastSimulationOutput>['result'];
+export type ForecastGraph = Success<ForecastSimulationOutput>['graph'];
 
 export type Metric = 'full' | 'management';

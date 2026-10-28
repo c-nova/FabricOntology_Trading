@@ -33,4 +33,12 @@ export type AppFunctionsSchema = {
     input: { eventId: string };
     output: { ok: false; code: string; message: string } | { ok: true; eventId: string; paths: { effectId: string; entityId: string; activityId: string; activityType: string; commodity: string; contractId: string; evidenceId: string; metricId: string; kpiId: string }[] };
   };
+  loadForecast: {
+    input: Record<string, never>;
+    output: { ok: false; code: string; message: string } | { ok: true; forecast: { baseline: { asOf: string; period: { from: string; to: string }; amountFull: string }; generatedAt: string; model: string }; history: { key: string; from: string; to: string; days: number; bySector: { [k: string]: string }; total: string }[]; forecastBySector: null | { [k: string]: string } };
+  };
+  simulateForecast: {
+    input: { scenario: { eventId: string; eventDate: string; scale: number } };
+    output: { ok: false; code: string; message: string } | { ok: true; result: { period: { from: string; to: string }; asOf: string; baselineFull: string; scenarioFull: string; deltaFull: string; eventId: string; eventDate: string; scale: string; includedEffects: number; excludedEffects: number; historicalEffects: number; byEntity: { entityId: string; name: string; deltaFull: string }[] }; graph: { effects: number; activities: number; contracts: number; evidence: number; metrics: number; kpis: number } };
+  };
 };

@@ -45,6 +45,14 @@
   --color-input: #857f70; /* input field borders */
   --color-ring: #1b4d7a; /* focus rings */
 
+  /* Chart — 積み上げ棒（業種別）の配色。背景として薄く敷くので、落ち着いた中間色にする。
+     メインの線（前景色・ブランド色）と区別でき、赤（減少）・青（増加）とも混ざらない色を選ぶ */
+  --color-chart-metals: #6b7a90;
+  --color-chart-energy: #c58a1c;
+  --color-chart-foods: #5f9a58;
+  --color-chart-finance: #8a5a8f;
+  --color-chart-other: #98938a;
+
   --radius-none: 0;
   --radius-sm: 1px;
   --radius-md: 2px;
@@ -177,6 +185,12 @@
     --color-border: #403d37;
     --color-input: #8a8578;
     --color-ring: #8ab4e0;
+
+    --color-chart-metals: #94a3b8;
+    --color-chart-energy: #e3b04f;
+    --color-chart-foods: #88c283;
+    --color-chart-finance: #c79bcc;
+    --color-chart-other: #b3ada0;
 
     --color-brand: #8ab4e0;
     --color-brand-foreground: #8ab4e0;

@@ -37,8 +37,19 @@ AIエージェントで作業するときは、先に [`AGENTS.md`](AGENTS.md) �
 
 - 金額：LakehouseからSQLで読んだ行を、`whatif-engine` と同じ計算（Decimal、行ごとに小数2桁へ丸め）で出します。Ontologyのグラフは、計算の入力にしていません
 - Ontology：グラフ（GQL Query API、beta）に問い合わせて、イベント一覧と、イベントから全社KPIまでの経路を取得します。経路の影響額の件数は、Lakehouseの件数と照合して表示します
+- 将来：予測Notebookの保存済み結果（AutoML + Graph、全額連結）を読み、折れ線で「実績→予測」と「イベントを仮定した後」を比べます。裏には、四半期ごとの業種別の積み上げ棒を置きます（過去は実績、予測の四半期はAutoMLが会社ごとに出した予測の業種別合計。イベント想定後の内訳は出しません）。折れ線の軸は0から始めず（棒は別の軸で0から）、差が見える幅に拡大しています。四半期は、このデモのデータの年度（10月始まり。FY26 = 2025-10〜2026-09）で表示します
+- 未来のイベントは、Graphの影響額IDとLakehouseの行を照合し、過去の影響を指定日に移して倍率を掛け、四半期内だけ予測に追加する仮定です。Graphが金額を計算するわけではなく、AutoMLの再予測でもありません。基準予測との二重計上が起こり得ます
+- 予測の基準日は履歴データの末日と一致している必要があります。Notebookを再実行すると保存済み予測が更新され、アプリのキャッシュには最大10分後に反映されます。Notebookが読めない、GraphとLakehouseの経路が一致しない場合は将来の試算を表示しません。保存された予測に会社別の値が無い（古い保存結果）ときは、予測の棒だけ内訳なしで出し、画面にその旨を注記します
 - 確認：2026-10-28に、デプロイ済みのアプリで確認しました。確認できた範囲と未確認の範囲は、`reports/whatif_app_live_verification_2026-10-28.json` にあります
 - 接続設定（`.env`、`local.settings.json`、`.deployments.json`）はGit管理外です。`whatif-app/rayfin/rayfin.yml` には、公開先ホストを書いていません。`rayfin up` が、デプロイのたびに公開先URLを追記します（Rayfinの仕様）。追記された行はコミットせず、デプロイのあとに `git restore whatif-app/rayfin/rayfin.yml` で戻してください。アプリのデプロイに `restore` は要りません。`rayfin/.project.json`（スキャフォールドの匿名の識別子）も、Git管理外です
+
+## Ontology × AutoML予測Notebook
+
+`notebooks/TradingDemo_04_Ontology_AutoML.ipynb` は、3四半期の履歴で学習し、最後の四半期を探索的に評価してから、4四半期で再学習して次の92日を予測します。直近91日平均、FLAML AutoML、Graphの過去の影響額・経路数を特徴量に加えたAutoMLを比較します。
+
+Ontology由来のGraphをGQLで照会し、取得した経路をLakehouseの影響額・日次指標と照合します。予測を行うのはAutoMLで、Graphそのものではありません。各予測時点より後のイベント、影響額、為替実績は特徴量に使いません。現在のGraphから過去を再構成するため、影響日を利用可能日時と仮定しており、当時の公開履歴は未検証です。1年分の合成データと既に閲覧済みの1四半期による比較は、実世界の精度や因果を示しません。
+
+Notebookは `python3 scripts/build_forecast_notebook.py` で生成します。処理本体は `scripts/forecast_automl_core.py`、Fabric接続は `scripts/forecast_automl_fabric.py` です。最新の実行結果（次の四半期の合計と、会社別の予測を含む）はNotebook内に保存され、What-ifアプリがそれを読みます。会社別の予測は、合計と一致することをテストで確認しています。LakehouseとGraphのデータは変更しません。
 
 ## ディレクトリ
 

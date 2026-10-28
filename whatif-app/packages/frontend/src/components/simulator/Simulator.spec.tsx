@@ -71,7 +71,7 @@ describe('Simulator の操作', () => {
   it('準備ができると、為替とイベントごとのスライダー、結果、経路が出る', async () => {
     const api = await ready();
     // 為替 1 + イベント 3
-    expect(screen.getAllByRole('slider')).toHaveLength(4);
+    expect(within(screen.getByRole('complementary', { name: '条件' })).getAllByRole('slider')).toHaveLength(4);
     expect(screen.getByRole('region', { name: '全額連結' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: '持分管理' })).toBeInTheDocument();
     expect(api.calls.eventPaths).toEqual(['MTL_NEG']); // 基準の影響額の絶対値が最大のイベント
@@ -83,6 +83,19 @@ describe('Simulator の操作', () => {
     const full = screen.getByRole('region', { name: '全額連結' });
     expect(within(full).getByText('0円')).toBeInTheDocument();
     expect(within(full).getByText('変化なし')).toBeInTheDocument();
+  });
+
+  it('将来の予測に切り替えても、過去の条件は保持する', async () => {
+    await ready();
+    fireEvent.click(screen.getByRole('button', { name: '円高 10%' }));
+    await settle();
+    fireEvent.click(screen.getByRole('radio', { name: '将来の予測' }));
+    await settle();
+    await settle();
+    expect(screen.getByRole('img', { name: /四半期の EBITDA/ })).toBeInTheDocument();
+    expect(screen.getByRole('slider', { name: '追加する影響の大きさ' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('radio', { name: '過去の実績' }));
+    expect(screen.getByText('円高 10%', { selector: 'output' })).toBeInTheDocument();
   });
 
   it('ワンタッチ「円高 10%」で、為替が −10% になり、結果が減少と符号つきで出る', async () => {

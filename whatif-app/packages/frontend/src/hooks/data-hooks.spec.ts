@@ -26,6 +26,8 @@ const fakeApi = (over: Partial<Api>): Api => ({
   loadModel: vi.fn(),
   simulate: vi.fn(),
   eventPaths: vi.fn(),
+  loadForecast: vi.fn(),
+  simulateForecast: vi.fn(),
   ...over,
 });
 

@@ -35,7 +35,7 @@ const BY_CODE: Record<string, Explained> = {
   },
   UPSTREAM: {
     title: 'データの取得に失敗しました',
-    action: 'Lakehouse またはグラフが一時的に応答していない可能性があります。再試行してください。',
+    action: 'Lakehouse・グラフ・予測Notebookの状態と、予測の対象期間を確認してから再試行してください。',
     needsOperator: false,
   },
   UNKNOWN_EVENT: {

@@ -1,6 +1,7 @@
 import { UserDataFunctions, AudienceType, type RayfinContext } from '@microsoft/fabric-user-data-functions';
-import { simulate, type Scenario, type ScenarioResult, ScenarioError } from './engine/index.js';
+import { simulate, simulateFuture, quarterlySectors, type Scenario, type ScenarioResult, type FutureBaseline, type FutureScenario, type FutureResult, type QuarterSectors, ScenarioError, DataError } from './engine/index.js';
 import { FabricError } from './fabric.js';
+import { forecastBySector, readForecast } from './forecast.js';
 import { readEvents, readPaths, type GraphEvent, type GraphPath } from './graph.js';
 import { load, cacheAgeMs, type Source } from './model.js';
 
@@ -12,6 +13,7 @@ export type Failure = { ok: false; code: string; message: string };
 const fail = (error: unknown): Failure => {
   if (error instanceof ScenarioError) return { ok: false, code: error.code, message: error.message };
   if (error instanceof FabricError) return { ok: false, code: error.code, message: error.message };
+  if (error instanceof DataError) return { ok: false, code: 'UPSTREAM', message: 'Graph and source data could not be reconciled.' };
   console.error('unexpected failure', error instanceof Error ? error.name : typeof error);
   return { ok: false, code: 'UNEXPECTED', message: 'An unexpected error occurred.' };
 };
@@ -143,6 +145,84 @@ udf.func(
         return { ok: false, code: 'UNKNOWN_EVENT', message: 'Unknown event.' };
       }
       return { ok: true, eventId, paths: await readPaths(ctx.Tokens.Fabric, data.coordinates, eventId) };
+    } catch (error) {
+      return fail(error);
+    }
+  },
+  []
+);
+
+export interface ForecastView {
+  baseline: FutureBaseline;
+  generatedAt: string;
+  model: string;
+}
+
+// 四半期ごとの業種別の実績と、予測の業種別の内訳（保存された結果に会社別が無いときは null）
+export type ForecastModelResult =
+  | { ok: true; forecast: ForecastView; history: QuarterSectors[]; forecastBySector: Record<string, string> | null }
+  | Failure;
+
+udf.func(
+  'loadForecast',
+  async (ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ForecastModelResult> => {
+    try {
+      const { data } = await load(tokens(ctx));
+      const forecast = await readForecast(ctx.Tokens.Fabric, data.coordinates.workspaceId);
+      if (forecast.baseline.asOf !== data.prepared.lastDate) {
+        throw new FabricError('UPSTREAM', 'Forecast and historical data have different cutoffs.');
+      }
+      return {
+        ok: true,
+        forecast: { baseline: forecast.baseline, generatedAt: forecast.generatedAt, model: forecast.model },
+        history: quarterlySectors(data.prepared),
+        forecastBySector: forecastBySector(forecast.byEntity, data.base.companies),
+      };
+    } catch (error) {
+      return fail(error);
+    }
+  },
+  []
+);
+
+export interface ForecastGraphSummary {
+  effects: number;
+  activities: number;
+  contracts: number;
+  evidence: number;
+  metrics: number;
+  kpis: number;
+}
+
+export type ForecastSimulationResult = { ok: true; result: FutureResult; graph: ForecastGraphSummary } | Failure;
+
+udf.func(
+  'simulateForecast',
+  async (scenario: FutureScenario, ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ForecastSimulationResult> => {
+    try {
+      const { data } = await load(tokens(ctx));
+      if (!data.base.events.some((event) => event.eventId === scenario.eventId)) {
+        return { ok: false, code: 'UNKNOWN_EVENT', message: 'Unknown event.' };
+      }
+      const [forecast, paths] = await Promise.all([
+        readForecast(ctx.Tokens.Fabric, data.coordinates.workspaceId),
+        readPaths(ctx.Tokens.Fabric, data.coordinates, scenario.eventId),
+      ]);
+      if (forecast.baseline.asOf !== data.prepared.lastDate) {
+        throw new FabricError('UPSTREAM', 'Forecast and historical data have different cutoffs.');
+      }
+      const result = simulateFuture(data.prepared, forecast.baseline, scenario, paths);
+      return {
+        ok: true, result,
+        graph: {
+          effects: new Set(paths.map((path) => path.effectId)).size,
+          activities: new Set(paths.map((path) => path.activityId)).size,
+          contracts: new Set(paths.map((path) => path.contractId)).size,
+          evidence: new Set(paths.map((path) => path.evidenceId)).size,
+          metrics: new Set(paths.map((path) => path.metricId)).size,
+          kpis: new Set(paths.map((path) => path.kpiId)).size,
+        },
+      };
     } catch (error) {
       return fail(error);
     }

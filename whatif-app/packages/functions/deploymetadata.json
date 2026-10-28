@@ -198,6 +198,105 @@
         ]
       },
       "functionCode": "udf.func(\n  'eventPaths',\n  async (eventId: string, ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<PathsResult> => {\n    try {\n      const { data } = await load(tokens(ctx));\n      if (!data.base.events.some((e) => e.eventId === eventId)) {\n        return { ok: false, code: 'UNKNOWN_EVENT', message: 'Unknown event.' };\n      }\n      return { ok: true, eventId, paths: await readPaths(ctx.Tokens.Fabric, data.coordinates, eventId) };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    },
+    {
+      "name": "loadForecast",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "loadForecast"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ForecastModelResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'loadForecast',\n  async (ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ForecastModelResult> => {\n    try {\n      const { data } = await load(tokens(ctx));\n      const forecast = await readForecast(ctx.Tokens.Fabric, data.coordinates.workspaceId);\n      if (forecast.baseline.asOf !== data.prepared.lastDate) {\n        throw new FabricError('UPSTREAM', 'Forecast and historical data have different cutoffs.');\n      }\n      return {\n        ok: true,\n        forecast: { baseline: forecast.baseline, generatedAt: forecast.generatedAt, model: forecast.model },\n        history: quarterlySectors(data.prepared),\n        forecastBySector: forecastBySector(forecast.byEntity, data.base.companies),\n      };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
+    },
+    {
+      "name": "simulateForecast",
+      "scriptFile": "src/function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "simulateForecast"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Sql",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Sql"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ForecastSimulationResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "scenario",
+            "dataType": "FutureScenario",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\n  'simulateForecast',\n  async (scenario: FutureScenario, ctx: RayfinContext<Record<string, never>, AudienceType.Fabric | AudienceType.Sql>): Promise<ForecastSimulationResult> => {\n    try {\n      const { data } = await load(tokens(ctx));\n      if (!data.base.events.some((event) => event.eventId === scenario.eventId)) {\n        return { ok: false, code: 'UNKNOWN_EVENT', message: 'Unknown event.' };\n      }\n      const [forecast, paths] = await Promise.all([\n        readForecast(ctx.Tokens.Fabric, data.coordinates.workspaceId),\n        readPaths(ctx.Tokens.Fabric, data.coordinates, scenario.eventId),\n      ]);\n      if (forecast.baseline.asOf !== data.prepared.lastDate) {\n        throw new FabricError('UPSTREAM', 'Forecast and historical data have different cutoffs.');\n      }\n      const result = simulateFuture(data.prepared, forecast.baseline, scenario, paths);\n      return {\n        ok: true, result,\n        graph: {\n          effects: new Set(paths.map((path) => path.effectId)).size,\n          activities: new Set(paths.map((path) => path.activityId)).size,\n          contracts: new Set(paths.map((path) => path.contractId)).size,\n          evidence: new Set(paths.map((path) => path.evidenceId)).size,\n          metrics: new Set(paths.map((path) => path.metricId)).size,\n          kpis: new Set(paths.map((path) => path.kpiId)).size,\n        },\n      };\n    } catch (error) {\n      return fail(error);\n    }\n  },\n  []\n)"
     }
   ]
 }

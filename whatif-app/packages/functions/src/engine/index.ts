@@ -2,3 +2,7 @@
 export { prepare, simulate, simulateRows, reconcile, ScenarioError, DataError, LIMITS } from './engine.js';
 export type { ScenarioErrorCode, Prepared } from './engine.js';
 export type * from './types.js';
+export { simulateFuture } from './future.js';
+export type { FutureBaseline, FutureScenario, FuturePath, FutureResult } from './future.js';
+export { quarterlySectors } from './quarters.js';
+export type { QuarterSectors } from './quarters.js';

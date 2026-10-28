@@ -41,7 +41,7 @@ export interface FabricCall {
   signal?: AbortSignal;
 }
 
-export async function fabricFetch<T>(token: string, call: FabricCall): Promise<T> {
+export async function fabricFetchResponse<T>(token: string, call: FabricCall): Promise<{ status: number; headers: Headers; data: T }> {
   const url = call.path.startsWith(FABRIC_API) ? call.path : `${FABRIC_API}/${call.path}`;
   if (!url.startsWith(FABRIC_API)) throw new FabricError('UPSTREAM', 'Unexpected API host');
   const res = await fetch(url, {
@@ -52,7 +52,11 @@ export async function fabricFetch<T>(token: string, call: FabricCall): Promise<T
   });
   const text = await res.text();
   if (!res.ok) throw classify(res.status, text);
-  return (text ? JSON.parse(text) : {}) as T;
+  return { status: res.status, headers: res.headers, data: (text ? JSON.parse(text) : {}) as T };
+}
+
+export async function fabricFetch<T>(token: string, call: FabricCall): Promise<T> {
+  return (await fabricFetchResponse<T>(token, call)).data;
 }
 
 interface Item {
@@ -81,6 +85,11 @@ function exactlyOne(items: Item[], name: string, what: string): Item {
   if (hits.length === 0) throw new FabricError('NOT_FOUND', `${what} "${name}" was not found`);
   if (hits.length > 1) throw new FabricError('AMBIGUOUS', `${what} "${name}" matched ${hits.length} items`);
   return hits[0]!;
+}
+
+export async function resolveNotebookId(token: string, workspaceId: string, name: string): Promise<string> {
+  const items = await listAll(token, `workspaces/${workspaceId}/items`);
+  return exactlyOne(items.filter((item) => item.type === 'Notebook'), name, 'Notebook').id;
 }
 
 export interface Coordinates {

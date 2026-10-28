@@ -50,30 +50,31 @@ function Figure({ result, metric, selected, pending }: { result: SimulationResul
         <h3 className="text-300 font-semibold text-foreground" title={meta.hint}>
           {meta.label}
         </h3>
-        <span className="text-200 text-muted-foreground">実績との差</span>
+        <span className="text-200 text-muted-foreground">年間 EBITDA</span>
       </header>
 
-      <p className={cn('flex items-center gap-200 font-heading text-[length:var(--text-hero-900)] font-bold leading-hero-900 @lg:text-[length:var(--text-hero-1000)] @lg:leading-hero-1000', TONE[direction])}>
-        <Arrow direction={direction} className="icon-size-500 shrink-0 @lg:icon-size-700" />
-        <span className="font-numeric tabular-nums">{formatSignedOku(delta)}</span>
-      </p>
-
-      <dl className="grid grid-cols-[auto_1fr] items-baseline gap-x-400 gap-y-100 text-300">
-        <dt className="text-muted-foreground">増減</dt>
-        <dd className={cn('flex flex-wrap gap-x-200 font-medium', TONE[direction])}>
-          <span>{WORD[direction]}</span>
-          {direction !== 'flat' && <span className="font-numeric tabular-nums">{formatPercent(delta, base)}</span>}
-        </dd>
-        <dt className="text-muted-foreground">実績</dt>
-        <dd className="font-numeric tabular-nums text-foreground" title={`${formatYen(base)} 円`}>
-          {formatOku(base)}
-        </dd>
-        <dt className="text-muted-foreground">シナリオ</dt>
-        <dd className="font-numeric tabular-nums text-foreground" title={`${formatYen(scenario)} 円`}>
-          {formatOku(scenario)}
-        </dd>
+      <dl className="grid grid-cols-2 gap-300">
+        <div>
+          <dt className="text-200 text-muted-foreground">実績</dt>
+          <dd className="font-numeric text-600 font-semibold tabular-nums text-foreground @lg:text-hero-700" title={`${formatYen(base)} 円`}>
+            {formatOku(base)}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-200 text-muted-foreground">条件変更後</dt>
+          <dd className="font-numeric text-600 font-bold tabular-nums text-foreground @lg:text-hero-700" title={`${formatYen(scenario)} 円`}>
+            {formatOku(scenario)}
+          </dd>
+        </div>
       </dl>
 
+      <p className={cn('flex flex-wrap items-center gap-x-200 text-300 font-medium', TONE[direction])}>
+        <span className="text-muted-foreground">実績との差</span>
+        <Arrow direction={direction} className="icon-size-200 shrink-0" />
+        <span>{WORD[direction]}</span>
+        <span className="font-numeric tabular-nums">{formatSignedOku(delta)}</span>
+        {direction !== 'flat' && <span className="font-numeric tabular-nums">{formatPercent(delta, base)}</span>}
+      </p>
       <p className="font-numeric text-200 tabular-nums text-muted-foreground">差 {formatSignedYen(delta)} 円</p>
     </section>
   );

@@ -1,0 +1,331 @@
+{
+  "version": 1,
+  "status": "verified_live_with_limits",
+  "captured_at_utc": "2026-10-28（Notebookの実行日）。アプリの確認は2026-10-28",
+  "subject": "予測Notebookの保存結果（AutoML + Graph）を、アプリの将来タブが読み、イベントを仮定した場合を重ねて、折れ線と業種別の積み上げ棒で表示する",
+  "identifiers_recorded": false,
+  "roles": {
+    "automl": "次の92日（四半期）の会社別EBITDAを予測する。Ontologyの関係は計算しない。入力は、過去の日次EBITDAと、Graphで確認した影響額・経路数の過去の合計",
+    "ontology_graph": "イベント→影響額→日次指標、影響額→取引活動の経路を返す（GQL Query API、beta）。金額は計算しない。未来のイベントの実体は作らない",
+    "lakehouse": "日次EBITDA、影響額、会社マスタを返す。Graphの経路とは、効果ID・日次指標ID・会社IDで突き合わせる",
+    "app_engine": "過去の影響額を、指定した発生日に移し、倍率を掛け、予測の四半期に収まる分だけを、保存済みの基準予測に足す（Decimal、影響額の行ごとに小数2桁へ丸め）"
+  },
+  "notebook": {
+    "executed_at_utc": "2026-10-28T09:49:38.775888+00:00",
+    "horizon_days": 92,
+    "validation_origin": "2026-03-30",
+    "q4_origin": "2026-06-30",
+    "future_origin": "2026-09-30",
+    "graph_paths_reconciled": 1344,
+    "graph_event_count": 10,
+    "models": [
+      {
+        "model": "直近91日日平均",
+        "q4_forecast_oku": 113.613,
+        "q4_actual_oku": 115.614,
+        "q4_error_percent": -1.73,
+        "q4_company_mae_oku": 0.913,
+        "next_q_forecast_oku": 115.625
+      },
+      {
+        "model": "AutoML",
+        "q4_forecast_oku": 109.321,
+        "q4_actual_oku": 115.614,
+        "q4_error_percent": -5.44,
+        "q4_company_mae_oku": 0.938,
+        "next_q_forecast_oku": 114.841
+      },
+      {
+        "model": "AutoML + Graph",
+        "q4_forecast_oku": 117.463,
+        "q4_actual_oku": 115.614,
+        "q4_error_percent": 1.6,
+        "q4_company_mae_oku": 0.737,
+        "next_q_forecast_oku": 114.895
+      }
+    ],
+    "selected_estimators": {
+      "AutoML": "rf",
+      "AutoML + Graph": "extra_tree"
+    },
+    "training_rows": {
+      "AutoML": {
+        "q4": 176,
+        "next_q": 288
+      },
+      "AutoML + Graph": {
+        "q4": 176,
+        "next_q": 288
+      }
+    },
+    "assumptions": [
+      "合成データ。為替は過去のECB実績。",
+      "Graphの現在のスナップショットを利用。イベント開始日と影響日を利用可能日時と仮定し、厳密な過去時点の公開履歴は未検証。",
+      "各予測時点より後のイベント、影響額、為替実績を特徴量に使わない。",
+      "四半期の観測は1回、Q4は既に閲覧済み。差は探索的で一般化・因果を示さない。",
+      "教師データの92日間は週ごとに重複する。独立した観測数ではない。",
+      "予測値の精度保証なし。将来の為替と未知イベントは予測していない。"
+    ]
+  },
+  "forecast": {
+    "model": "AutoML + Graph",
+    "as_of": "2026-09-30",
+    "period": {
+      "from": "2026-10-01",
+      "to": "2026-12-31"
+    },
+    "baseline_jpy": "11489536832.22",
+    "notebook_saved_at_utc": "2026-10-28T09:49:38.775888+00:00",
+    "by_sector_jpy": {
+      "energy": "3468366385.09",
+      "finance": "2283752778.81",
+      "foods": "2282177748.07",
+      "metals": "3455239920.26"
+    },
+    "company_forecasts": 8
+  },
+  "actual_by_quarter": [
+    {
+      "key": "2025-10",
+      "from": "2025-10-01",
+      "to": "2025-12-31",
+      "days": 92,
+      "total_jpy": "11593302366.70",
+      "by_sector_jpy": {
+        "energy": "3659896223.83",
+        "finance": "2215293991.93",
+        "foods": "2268041186.13",
+        "metals": "3450070964.81"
+      }
+    },
+    {
+      "key": "2026-01",
+      "from": "2026-01-01",
+      "to": "2026-03-31",
+      "days": 90,
+      "total_jpy": "10364912322.56",
+      "by_sector_jpy": {
+        "energy": "3051868478.21",
+        "finance": "2006240974.71",
+        "foods": "1899787513.32",
+        "metals": "3407015356.32"
+      }
+    },
+    {
+      "key": "2026-04",
+      "from": "2026-04-01",
+      "to": "2026-06-30",
+      "days": 91,
+      "total_jpy": "11237795462.07",
+      "by_sector_jpy": {
+        "energy": "3641639908.28",
+        "finance": "2025999134.02",
+        "foods": "2182944718.51",
+        "metals": "3387211701.26"
+      }
+    },
+    {
+      "key": "2026-07",
+      "from": "2026-07-01",
+      "to": "2026-09-30",
+      "days": 92,
+      "total_jpy": "11561389581.51",
+      "by_sector_jpy": {
+        "energy": "3436018594.32",
+        "finance": "2338305881.58",
+        "foods": "2301118582.61",
+        "metals": "3485946523.00"
+      }
+    }
+  ],
+  "annual_actual_ebitda_full_jpy": "44757399732.84",
+  "graph_vs_lakehouse_per_event": [
+    {
+      "eventId": "CROSS_NEG",
+      "graph_paths": 336,
+      "lakehouse_effects": 336,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "CROSS_POS",
+      "graph_paths": 336,
+      "lakehouse_effects": 336,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "ENE_NEG",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "ENE_POS",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "FIN_NEG",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "FIN_POS",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "FOD_NEG",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "FOD_POS",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "MTL_NEG",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    },
+    {
+      "eventId": "MTL_POS",
+      "graph_paths": 84,
+      "lakehouse_effects": 84,
+      "ids_match_exactly": true
+    }
+  ],
+  "fod_neg_graph_entities": {
+    "effects": 84,
+    "activities": 84,
+    "contracts": 6,
+    "evidence": 2,
+    "metrics": 28,
+    "kpis": 15
+  },
+  "scenarios": {
+    "fod_neg_nov15_100": {
+      "event_id": "FOD_NEG",
+      "event_date": "2026-11-15",
+      "scale": 1,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11375075645.97",
+      "delta_jpy": "-114461186.25",
+      "included_effects": 84,
+      "excluded_effects": 0,
+      "historical_effects": 84
+    },
+    "fod_neg_dec20_100": {
+      "event_id": "FOD_NEG",
+      "event_date": "2026-12-20",
+      "scale": 1,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11396487651.87",
+      "delta_jpy": "-93049180.35",
+      "included_effects": 57,
+      "excluded_effects": 27,
+      "historical_effects": 84
+    },
+    "fod_neg_dec31_100": {
+      "event_id": "FOD_NEG",
+      "event_date": "2026-12-31",
+      "scale": 1,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11489536832.22",
+      "delta_jpy": "0.00",
+      "included_effects": 0,
+      "excluded_effects": 84,
+      "historical_effects": 84
+    },
+    "fod_neg_nov15_300": {
+      "event_id": "FOD_NEG",
+      "event_date": "2026-11-15",
+      "scale": 3,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11146153273.47",
+      "delta_jpy": "-343383558.75",
+      "included_effects": 84,
+      "excluded_effects": 0,
+      "historical_effects": 84
+    },
+    "fod_neg_nov15_0": {
+      "event_id": "FOD_NEG",
+      "event_date": "2026-11-15",
+      "scale": 0,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11489536832.22",
+      "delta_jpy": "0.00",
+      "included_effects": 84,
+      "excluded_effects": 0,
+      "historical_effects": 84
+    },
+    "fod_pos_nov15_100": {
+      "event_id": "FOD_POS",
+      "event_date": "2026-11-15",
+      "scale": 1,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "11609235562.87",
+      "delta_jpy": "119698730.65",
+      "included_effects": 84,
+      "excluded_effects": 0,
+      "historical_effects": 84
+    },
+    "cross_neg_nov15_100": {
+      "event_id": "CROSS_NEG",
+      "event_date": "2026-11-15",
+      "scale": 1,
+      "baseline_jpy": "11489536832.22",
+      "scenario_jpy": "10809501600.98",
+      "delta_jpy": "-680035231.24",
+      "included_effects": 336,
+      "excluded_effects": 0,
+      "historical_effects": 336
+    }
+  },
+  "ui_observations": {
+    "chart": "実績4四半期＋予測1四半期。折れ線2本（実績→予測、イベント想定後）、業種4色の積み上げ棒（棒は5本×4業種=20区画）。線の軸は0から始めず、棒の軸は0から始まる（別軸）",
+    "forecast_bars": "予測の四半期の棒は、AutoMLの会社別予測を業種ごとに足した値（斜線で区別）。イベント想定後の内訳は出さない",
+    "fiscal_labels": "このデモのデータの年度（10月始まり。FY26 = 2025-10〜2026-09）で表示。予測は FY27 Q1",
+    "first_open_seconds_observed": "約25〜30（モデル読み込み後、将来タブの初回表示）",
+    "console_errors": 0,
+    "units": "将来タブの金額は、タイル・会社別内訳・グラフ・表のすべてを億円にそろえた（1億円未満でも万円にしない）"
+  },
+  "learn_sources": [
+    {
+      "page": "fabric/data-science/how-to-use-automated-machine-learning-fabric",
+      "updated": "2026-07-22",
+      "used_for": "FLAMLのAutoMLを、Fabric Runtime 1.3以上のNotebookで使う。時系列の予測は、flaml.AutoML のタスクの一つ"
+    },
+    {
+      "page": "fabric/data-science/automated-machine-learning-fabric",
+      "updated": "2025-09-10",
+      "used_for": "AutoMLの概念。対応するモデルの一覧。MLflowでの追跡"
+    },
+    {
+      "page": "fabric/graph/gql-query-api",
+      "updated": "2026-09-29",
+      "used_for": "GQL Query API は beta。本番利用は推奨されない"
+    },
+    {
+      "page": "fabric/apps/overview",
+      "updated": "2026-09-29",
+      "used_for": "Fabric Apps は Preview。リージョンは限定。容量のCUを消費"
+    }
+  ],
+  "not_verified": [
+    "予測の精度の一般化。検証は、合成データの最後の1四半期（既に結果を見た四半期）の1回だけ。モデルの比較で、Graphの特徴量が精度を上げたとは言えない（選ばれたモデルも異なる）",
+    "教師データの92日先ラベルは、週ごとに重なる。独立した観測の数ではない",
+    "現在のGraphから過去を再構成している。各日付の時点で、その情報が利用可能だったかは未検証",
+    "基準予測に、過去のイベントの影響が既に含まれている可能性（二重計上）。分離は未検証",
+    "将来の為替、将来のイベントの発生は予測していない。イベントは、ユーザーが仮定する",
+    "持分管理の値（全額連結のみ対応）",
+    "利用者数・同時アクセス・データ量を増やしたときの性能、容量の消費量とコスト",
+    "利用者ごとの権限（アプリはアイテムの所有者のIDでFabricを読む）"
+  ]
+}
