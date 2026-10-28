@@ -13,7 +13,7 @@ randomly shuffled across the eight entities, not determined by country.
 
 ## Workspace and physical separation
 
-Workspace: `Trading` (`fb31bf6e-8199-4559-b1ce-541d04d20f04`).
+Workspace: `Trading` (`__WORKSPACE_ID__`).
 Nine separate Lakehouses are preserved:
 
 - Parent/SAP-like: `LH_Group_SAP`
@@ -198,9 +198,15 @@ management EBITDA **33,547,898,914.09**. Accounting and live-query evidence:
 
 ## Live entry points
 
-- Workspace: https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/list?experience=fabric-developer
-- Ontology: https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/ontologies/71b8b726-4f82-491b-afcb-ab5c75510e5e
-- Data Agent: https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/aiskills/f8bd4ae0-96fa-4752-b911-6ebcc8c531e7?experience=fabric-developer
+- Workspace: https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/list?experience=fabric-developer
+- Ontology: https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/ontologies/__ONTOLOGY_ID__
+- Data Agent: https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/aiskills/__DATA_AGENT_ID__?experience=fabric-developer
+
+The identifiers in this document and across the repository are placeholders of the
+form `__NAME__` because the repository is public. `scripts/environment_ids.py`
+swaps them with the real values kept in the git-ignored
+`config/environment_ids.local.json` (see the README section on environment
+identifiers).
 
 In the Data Agent, choose **公開済み** to use the published version. In the
 Ontology, **グラフの探索** opens the materialized graph. Resource IDs, publication
@@ -211,7 +217,7 @@ state, and verification references are persisted in `config/deployment_manifest.
 ### Demo step 3: real ontology-backed graph paths → notebook DAG
 
 New notebook **TradingDemo_03_食品損失のOntology経路とDAG**:
-https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/synapsenotebooks/a4f43713-21d0-481e-a843-50566614182d
+https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/synapsenotebooks/__NOTEBOOK_ID_STEP3__
 
 The DA-to-notebook transition is intentional: the DA states the loss magnitude;
 the notebook renders the graph. It reads the **materialized GraphModel derived
@@ -259,7 +265,7 @@ From this project directory:
 python3 scripts/generate_demo.py
 python3 scripts/build_notebook.py
 python3 scripts/build_shortcuts.py
-python3 scripts/build_semantic.py 71b8b726-4f82-491b-afcb-ab5c75510e5e
+python3 scripts/build_semantic.py __ONTOLOGY_ID__
 python3 scripts/verify_live_reports.py
 ```
 

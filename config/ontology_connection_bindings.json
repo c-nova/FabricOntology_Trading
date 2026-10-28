@@ -17,11 +17,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -37,7 +37,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -69,11 +69,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -89,7 +89,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -121,11 +121,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -141,7 +141,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -173,11 +173,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -193,7 +193,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -225,11 +225,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -245,7 +245,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -277,11 +277,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -297,7 +297,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -329,11 +329,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -349,7 +349,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -381,11 +381,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -401,7 +401,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -433,11 +433,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -453,7 +453,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -485,11 +485,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -505,7 +505,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -537,11 +537,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -557,7 +557,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -589,11 +589,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -609,7 +609,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -641,11 +641,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -661,7 +661,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -693,11 +693,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -713,7 +713,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -745,11 +745,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -765,7 +765,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -797,11 +797,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -817,7 +817,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -849,11 +849,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -869,7 +869,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -901,11 +901,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -921,7 +921,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -953,11 +953,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -973,7 +973,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",
@@ -1005,11 +1005,11 @@
         "annotations": [
           {
             "name": "ONT_WorkspaceId",
-            "value": "fb31bf6e-8199-4559-b1ce-541d04d20f04"
+            "value": "__WORKSPACE_ID__"
           },
           {
             "name": "ONT_ItemId",
-            "value": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+            "value": "__LAKEHOUSE_ID_LH_Group_SAP__"
           },
           {
             "name": "ONT_ItemKind",
@@ -1025,7 +1025,7 @@
           },
           {
             "name": "ONT_SqlEndpoint",
-            "value": "jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+            "value": "__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
           },
           {
             "name": "ONT_SqlDatabase",

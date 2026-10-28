@@ -1,42 +1,42 @@
 {
-  "workspaceId": "fb31bf6e-8199-4559-b1ce-541d04d20f04",
+  "workspaceId": "__WORKSPACE_ID__",
   "workspaceName": "Trading",
   "lakehouses": [
     {
       "displayName": "LH_Group_SAP",
-      "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c"
+      "id": "__LAKEHOUSE_ID_LH_Group_SAP__"
     },
     {
       "displayName": "LH_Metals_JP_01",
-      "id": "c4c19a1b-3fd9-4217-ba24-7be2dc4b8e04"
+      "id": "__LAKEHOUSE_ID_LH_Metals_JP_01__"
     },
     {
       "displayName": "LH_Metals_US_01",
-      "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7"
+      "id": "__LAKEHOUSE_ID_LH_Metals_US_01__"
     },
     {
       "displayName": "LH_Energy_JP_01",
-      "id": "b8c787a9-24d8-4594-9c1a-6795a9cc3efe"
+      "id": "__LAKEHOUSE_ID_LH_Energy_JP_01__"
     },
     {
       "displayName": "LH_Energy_US_01",
-      "id": "de63071c-0034-4bcb-89ad-f08b6362a87c"
+      "id": "__LAKEHOUSE_ID_LH_Energy_US_01__"
     },
     {
       "displayName": "LH_Foods_JP_01",
-      "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57"
+      "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__"
     },
     {
       "displayName": "LH_Foods_US_01",
-      "id": "f4bed453-affa-4e95-b1d3-fb416365834d"
+      "id": "__LAKEHOUSE_ID_LH_Foods_US_01__"
     },
     {
       "displayName": "LH_Finance_JP_01",
-      "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947"
+      "id": "__LAKEHOUSE_ID_LH_Finance_JP_01__"
     },
     {
       "displayName": "LH_Finance_US_01",
-      "id": "7c9d037c-d4ed-4eca-8eb9-eac64ac38ba8"
+      "id": "__LAKEHOUSE_ID_LH_Finance_US_01__"
     }
   ]
 }

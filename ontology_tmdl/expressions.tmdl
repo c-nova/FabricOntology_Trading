@@ -1,6 +1,6 @@
 expression DB_LH_Group_SAP =
 		let
-		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/fb31bf6e-8199-4559-b1ce-541d04d20f04/48b1c2cc-3591-472a-b647-e186ccb28c6c", [HierarchicalNavigation=true])
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/__WORKSPACE_ID__/__LAKEHOUSE_ID_LH_Group_SAP__", [HierarchicalNavigation=true])
 		in
 		    Source
 	lineageTag: a16c19ce-9c2b-500d-bf58-33af6d3a83f8

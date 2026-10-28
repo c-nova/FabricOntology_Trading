@@ -33,7 +33,7 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 
 | パス | 内容 |
 |---|---|
-| `config/` | Fabricへのデプロイ定義、ID、検証用の設定 |
+| `config/` | Fabricへのデプロイ定義、検証用の設定（識別子はプレースホルダー。「環境ID（識別子）の扱い」を参照） |
 | `data/` | 生成済みデータセットと、ECBの為替の生データ |
 | `ddl/` | テーブル定義 |
 | `docs/` | 構成、再構築手順 |
@@ -41,7 +41,7 @@ LNG / Power Trading 向けの PoC は [FabricOntology_TradingLNG](https://github
 | `ontology/`、`ontology_tmdl/` | Ontology定義（現行形式は `ontology_tmdl/`、`ontology/` は旧形式の参考） |
 | `prompts/` | Data Agentの指示、質問 |
 | `reports/` | 検証結果（クラウド側、Graph、Data Agent） |
-| `scripts/` | データ生成、デプロイ補助、検証 |
+| `scripts/` | データ生成、デプロイ補助、検証、環境IDの置き換え（`environment_ids.py`） |
 | `presentation/` | 説明者ガイドの生成と検証 |
 | `decks/` | 生成した説明者ガイド |
 
@@ -59,6 +59,15 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 
 `verify_presenter_deck.py` は、macOSのLibreOffice（`/Applications/LibreOffice.app`）とHomebrewのフォント設定を前提にしています。パスは環境変数 `SOFFICE` と `presentation/fonts.conf` で変更できます。日本語フォントが無い環境では、描画結果の改行位置が実際のPowerPointと異なります。最終確認はPowerPointで行ってください。
 
+## 環境ID（識別子）の扱い
+
+公開リポジトリのため、デモ環境のFabricの識別子は、`__WORKSPACE_ID__` のようなプレースホルダーに置き換えています。対象は、ワークスペース、キャパシティ、各アイテム（Lakehouse、Notebook、Ontology、Graph、Data Agent）、ジョブ、SQLエンドポイントのIDとホスト名、Data Agentの会話などのIDです。認証情報は含みません。
+
+- 実際の値は、Git管理外の `config/environment_ids.local.json` に置きます（`.gitignore` 済み。項目の一覧と形式は `config/environment_ids.example.json`）
+- Fabricに接続するスクリプトやNotebookを使う前に、`python3 scripts/environment_ids.py restore` で実際の値に戻します
+- コミットの前に、`python3 scripts/environment_ids.py redact` でプレースホルダーに戻し、`python3 scripts/environment_ids.py check` で残りがないことを確認します。`check` は対応表がなくても、ランダムなGUIDとSQLエンドポイントのホスト名を探します
+- プレースホルダーのままでは、Fabricに接続するスクリプトやNotebookは動きません。`decks/` の説明者ガイドにあるFabricへのリンクも、プレースホルダーのままです。実際のリンクが要るときは、`restore` のあとに `python3 presentation/build_presenter_deck.py` で作り直してください
+
 ## 検証の状況（2026-10-27時点）
 
 - Data Agentは、Fabricで公開済みです。説明者ガイドの質問は、同日に公開済み版で実行しました。Q1、Q3、Q4の結果は元データと照合し、Q2の金額は公開済み版のQA（`reports/da_qa_published.json`）で照合済みです。後述の指示文の更新（5回目の公開）のあとにも、Q1〜Q4を公開済み版で1回ずつ実行し、数値が変わらないことを確認しています
@@ -72,5 +81,5 @@ python3 presentation/verify_presenter_deck.py   # LibreOfficeで描画して点�
 ## 注意
 
 - すべて架空のデータです。実在企業の非公開データではありません
-- `config/deployment_manifest.json` などに、Fabricのワークスペースとアイテムの識別子が含まれます。認証情報は含みません。公開リポジトリにする場合は、識別子を含めてよいか確認してください
+- Fabricのワークスペースやアイテムの識別子は、プレースホルダーに置き換えてあります（「環境ID（識別子）の扱い」を参照）。認証情報は含みません
 - 全額連結EBITDAも持分管理寄与EBITDAも、連結財務諸表の数値ではなくデモ用の管理値です。CFはEBITDAの80%を起点にした簡易シミュレーションで、正式な営業CFではありません

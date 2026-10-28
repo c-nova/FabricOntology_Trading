@@ -8,7 +8,7 @@ import urllib.parse
 import urllib.request
 
 BASE = "https://api.fabric.microsoft.com/v1/"
-WORKSPACE = os.environ.get("WORKSPACE_ID","fb31bf6e-8199-4559-b1ce-541d04d20f04")
+WORKSPACE = os.environ.get("WORKSPACE_ID","__WORKSPACE_ID__")
 TOKEN = os.environ.get("FABRIC_TOKEN")
 NAMES = ["LH_Group_SAP"]+[f"LH_{s}_{c}_01" for s in ("Metals","Energy","Foods","Finance") for c in ("JP","US")]
 

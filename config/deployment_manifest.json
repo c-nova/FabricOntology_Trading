@@ -4,17 +4,17 @@
   "step3_extension": {
     "verified_on": "2026-10-26",
     "manifest": "config/step3_deployment.json",
-    "notebook_id": "a4f43713-21d0-481e-a843-50566614182d",
+    "notebook_id": "__NOTEBOOK_ID_STEP3__",
     "status": "executed_with_persisted_reopened_live_graph_dag"
   },
   "data_classification": "fictional_synthetic_company_data_with_actual_public_ECB_FX",
   "period": {"start": "2025-10-01", "end": "2026-09-30"},
   "seed": 20261023,
   "workspace": {
-    "id": "fb31bf6e-8199-4559-b1ce-541d04d20f04",
+    "id": "__WORKSPACE_ID__",
     "name": "Trading",
-    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/list?experience=fabric-developer",
-    "capacity_id": "38018e0f-a4ed-4723-9939-081296c99cc7",
+    "url": "https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/list?experience=fabric-developer",
+    "capacity_id": "__CAPACITY_ID__",
     "capacity_sku": "F16"
   },
   "storage": {
@@ -29,24 +29,24 @@
     "copied_shortcut_rows": 0
   },
   "seed_notebook": {
-    "id": "9515251b-f0c8-42ac-8191-d97e039d3251",
-    "job_id": "bddfef90-b2bf-4628-86ec-264850817cef",
+    "id": "__NOTEBOOK_ID_SEED__",
+    "job_id": "__JOB_ID_SEED__",
     "job_status": "Completed"
   },
   "finalize_notebook": {
-    "id": "2a1d9049-3321-407c-aeb3-48bdc504b5c8",
-    "job_id": "7c414a58-ff48-4f6c-86a8-adb67bdc481d",
+    "id": "__NOTEBOOK_ID_FINALIZE__",
+    "job_id": "__JOB_ID_FINALIZE__",
     "job_status": "Completed"
   },
   "ontology": {
-    "id": "71b8b726-4f82-491b-afcb-ab5c75510e5e",
-    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/ontologies/71b8b726-4f82-491b-afcb-ab5c75510e5e",
+    "id": "__ONTOLOGY_ID__",
+    "url": "https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/ontologies/__ONTOLOGY_ID__",
     "entity_types": 17,
     "relationship_types": 39,
     "backed_tables": 20,
     "native_connection_annotations_verified": 160,
-    "graph_id": "06a5ee19-a046-4ad5-9be3-1251c2378a68",
-    "final_refresh_job_id": "859c989a-1a44-4c40-a3bf-5ce38c99f253",
+    "graph_id": "__GRAPH_ID__",
+    "final_refresh_job_id": "__JOB_ID_GRAPH_REFRESH_FINAL__",
     "final_refresh_status": "Completed",
     "final_refresh_end_utc": "2026-10-23T09:44:24.8216406Z",
     "runtime_verified_nodes": 33960,
@@ -56,7 +56,7 @@
     "relationships_active": 42,
     "relationships_activated_utc": "2026-10-27T06:06:49Z",
     "refresh_after_relationship_activation": {
-      "job_id": "120c882c-c079-4151-8db7-0b190f43d6c3",
+      "job_id": "__JOB_ID_GRAPH_REFRESH_AFTER_RELATIONSHIP_FIX__",
       "status": "Completed",
       "start_utc": "2026-10-27T06:09:41.7213355Z",
       "end_utc": "2026-10-27T06:13:18.6987655Z",
@@ -64,14 +64,14 @@
     }
   },
   "data_agent": {
-    "id": "f8bd4ae0-96fa-4752-b911-6ebcc8c531e7",
-    "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/aiskills/f8bd4ae0-96fa-4752-b911-6ebcc8c531e7?experience=fabric-developer",
+    "id": "__DATA_AGENT_ID__",
+    "url": "https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/aiskills/__DATA_AGENT_ID__?experience=fabric-developer",
     "published_through_fabric": true,
     "native_publish_http_status": 200,
     "selected_tables": 25,
     "runtime": "Preview",
     "published_stage_japanese_live_qa": "passed",
-    "production_conversation_id": "conv_fabqjhS3wLTVpXY4PWVhJZgut6f7",
+    "production_conversation_id": "__DA_CONVERSATION_ID_04__",
     "microsoft_copilot_publication": false,
     "japanese_support": "tested_best_effort_not_officially_supported"
   },

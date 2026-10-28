@@ -1,6 +1,6 @@
 {
   "has_more": false,
-  "last_id": "msg_0dbc2245ea194a5a016adb2d7299f48194aeb51c0074b7e8c9",
+  "last_id": "__DA_MESSAGE_ID_02__",
   "messages": [
     {
       "role": "user",
@@ -23,13 +23,13 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fabfhhDWr2JpjvgOoGoEQBDdA85w",
+              "file_id": "__DA_FILE_ID_08__",
               "filename": "result_0.json",
               "index": 0
             },
             {
               "type": "file_citation",
-              "file_id": "file_fabXR2wKTL4c0OuZ7Ms7sYoLhcKt",
+              "file_id": "__DA_FILE_ID_06__",
               "filename": "result_1.json",
               "index": 1
             }
@@ -227,7 +227,7 @@
       "attached": [],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]

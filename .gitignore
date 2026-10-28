@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.lock
 presentation/qa/
+config/environment_ids.local.json

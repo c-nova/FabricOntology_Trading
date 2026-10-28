@@ -23,7 +23,7 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fabp93KEmzxgB5MMlSTrVwJeoNZv",
+              "file_id": "__DA_FILE_ID_10__",
               "filename": "result_0.json",
               "index": 0
             }
@@ -49,7 +49,7 @@
   ],
   "sql_executions": [
     {
-      "error": "Failed to execute step (RAID: 593ed4ab-883d-411a-abac-d4b7e32c85c5). Error: {\"execution_index\":-1,\"sql\":\"SELECT kpi_code, SUM(amount_group) AS amount_jpy\\nFROM dbo.kpi_snapshot\\nWHERE scenario_tag = \\u0027actual\\u0027\\n  AND snapshot_date \\u003E= \\u00272025-10-01\\u0027\\n  AND snapshot_date \\u003C= \\u00272026-09-30\\u0027\\n  AND kpi_code IN (\\u0027EBITDA_FULL_CONSOLIDATED\\u0027, \\u0027EBITDA_MANAGEMENT_WEIGHTED\\u0027)\\nGROUP BY kpi_code\",\"rows\":[],\"columns\":[],\"columns_types\":[],\"is_success\":false,\"content_format\":\"markdown\",\"content\":\"\",\"error\":\"SQL Exception Summary\\r\\n----------------------------------------\\r\\nMessage     : Invalid column name \\u0027snapshot_date\\u0027.\\r\\nInvalid column name \\u0027snapshot_date\\u0027.\\r\\nProcedure   : \\r\\nLineNumber  : 4\\r\\nClass       : 16\\r\\nState       : 1\\r\\nErrorCode   : -2146232060\\r\\nNumber      : 207\\r\\n\\r\\nDetailed Errors:\\r\\n----------------------------------------\\r\\n[#207] Invalid column name \\u0027snapshot_date\\u0027.\\r\\n  Procedure : \\r\\n  Line      : 4\\r\\n  State     : 1\\r\\n\\r\\n[#207] Invalid column name \\u0027snapshot_date\\u0027.\\r\\n  Procedure : \\r\\n  Line      : 5\\r\\n  State     : 1\\r\\n\\r\\n\",\"auto_submitted\":false,\"requires_approval\":false}"
+      "error": "Failed to execute step (RAID: __REQUEST_ACTIVITY_ID_DA_RETEST__). Error: {\"execution_index\":-1,\"sql\":\"SELECT kpi_code, SUM(amount_group) AS amount_jpy\\nFROM dbo.kpi_snapshot\\nWHERE scenario_tag = \\u0027actual\\u0027\\n  AND snapshot_date \\u003E= \\u00272025-10-01\\u0027\\n  AND snapshot_date \\u003C= \\u00272026-09-30\\u0027\\n  AND kpi_code IN (\\u0027EBITDA_FULL_CONSOLIDATED\\u0027, \\u0027EBITDA_MANAGEMENT_WEIGHTED\\u0027)\\nGROUP BY kpi_code\",\"rows\":[],\"columns\":[],\"columns_types\":[],\"is_success\":false,\"content_format\":\"markdown\",\"content\":\"\",\"error\":\"SQL Exception Summary\\r\\n----------------------------------------\\r\\nMessage     : Invalid column name \\u0027snapshot_date\\u0027.\\r\\nInvalid column name \\u0027snapshot_date\\u0027.\\r\\nProcedure   : \\r\\nLineNumber  : 4\\r\\nClass       : 16\\r\\nState       : 1\\r\\nErrorCode   : -2146232060\\r\\nNumber      : 207\\r\\n\\r\\nDetailed Errors:\\r\\n----------------------------------------\\r\\n[#207] Invalid column name \\u0027snapshot_date\\u0027.\\r\\n  Procedure : \\r\\n  Line      : 4\\r\\n  State     : 1\\r\\n\\r\\n[#207] Invalid column name \\u0027snapshot_date\\u0027.\\r\\n  Procedure : \\r\\n  Line      : 5\\r\\n  State     : 1\\r\\n\\r\\n\",\"auto_submitted\":false,\"requires_approval\":false}"
     },
     {
       "execution_index": 0,
@@ -187,25 +187,25 @@
       "skippedCount": 1,
       "attached": [
         {
-          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "id": "__LAKEHOUSE_ID_LH_Metals_US_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "c4c19a1b-3fd9-4217-ba24-7be2dc4b8e04",
+          "id": "__LAKEHOUSE_ID_LH_Metals_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "b8c787a9-24d8-4594-9c1a-6795a9cc3efe",
+          "id": "__LAKEHOUSE_ID_LH_Energy_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__",
           "type": "LakehouseTables"
         }
       ],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]
@@ -215,25 +215,25 @@
       "skippedCount": 1,
       "attached": [
         {
-          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "id": "__LAKEHOUSE_ID_LH_Metals_US_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "c4c19a1b-3fd9-4217-ba24-7be2dc4b8e04",
+          "id": "__LAKEHOUSE_ID_LH_Metals_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "b8c787a9-24d8-4594-9c1a-6795a9cc3efe",
+          "id": "__LAKEHOUSE_ID_LH_Energy_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__",
           "type": "LakehouseTables"
         }
       ],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]

@@ -146,18 +146,18 @@ def tmdl_part(path,text):
 def current_tmdl_definition():
     """Current (2026-09) public API uses TMDL, not legacy entity-type JSON."""
     endpoints={
-        "LH_Group_SAP":"2ef7f1dd-1f4b-4fa5-854b-acf8a30a738a",
-        "LH_Metals_JP_01":"54f870a9-8480-4978-a3ba-eb3a6a96ec04",
-        "LH_Metals_US_01":"c21c2f42-6e81-4801-965d-ce42d54077a3",
-        "LH_Energy_JP_01":"34e6b1d7-4565-4a14-959a-f62c9533f36c",
-        "LH_Energy_US_01":"e950363a-dc5c-498f-aed7-cd751d620fcb",
-        "LH_Foods_JP_01":"d79a7e4c-ef48-483f-a408-83541ab885f7",
-        "LH_Foods_US_01":"3b17bd9e-89c9-454e-ac6b-95ea5cb4d691",
-        "LH_Finance_JP_01":"74bb56b5-ccea-4a04-8766-600f45e5b161",
-        "LH_Finance_US_01":"4b033ed0-5cdb-451f-8625-34a6c70c5b05",
+        "LH_Group_SAP":"__SQL_ENDPOINT_ID_LH_Group_SAP__",
+        "LH_Metals_JP_01":"__SQL_ENDPOINT_ID_LH_Metals_JP_01__",
+        "LH_Metals_US_01":"__SQL_ENDPOINT_ID_LH_Metals_US_01__",
+        "LH_Energy_JP_01":"__SQL_ENDPOINT_ID_LH_Energy_JP_01__",
+        "LH_Energy_US_01":"__SQL_ENDPOINT_ID_LH_Energy_US_01__",
+        "LH_Foods_JP_01":"__SQL_ENDPOINT_ID_LH_Foods_JP_01__",
+        "LH_Foods_US_01":"__SQL_ENDPOINT_ID_LH_Foods_US_01__",
+        "LH_Finance_JP_01":"__SQL_ENDPOINT_ID_LH_Finance_JP_01__",
+        "LH_Finance_US_01":"__SQL_ENDPOINT_ID_LH_Finance_US_01__",
     }
     # These are live-discovered SQL endpoint identities, not invented resources.
-    server="jh6zduwe5ahuzonwbmgkxkovau-n27td64zqfmulmookqoqjuqpaq.datawarehouse.fabric.microsoft.com"
+    server="__SQL_ENDPOINT_HOST_LABEL__.datawarehouse.fabric.microsoft.com"
     tables,entities,relationships,entityrels={},{},[],[]
     connection_scripts=[]
     pinned_at=datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00","Z")

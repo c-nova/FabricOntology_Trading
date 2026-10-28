@@ -1,6 +1,6 @@
 {
   "has_more": false,
-  "last_id": "msg_0e3716740ed770fe016adb2c73a5f08194950452c71bf00236",
+  "last_id": "__DA_MESSAGE_ID_03__",
   "messages": [
     {
       "role": "user",
@@ -23,7 +23,7 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fab77RAal8RLZm99mjaLvjh8tdB7",
+              "file_id": "__DA_FILE_ID_02__",
               "filename": "result_0.json",
               "index": 0
             }
@@ -55,7 +55,7 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fab42O7BWpSmWuC5Kg7P631Pjx5j",
+              "file_id": "__DA_FILE_ID_01__",
               "filename": "result_1.json",
               "index": 0
             }
@@ -87,25 +87,25 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fabdlf0sxAiMWSv5RntCroBc7mBR",
+              "file_id": "__DA_FILE_ID_07__",
               "filename": "result_2.json",
               "index": 0
             },
             {
               "type": "file_citation",
-              "file_id": "file_fab8OpcwqK9saRTDs8VUE2jcZEYh",
+              "file_id": "__DA_FILE_ID_03__",
               "filename": "result_3.json",
               "index": 1
             },
             {
               "type": "file_citation",
-              "file_id": "file_fab9GTlgjoVSkRvDy8KBbF3UKA8k",
+              "file_id": "__DA_FILE_ID_04__",
               "filename": "result_4.json",
               "index": 2
             },
             {
               "type": "file_citation",
-              "file_id": "file_fabmxSz6KRNjAwpWsux73ZPKblnt",
+              "file_id": "__DA_FILE_ID_09__",
               "filename": "result_5.json",
               "index": 3
             }
@@ -137,13 +137,13 @@
           "annotations": [
             {
               "type": "file_citation",
-              "file_id": "file_fabCnMyw6BLrIMiPYpjCs7F30Bzj",
+              "file_id": "__DA_FILE_ID_05__",
               "filename": "result_6.json",
               "index": 0
             },
             {
               "type": "file_citation",
-              "file_id": "file_fabzMAJwtXyNZO1wqt0K4hprEqOk",
+              "file_id": "__DA_FILE_ID_12__",
               "filename": "result_7.json",
               "index": 1
             }
@@ -1472,25 +1472,25 @@
       "skippedCount": 1,
       "attached": [
         {
-          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "id": "__LAKEHOUSE_ID_LH_Metals_US_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "id": "__LAKEHOUSE_ID_LH_Finance_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "id": "__LAKEHOUSE_ID_LH_Energy_US_01__",
           "type": "LakehouseTables"
         }
       ],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]
@@ -1500,25 +1500,25 @@
       "skippedCount": 1,
       "attached": [
         {
-          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "id": "__LAKEHOUSE_ID_LH_Metals_US_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "id": "__LAKEHOUSE_ID_LH_Finance_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "id": "__LAKEHOUSE_ID_LH_Energy_US_01__",
           "type": "LakehouseTables"
         }
       ],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]
@@ -1528,25 +1528,25 @@
       "skippedCount": 1,
       "attached": [
         {
-          "id": "a9f2339d-db21-4dae-b019-5f8ef2bb2f57",
+          "id": "__LAKEHOUSE_ID_LH_Foods_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "b061ef73-0025-4c51-8880-5bc38ce45ac7",
+          "id": "__LAKEHOUSE_ID_LH_Metals_US_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "ebeba08c-1f48-4f0a-914f-66f00ef73947",
+          "id": "__LAKEHOUSE_ID_LH_Finance_JP_01__",
           "type": "LakehouseTables"
         },
         {
-          "id": "de63071c-0034-4bcb-89ad-f08b6362a87c",
+          "id": "__LAKEHOUSE_ID_LH_Energy_US_01__",
           "type": "LakehouseTables"
         }
       ],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]
@@ -1557,7 +1557,7 @@
       "attached": [],
       "skipped": [
         {
-          "id": "48b1c2cc-3591-472a-b647-e186ccb28c6c",
+          "id": "__LAKEHOUSE_ID_LH_Group_SAP__",
           "type": "LakehouseTables"
         }
       ]

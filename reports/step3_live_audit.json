@@ -2,12 +2,12 @@
   "version": 1,
   "status": "passed",
   "event_id": "FOD_NEG",
-  "workspace_id": "fb31bf6e-8199-4559-b1ce-541d04d20f04",
-  "ontology_id": "71b8b726-4f82-491b-afcb-ab5c75510e5e",
-  "graph_id": "06a5ee19-a046-4ad5-9be3-1251c2378a68",
-  "notebook_id": "a4f43713-21d0-481e-a843-50566614182d",
+  "workspace_id": "__WORKSPACE_ID__",
+  "ontology_id": "__ONTOLOGY_ID__",
+  "graph_id": "__GRAPH_ID__",
+  "notebook_id": "__NOTEBOOK_ID_STEP3__",
   "live_graph_read_at_utc": "2026-10-26T01:25:34.097979+00:00",
-  "graph_api": "https://api.fabric.microsoft.com/v1/workspaces/fb31bf6e-8199-4559-b1ce-541d04d20f04/graphModels/06a5ee19-a046-4ad5-9be3-1251c2378a68/executeQuery?beta=true",
+  "graph_api": "https://api.fabric.microsoft.com/v1/workspaces/__WORKSPACE_ID__/graphModels/__GRAPH_ID__/executeQuery?beta=true",
   "graph_queries": [
     {
       "query": "MATCH (e:RiskEvent)-[:EventHasEffect]->(f:FinancialEffect)\n      -[:EffectRealizedInMetric]->(m:FinancialMetric)\n      -[:MetricRollsUpToGroupKPI]->(k:GroupKPI),\n      (f)-[:EffectOnActivity]->(a:Activity)-[:ActivityUnderContract]->(c:Contract),\n      (f)-[:EffectOnContract]->(c),\n      (f)-[:EffectExplainedByEvidence]->(v:Evidence)-[:EvidenceSupportsEvent]->(e),\n      (e)-[:EventImpactsActivity]->(a)\nWHERE e.event_id='FOD_NEG'\n  AND m.metric_code='EBITDA' AND m.scenario_tag='actual'\n  AND k.kpi_code='EBITDA_FULL_CONSOLIDATED' AND k.scenario_tag='actual'\nRETURN e.event_id AS event_id, e.narrative AS narrative,\n       e.is_synthetic AS event_is_synthetic, v.evidence_id AS evidence_id,\n       v.source_record AS source_record, v.excerpt AS excerpt,\n       v.is_synthetic AS evidence_is_synthetic,\n       a.activity_id AS activity_id, a.activity_type AS activity_type,\n       a.activity_date AS activity_date, a.entity_id AS entity_id,\n       c.contract_id AS contract_id, c.commodity AS commodity,\n       f.effect_id AS effect_id, f.effect_date AS effect_date,\n       f.delta_ebitda_full_jpy AS graph_effect_jpy,\n       f.delta_management_jpy AS graph_management_jpy,\n       m.metric_id AS metric_id, k.kpi_id AS kpi_id\nORDER BY f.effect_id LIMIT 1000",
@@ -141,9 +141,9 @@
   "exact_subsidiary_daily_actual_ebitda_jpy": "3711231.19000000",
   "exact_group_daily_actual_ebitda_jpy": "113069201.90000000",
   "delta_financial_crosscheck_tables": [
-    "abfss://fb31bf6e-8199-4559-b1ce-541d04d20f04@onelake.dfs.fabric.microsoft.com/48b1c2cc-3591-472a-b647-e186ccb28c6c/Tables/dbo/semantic_event_financial_effects",
-    "abfss://fb31bf6e-8199-4559-b1ce-541d04d20f04@onelake.dfs.fabric.microsoft.com/48b1c2cc-3591-472a-b647-e186ccb28c6c/Tables/dbo/semantic_financial_metrics_daily",
-    "abfss://fb31bf6e-8199-4559-b1ce-541d04d20f04@onelake.dfs.fabric.microsoft.com/48b1c2cc-3591-472a-b647-e186ccb28c6c/Tables/dbo/kpi_snapshot"
+    "abfss://__WORKSPACE_ID__@onelake.dfs.fabric.microsoft.com/__LAKEHOUSE_ID_LH_Group_SAP__/Tables/dbo/semantic_event_financial_effects",
+    "abfss://__WORKSPACE_ID__@onelake.dfs.fabric.microsoft.com/__LAKEHOUSE_ID_LH_Group_SAP__/Tables/dbo/semantic_financial_metrics_daily",
+    "abfss://__WORKSPACE_ID__@onelake.dfs.fabric.microsoft.com/__LAKEHOUSE_ID_LH_Group_SAP__/Tables/dbo/kpi_snapshot"
   ],
   "diagram_nodes": 8,
   "diagram_edges": 7,

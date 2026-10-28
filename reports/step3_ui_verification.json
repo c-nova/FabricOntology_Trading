@@ -1,6 +1,6 @@
 {
   "verification": "Opened the new Fabric notebook after its completed API run, without running any cell in the editor",
-  "url": "https://app.fabric.microsoft.com/groups/fb31bf6e-8199-4559-b1ce-541d04d20f04/synapsenotebooks/a4f43713-21d0-481e-a843-50566614182d?experience=fabric-developer",
+  "url": "https://app.fabric.microsoft.com/groups/__WORKSPACE_ID__/synapsenotebooks/__NOTEBOOK_ID_STEP3__?experience=fabric-developer",
   "persisted_notebook_definition_contains_outputs": true,
   "dashboard_in_actual_notebook_output_iframe": true,
   "dashboard_visible": true,
@@ -11,6 +11,6 @@
   "snapshot_timestamp_visible": true,
   "saved_dashboard_width_css_px": 1291,
   "svg_text_elements": 32,
-  "get_definition_operation_id": "ce7ea20c-bf79-40e2-bee1-03f3dbc01df4",
+  "get_definition_operation_id": "__OPERATION_ID_STEP3_GET_DEFINITION__",
   "screenshots": "Playwright screenshot capture timed out; visible DOM/SVG, text widths and persisted definition outputs were verified instead"
 }
